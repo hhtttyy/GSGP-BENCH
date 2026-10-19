@@ -1,0 +1,31 @@
+{
+  "schema_version": "gsgp.dataset.v1",
+  "id": "sim500",
+  "name": "GSGP-Sim 500\u00d75k",
+  "species": "Sus scrofa (demo genotype)",
+  "source": "Genotype: 500 individuals \u00d7 5,000 SNPs derived from the public upstream IFAM demo. Trait: simulated quantitative phenotype, h\u00b2=0.5, 200 causal SNPs, seed 20261019. Raw data stays local.",
+  "n_individuals": 500,
+  "n_snps": 5000,
+  "trait": {
+    "name": "simulated_trait",
+    "type": "quantitative",
+    "simulated": true,
+    "heritability": 0.5
+  },
+  "split": {
+    "split_id": "sim500-repeat-1",
+    "seed": 20261019,
+    "n_training": 400,
+    "n_validation": 100,
+    "split_sha256": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+  },
+  "input_sha256": {
+    "geno/demo.bed": "f8fc2bbec495a7e00d2032d1f1369cdaa3309c71d4b84c8c50639a27da8ac59e",
+    "geno/demo.bim": "671e3675bb33a2449b8d105768f7d5ef1a8d3224668a33474a409e127711e2f4",
+    "geno/demo.fam": "a5deb5a684b1cbe5f880ad0e011723db6311b0e688379a80a52ea2b3cb8ecad0",
+    "pheno/phenotype.fit.txt": "a40576e66b59cd6cd3df14e9f28fea8945b5dc9e5bcd41ec45abcdeeddb3ffd2",
+    "splits/repeat-1.json": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+  },
+  "license_note": "Raw genotype, phenotype and predictions remain local; only aggregate metrics and hashes are public.",
+  "local_path": "local_data/gblup-sim500"
+}

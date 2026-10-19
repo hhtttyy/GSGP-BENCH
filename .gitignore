@@ -15,3 +15,9 @@ venv/
 .env.*
 !.env.example
 !.env.template
+
+# Local data and private run artifacts (never commit raw observations or predictions)
+local_data/
+
+# Local paper PDFs: licenses vary and the static site does not need them
+docs/*.pdf

@@ -1,0 +1,2854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GSGP·Bench — 基因组预测方法比较</title>
+<meta name="description" content="GSGP-Bench：比较基因组预测方法，查看可追溯的评测记录。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%233d5a47' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%233d5a47'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%233d5a47' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%233d5a47' opacity='.8'/%3E%3C/svg%3E" />
+<style>
+  :root {
+    --paper: #f1f2ee;
+    --plate: #fbfbf8;
+    --ink: #1b2621;
+    --ink-2: #4f5c56;
+    --ink-3: #7b857f;
+    --rule: #d2d7ce;
+    --rule-soft: #e5e8e1;
+    --moss: #3d5a47;
+    --moss-2: #5d7a63;
+    --moss-soft: #e9eee7;
+    --indigo: #4a607c;
+    --clay: #8b5a43;
+    --olive: #7b794d;
+    --plum: #715c6e;
+    --rust: #985a3f;
+    --rust-soft: #f1e8e1;
+    --blue-soft: #eceff3;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Songti SC", "STSong", "Noto Serif CJK SC", "Noto Serif SC", "Source Han Serif SC", "SimSun", "宋体", Georgia, serif;
+    --sans: "Avenir Next", Avenir, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  a { color: inherit; }
+  em { font-style: italic; }
+  ::selection { background: var(--moss); color: #fff; }
+  :focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
+
+  .app { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ---------------- Masthead ---------------- */
+  .masthead {
+    flex: 0 0 auto;
+    height: 78px;
+    padding: 0 26px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: var(--plate);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    text-decoration: none;
+    min-width: 0;
+  }
+  .chromosome { width: 19px; height: 28px; color: var(--moss); flex: 0 0 auto; }
+  .brand-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .wordmark {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .wordmark-slash { color: var(--moss); font-weight: 400; margin: 0 3px; }
+  .wordmark-bench {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.3em;
+    color: var(--ink-2);
+    vertical-align: 2px;
+  }
+  .brand-sub {
+    color: var(--ink-3);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mast-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    white-space: nowrap;
+  }
+  .nav-link {
+    position: relative;
+    color: var(--ink-2);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+  .nav-link:hover { color: var(--ink); }
+  .nav-link.is-active { color: var(--ink); }
+  .nav-link.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 1.5px;
+    background: var(--moss);
+  }
+  .nav-research {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    padding: 6px 10px 5px;
+    color: var(--ink-2);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .nav-research:hover { border-color: var(--ink-2); color: var(--ink); background: #f7f8f4; }
+  .nav-research .preview-mark {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--rust);
+    letter-spacing: 0.04em;
+  }
+  .nav-github { text-decoration: none; }
+  .nav-github .arrow { margin-left: 4px; color: var(--ink-3); }
+
+  /* ---------------- Folio ---------------- */
+  .folio {
+    flex: 0 0 auto;
+    height: 33px;
+    padding: 0 26px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 18px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .folio-center {
+    color: var(--ink-2);
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+  .folio-right {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--rust);
+    letter-spacing: 0.07em;
+  }
+  .folio-right i {
+    width: 4px; height: 4px;
+    background: var(--rust);
+    display: inline-block;
+  }
+
+  /* ---------------- Workspace sheet ---------------- */
+  .workspace {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 15px 22px 20px;
+    display: grid;
+    grid-template-columns: 294px 316px minmax(0, 1fr);
+    background: var(--plate);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .column {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 22px 0;
+    animation: column-in 0.55s cubic-bezier(0.2, 0.65, 0.2, 1) both;
+  }
+  .column:nth-child(2) { animation-delay: 0.06s; }
+  .column:nth-child(3) { animation-delay: 0.12s; }
+  .column + .column { border-left: 1px solid var(--rule); }
+  .column-results { padding: 0; }
+  .column-results { animation-name: column-in-flat; }
+
+  .col-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .panel-letter {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0;
+    color: var(--moss);
+    line-height: 1;
+  }
+  .eyebrow-rule { flex: 1 1 auto; height: 1px; background: var(--rule-soft); min-width: 8px; }
+  .eyebrow-side { letter-spacing: 0.08em; color: var(--ink-3); }
+  .col-title {
+    margin: 9px 0 5px;
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 500;
+    line-height: 1.14;
+    letter-spacing: -0.02em;
+  }
+  .col-deck {
+    margin: 0;
+    max-width: 250px;
+    color: var(--ink-2);
+    font-size: 10.5px;
+    line-height: 1.65;
+  }
+  .search-row {
+    margin-top: 16px;
+    padding: 0 0 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-3);
+    transition: border-color 0.15s;
+  }
+  .search-row:focus-within { border-color: var(--ink); color: var(--ink-2); }
+  .search-row svg { flex: 0 0 auto; }
+  .search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 11px;
+    color: var(--ink);
+    padding: 0;
+  }
+  .search-input::placeholder { color: var(--ink-3); }
+
+  .entry-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 4px -4px 0 0;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #c6cdc4 transparent;
+  }
+  .entry-list::-webkit-scrollbar { width: 5px; }
+  .entry-list::-webkit-scrollbar-thumb { background: #c6cdc4; }
+  .entry {
+    position: relative;
+    border-bottom: 1px solid var(--rule-soft);
+    transition: background 0.15s;
+  }
+  .entry-main {
+    display: grid;
+    grid-template-columns: 13px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px 8px 7px;
+    cursor: pointer;
+  }
+  .entry-plain .entry-main { padding-bottom: 11px; }
+  .entry:hover { background: #f6f7f3; }
+  .entry.selected { background: var(--moss-soft); }
+  .entry.selected::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--moss);
+  }
+  .entry:focus-within { outline: 2px solid rgba(61, 90, 71, 0.5); outline-offset: -2px; }
+  .entry input[type="checkbox"] {
+    position: absolute;
+    width: 1px; height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .entry-check {
+    width: 13px; height: 13px;
+    margin-top: 2px;
+    border: 1px solid #b6beb4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #fff;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .entry-check svg { width: 8px; height: 8px; opacity: 0; }
+  .entry.selected .entry-check { background: var(--moss); border-color: var(--moss); }
+  .entry.selected .entry-check svg { opacity: 1; }
+  .entry-body { min-width: 0; }
+  .entry-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .entry-key {
+    width: 6px; height: 6px;
+    background: var(--c, var(--moss));
+    flex: 0 0 auto;
+  }
+  .entry-name {
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: 0.005em;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+  .entry-status {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--moss);
+    white-space: nowrap;
+  }
+  .entry-status::before {
+    content: "";
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .entry-status.is-pending { color: var(--rust); }
+  .entry-status.is-planned { color: var(--ink-3); }
+  .entry-meta {
+    display: block;
+    margin-top: 3px;
+    color: var(--ink-3);
+    font-size: 9.5px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .entry-meta .sci { font-family: var(--serif); font-size: 10px; }
+  .entry-note {
+    display: block;
+    margin-top: 4px;
+    color: var(--ink-2);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+  .resource-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 11px;
+    margin: 0 8px 0 31px;
+    padding: 0 0 9px;
+    font-family: var(--mono);
+    font-size: 8px;
+    line-height: 1.45;
+    letter-spacing: 0.045em;
+  }
+  .resource {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    min-width: 0;
+    padding: 1px 0;
+    border: 0;
+    border-bottom: 1px dotted transparent;
+    background: transparent;
+    font: inherit;
+    letter-spacing: inherit;
+    white-space: nowrap;
+  }
+  .resource-label {
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+  }
+  .resource-state { color: var(--ink-3); }
+  .resource.is-link { color: var(--moss); text-decoration: none; }
+  .resource.is-link .resource-state { color: var(--rust); }
+  .resource.is-link:hover .resource-state { color: var(--ink-2); }
+  .resource.is-link .resource-label {
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 2px;
+  }
+  .resource.is-link:hover { color: var(--ink); }
+  .resource.is-link:hover .resource-label { text-decoration-color: currentColor; }
+  .resource-arrow { font-size: 8px; line-height: 1; }
+  .resource.is-missing {
+    color: var(--ink-3);
+    border-bottom-color: #c0c6bd;
+    cursor: help;
+  }
+  .resource.is-missing:hover,
+  .resource.is-missing:focus-visible {
+    color: var(--ink-2);
+    border-bottom-color: var(--ink-2);
+  }
+  .resource.is-missing .resource-state { color: var(--rust); }
+  .resource.is-missing:hover .resource-state,
+  .resource.is-missing:focus-visible .resource-state { color: var(--ink-2); }
+  .resource-tooltip {
+    position: fixed;
+    z-index: 130;
+    width: max-content;
+    max-width: min(260px, calc(100vw - 16px));
+    padding: 7px 9px;
+    border: 1px solid rgba(251, 251, 248, 0.14);
+    background: var(--ink);
+    color: #f4f5f1;
+    box-shadow: 0 10px 26px rgba(27, 38, 33, 0.18);
+    font-family: var(--sans);
+    font-size: 10px;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(3px);
+    transition: opacity 0.14s ease, transform 0.14s ease;
+  }
+  .resource-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .col-foot {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0 13px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .col-foot b { color: var(--ink); font-weight: 500; }
+  .clear-btn {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: var(--ink-2);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--rule);
+  }
+  .clear-btn:hover { color: var(--ink); text-decoration-color: var(--ink-2); }
+
+  .list-empty {
+    padding: 28px 8px;
+    color: var(--ink-3);
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  /* ---------------- Results ---------------- */
+  .results-head {
+    flex: 0 0 auto;
+    padding: 22px 24px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .results-title-row {
+    margin-top: 8px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .results-title {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 29px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+  .results-sub {
+    margin: 0;
+    padding-bottom: 2px;
+    color: var(--ink-3);
+    font-size: 9.5px;
+    line-height: 1.5;
+    text-align: right;
+    max-width: 58%;
+  }
+  .evidence-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 8px 0;
+    border-top: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+    min-height: 34px;
+  }
+  .evidence-row[hidden] { display: none; }
+  .evidence-label {
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .evidence-track {
+    display: flex;
+    align-items: stretch;
+    gap: 9px;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  .ev-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: 9px;
+    border-right: 1px solid var(--rule);
+  }
+  .ev-group:last-child { border-right: 0; padding-right: 0; }
+  .ev {
+    width: 5px;
+    height: 14px;
+    display: inline-block;
+    background: var(--c);
+  }
+  .ev.is-l3 {
+    background: repeating-linear-gradient(135deg, var(--c) 0 1px, transparent 1px 3px);
+    outline: 1px solid var(--c);
+    outline-offset: -1px;
+  }
+  .ev.is-exp {
+    background: repeating-linear-gradient(90deg, var(--c) 0 1px, transparent 1px 3px);
+    outline: 1px solid var(--c);
+    outline-offset: -1px;
+  }
+  .ev.is-stub {
+    background: repeating-linear-gradient(45deg, var(--c) 0 1px, transparent 1px 3px);
+    outline: 1px dashed var(--c);
+    outline-offset: -1px;
+    opacity: .7;
+  }
+  .ev.is-none {
+    background: transparent;
+    outline: 1px dashed #bcc4ba;
+    outline-offset: -1px;
+  }
+  .evidence-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.03em;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .evidence-count b { color: var(--ink-2); font-weight: 500; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 9px 0 10px;
+  }
+  .metric-tabs { display: flex; align-items: center; gap: 19px; }
+  .metric-tab {
+    border: 0;
+    background: transparent;
+    padding: 3px 0 6px;
+    border-bottom: 1.5px solid transparent;
+    color: var(--ink-3);
+    font-size: 10.5px;
+    font-weight: 550;
+    letter-spacing: 0.015em;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .metric-tab:hover { color: var(--ink); }
+  .metric-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+  .toolbar-note {
+    color: var(--ink-3);
+    font-size: 9px;
+    line-height: 1.45;
+    text-align: right;
+    max-width: 52%;
+  }
+
+  .results-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 18px 24px 32px;
+    scrollbar-width: thin;
+    scrollbar-color: #c6cdc4 transparent;
+  }
+  .results-body::-webkit-scrollbar { width: 6px; }
+  .results-body::-webkit-scrollbar-thumb { background: #c6cdc4; }
+
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 10px;
+    padding: 8px 11px;
+    border-left: 2px solid var(--rust);
+    background: var(--rust-soft);
+    color: #6c4a36;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+  .notice.is-info { border-left-color: var(--indigo); background: var(--blue-soft); color: #394d66; }
+  .notice-label {
+    flex: 0 0 auto;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .empty-state {
+    padding: 54px 18px 48px;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    max-width: 560px;
+  }
+  .empty-no {
+    display: block;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--moss);
+  }
+  .empty-state h3 {
+    margin: 12px 0 7px;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .empty-state p {
+    margin: 0;
+    max-width: 410px;
+    color: var(--ink-2);
+    font-size: 11.5px;
+    line-height: 1.7;
+  }
+  .text-link {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    margin-top: 16px;
+    color: var(--moss);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(61, 90, 71, 0.35);
+  }
+  .text-link:hover { text-decoration-color: var(--moss); }
+
+  /* ---------------- Figure ---------------- */
+  .figure {
+    margin: 8px 0 0;
+    padding-top: 9px;
+    border-top: 1px solid var(--ink);
+  }
+  .fig-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .fig-no {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--moss);
+    white-space: nowrap;
+  }
+  .fig-title {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .fig-meta {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .plot {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 43px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .y-axis {
+    position: relative;
+    height: 214px;
+    color: var(--ink-3);
+  }
+  .y-tick {
+    position: absolute;
+    right: 0;
+    transform: translateY(50%);
+    font-family: var(--mono);
+    font-size: 8px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .plot-main { min-width: 0; }
+  .plot-field {
+    position: relative;
+    height: 214px;
+    border-bottom: 1px solid var(--ink-2);
+  }
+  .gridline {
+    position: absolute;
+    left: 0; right: 0;
+    border-top: 1px solid var(--rule-soft);
+    pointer-events: none;
+  }
+  .plot-groups {
+    position: absolute;
+    inset: 0;
+    display: grid;
+  }
+  .plot-group {
+    min-width: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 6px;
+    border-left: 1px dotted transparent;
+  }
+  .plot-group + .plot-group { border-left-color: #e9ece5; }
+  .plot-bars {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 8px;
+  }
+  .bar-col {
+    position: relative;
+    flex: 1 1 0;
+    max-width: 34px;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .bar-value {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--h) + 5px);
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 7.5px;
+    line-height: 1;
+    color: var(--ink-2);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+  .bar {
+    position: relative;
+    width: 100%;
+    min-height: 2px;
+    background: var(--c, var(--moss));
+    animation: bar-rise 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    transform-origin: bottom;
+  }
+  .bar.is-paper {
+    background: repeating-linear-gradient(135deg, var(--c) 0 1.5px, transparent 1.5px 4.5px);
+    box-shadow: inset 0 0 0 1px var(--c);
+  }
+  .bar.is-exp {
+    background: repeating-linear-gradient(90deg, var(--c) 0 2px, transparent 2px 5px);
+    box-shadow: inset 0 0 0 1px var(--c);
+  }
+  .bar.is-stub {
+    background: repeating-linear-gradient(45deg, var(--c) 0 1.5px, transparent 1.5px 5px);
+    box-shadow: inset 0 0 0 1px var(--c);
+    opacity: .65;
+  }
+  .bar-err {
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    background: var(--ink-2);
+    transform: translateX(-50%);
+  }
+  .bar-err::before, .bar-err::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 5px;
+    height: 1px;
+    background: var(--ink-2);
+    transform: translateX(-50%);
+  }
+  .bar-err::before { top: 0; }
+  .bar-err::after { bottom: 0; }
+  .x-axis {
+    display: grid;
+    padding-top: 8px;
+  }
+  .x-label { text-align: center; min-width: 0; padding: 0 3px; }
+  .x-name {
+    display: block;
+    color: var(--ink-2);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .x-sci {
+    display: block;
+    font-family: var(--serif);
+    font-size: 9.5px;
+    font-style: italic;
+    color: var(--ink-3);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .figure-empty {
+    margin-top: 18px;
+    height: 214px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid var(--ink-2);
+    color: var(--ink-3);
+    font-family: var(--serif);
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+  }
+  .fig-key {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    padding-top: 8px;
+    border-top: 1px solid var(--rule-soft);
+    color: var(--ink-2);
+    font-size: 9px;
+  }
+  .key-item { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .key-swatch { width: 7px; height: 7px; background: var(--c); flex: 0 0 auto; }
+  .key-status { display: inline-flex; align-items: center; gap: 5px; }
+  .key-bar {
+    width: 7px; height: 10px;
+    background: var(--c);
+    display: inline-block;
+    flex: 0 0 auto;
+  }
+  .key-bar.is-paper {
+    background: repeating-linear-gradient(135deg, var(--c) 0 1.5px, transparent 1.5px 4px);
+    box-shadow: inset 0 0 0 1px var(--c);
+  }
+  .key-bar.is-exp {
+    background: repeating-linear-gradient(90deg, var(--c) 0 1.5px, transparent 1.5px 4px);
+    box-shadow: inset 0 0 0 1px var(--c);
+  }
+  .key-bar.is-stub {
+    background: repeating-linear-gradient(45deg, var(--c) 0 1.5px, transparent 1.5px 4px);
+    box-shadow: inset 0 0 0 1px var(--c);
+    opacity: .7;
+  }
+  .key-sep { color: var(--rule); }
+  .fig-caption {
+    margin: 9px 0 0;
+    color: var(--ink-2);
+    font-family: var(--serif);
+    font-size: 10.5px;
+    line-height: 1.7;
+  }
+  .fig-caption b { font-weight: 600; }
+  .fig-caption .demo { color: var(--rust); font-style: italic; }
+  .fig-caption .n { font-family: var(--mono); font-size: 8.5px; color: var(--ink-3); letter-spacing: 0.02em; }
+
+  /* ---------------- Table ---------------- */
+  .table-block {
+    margin-top: 27px;
+    padding-top: 9px;
+    border-top: 1px solid var(--ink);
+  }
+  .table-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .table-no {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--moss);
+    white-space: nowrap;
+  }
+  .table-title {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .table-hint {
+    margin-left: auto;
+    color: var(--ink-3);
+    font-size: 9px;
+    white-space: nowrap;
+  }
+  .table-wrap { overflow-x: auto; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .table-scroll-note { display: none; }
+  table.matrix {
+    width: 100%;
+    min-width: 550px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  table.matrix thead th {
+    padding: 7px 10px 8px 0;
+    border-bottom: 1px solid var(--ink-2);
+    text-align: left;
+    vertical-align: bottom;
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  table.matrix thead th:first-child { width: 34%; }
+  .th-name {
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+  .th-sci {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink-3);
+    line-height: 1.35;
+  }
+  .th-access {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink-3);
+  }
+  table.matrix tbody th, table.matrix tbody td {
+    padding: 11px 10px 11px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    text-align: left;
+    vertical-align: top;
+  }
+  table.matrix tbody tr:hover th, table.matrix tbody tr:hover td { background: #f6f7f3; }
+  .row-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 650;
+    color: var(--ink);
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .row-name .entry-key { width: 6px; height: 6px; }
+  .row-meta {
+    display: block;
+    margin-top: 2px;
+    color: var(--ink-3);
+    font-size: 8.5px;
+    font-weight: 400;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .cell-btn {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  .cell-btn:hover .cell-value { color: var(--moss); }
+  .cell-btn:focus-visible { outline: 2px solid var(--moss); outline-offset: 3px; }
+  .cell-value {
+    display: block;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .cell-sd {
+    font-size: 8.5px;
+    color: var(--ink-3);
+    font-weight: 400;
+    letter-spacing: 0;
+    margin-left: 3px;
+  }
+  .cell-status {
+    display: block;
+    margin-top: 3px;
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .status-l1 { color: var(--moss); }
+  .status-exp { color: var(--ink-2); }
+  .status-stub { color: #6f6a5f; }
+  .status-l3 { color: var(--rust); }
+  .cell-na {
+    display: block;
+    padding-top: 1px;
+    color: #adb5ab;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .table-foot {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    color: var(--ink-3);
+    font-size: 8.5px;
+    line-height: 1.55;
+  }
+  .table-foot span { display: inline-flex; align-items: center; gap: 5px; }
+  .foot-mark { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .foot-l1 { color: var(--moss); }
+  .foot-l3 { color: var(--rust); }
+  .foot-na { color: var(--ink-3); }
+
+  /* ---------------- Drawer / sheet ---------------- */
+  .scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(22, 31, 26, 0.38);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 40;
+  }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: min(440px, 94vw);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    background: var(--plate);
+    border-left: 1px solid var(--rule);
+    box-shadow: -18px 0 50px rgba(27, 38, 33, 0.12);
+    transform: translateX(102%);
+    transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head {
+    flex: 0 0 auto;
+    padding: 22px 24px 17px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .drawer-head-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .drawer-title {
+    margin: 9px 0 0;
+    font-family: var(--serif);
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .drawer-subtitle {
+    margin: 4px 0 0;
+    color: var(--ink-3);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+  .icon-btn {
+    flex: 0 0 auto;
+    width: 27px; height: 27px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .icon-btn:hover { border-color: var(--ink-2); background: #f5f6f2; }
+  .drawer-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 18px 24px 34px;
+    scrollbar-width: thin;
+    scrollbar-color: #c6cdc4 transparent;
+  }
+  .run-status-line {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .run-level { display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+  .run-level::before {
+    content: "";
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .run-level.is-l1 { color: var(--moss); }
+  .run-level.is-exp { color: var(--ink-2); }
+  .run-level.is-stub { color: #6f6a5f; }
+  .run-level.is-l3 { color: var(--rust); }
+  .run-sep { color: var(--rule); }
+  .run-metric {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0 16px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 18px;
+  }
+  .run-metric-label {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .run-metric-value {
+    margin-top: 3px;
+    font-family: var(--serif);
+    font-size: 44px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .run-metric-value small {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-3);
+    font-weight: 400;
+    letter-spacing: 0;
+    margin-left: 5px;
+  }
+  .run-metric-note {
+    max-width: 132px;
+    padding-top: 2px;
+    color: var(--ink-3);
+    font-size: 8.5px;
+    line-height: 1.6;
+    text-align: right;
+  }
+  .detail-section { margin-bottom: 19px; }
+  .detail-title {
+    margin: 0 0 6px;
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .data-list { margin: 0; border-top: 1px solid var(--rule-soft); }
+  .data-row {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 10px;
+    line-height: 1.55;
+  }
+  .data-row dt { margin: 0; color: var(--ink-3); }
+  .data-row dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+  .data-row code {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    color: var(--ink-2);
+    background: #f0f2ec;
+    padding: 1px 4px;
+  }
+  .artifact-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 10px;
+    color: var(--ink-2);
+  }
+  .artifact-row:first-child { border-top: 1px solid var(--rule-soft); }
+  .artifact-row code { font-family: var(--mono); font-size: 8.5px; color: var(--ink-3); }
+  .drawer-note {
+    margin-top: 20px;
+    padding-top: 11px;
+    border-top: 1px solid var(--rule-soft);
+    color: var(--ink-3);
+    font-family: var(--serif);
+    font-size: 9.5px;
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  /* ---------------- Research console preview ---------------- */
+  .research-overlay { z-index: 60; }
+  .research-sheet {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: min(720px, 96vw);
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    background: var(--plate);
+    border-left: 1px solid var(--rule);
+    box-shadow: -22px 0 60px rgba(27, 38, 33, 0.14);
+    transform: translateX(103%);
+    transition: transform 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .research-sheet.open { transform: translateX(0); }
+  .research-head {
+    flex: 0 0 auto;
+    padding: 22px 32px 17px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+  }
+  .research-head .col-eyebrow { white-space: normal; }
+  .preview-stamp {
+    display: inline-block;
+    margin-left: 8px;
+    border: 1px solid var(--rust);
+    padding: 1px 5px;
+    color: var(--rust);
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: 1px;
+  }
+  .research-title {
+    margin: 7px 0 0;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+  .research-deck {
+    margin: 5px 0 0;
+    max-width: 560px;
+    color: var(--ink-2);
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  .research-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 24px 32px 42px;
+    scrollbar-width: thin;
+    scrollbar-color: #c6cdc4 transparent;
+  }
+  .research-intro {
+    margin: 0 0 26px;
+    max-width: 580px;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-2);
+  }
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .flow-step {
+    padding-top: 9px;
+    border-top: 1px solid var(--ink);
+  }
+  .flow-no {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: var(--moss);
+  }
+  .flow-step h3 {
+    margin: 7px 0 2px;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .flow-en {
+    display: block;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .flow-step p {
+    margin: 7px 0 0;
+    color: var(--ink-2);
+    font-size: 9.5px;
+    line-height: 1.7;
+  }
+  .research-section { margin-top: 27px; }
+  .research-section > .detail-title { margin-bottom: 8px; }
+  .use-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .use-item h3 {
+    margin: 0 0 3px;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .use-item p { margin: 0; color: var(--ink-2); font-size: 9.5px; line-height: 1.7; }
+  .pilot-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .pilot-table th {
+    padding: 6px 8px 7px 0;
+    border-bottom: 1px solid var(--ink-2);
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 7.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .pilot-table td {
+    padding: 9px 8px 9px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+  .pilot-table td:first-child { color: var(--ink); font-weight: 650; white-space: nowrap; }
+  .pilot-status { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pilot-status.is-pilot { color: var(--moss); }
+  .pilot-status.is-next { color: var(--rust); }
+  .research-note {
+    margin: 25px 0 0;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-3);
+    font-family: var(--serif);
+    font-size: 10px;
+    font-style: italic;
+    line-height: 1.75;
+  }
+  .research-note b { color: var(--rust); font-style: normal; font-weight: 600; }
+
+  /* ---------------- Colophon ---------------- */
+  .colophon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 8px 26px 9px;
+    background: var(--plate);
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+  }
+  .colophon p { margin: 0; }
+  .colophon a {
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .colophon a:hover { color: var(--ink); border-bottom-color: var(--ink-2); }
+  .colophon-meta { display: flex; align-items: baseline; gap: 14px; white-space: nowrap; }
+
+  /* ---------------- Toast ---------------- */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 90;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--ink);
+    color: #f4f5f1;
+    padding: 8px 13px;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+    box-shadow: 0 8px 24px rgba(27, 38, 33, 0.18);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------------- Motion ---------------- */
+  @keyframes column-in {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes column-in-flat {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes bar-rise {
+    from { transform: scaleY(0); opacity: 0.4; }
+    to { transform: scaleY(1); opacity: 1; }
+  }
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width: 1220px) {
+    .workspace { grid-template-columns: 272px 296px minmax(0, 1fr); }
+    .mast-nav { gap: 20px; }
+    .brand-sub { letter-spacing: 0.1em; }
+  }
+  @media (max-width: 1080px) {
+    .masthead { padding: 0 20px; gap: 20px; }
+    .folio { padding: 0 20px; }
+    .workspace { grid-template-columns: 256px 282px minmax(0, 1fr); margin: 13px 16px 18px; }
+    .mast-nav .nav-link[href="#methods"], .mast-nav .nav-link[href="#datasets"] { display: none; }
+    .results-head { padding-left: 20px; padding-right: 20px; }
+    .results-body { padding-left: 20px; padding-right: 20px; }
+    .toolbar-note { font-size: 8.5px; }
+  }
+  @media (max-width: 920px) {
+    body { min-height: 100vh; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .masthead { height: auto; min-height: 64px; padding: 12px 18px; flex-wrap: wrap; }
+    .mast-nav { gap: 18px; }
+    .folio { height: auto; min-height: 30px; padding: 7px 18px; }
+    .workspace {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+      margin: 11px 14px 18px;
+    }
+    .column { padding: 19px 20px 0; flex: 0 0 auto; }
+    .column + .column { border-left: 0; border-top: 1px solid var(--rule); }
+    .column-results { padding: 0; }
+    .entry-list { flex: 0 0 auto; max-height: none; overflow: visible; }
+    .entry-note { display: none; }
+    .col-deck { max-width: 480px; }
+    .results-head { padding: 19px 20px 0; }
+    .results-body { overflow: visible; padding: 18px 20px 28px; }
+    .results-sub { max-width: 52%; }
+    .table-wrap { overflow-x: auto; }
+  }
+  @media (max-width: 680px) {
+    .masthead { padding: 11px 14px; gap: 12px; }
+    .brand { gap: 9px; }
+    .chromosome { width: 16px; height: 24px; }
+    .wordmark { font-size: 21px; }
+    .wordmark-bench { font-size: 9px; letter-spacing: 0.24em; }
+    .brand-sub { display: none; }
+    .mast-nav { gap: 13px; margin-left: auto; }
+    .mast-nav .nav-link.is-active { display: none; }
+    .nav-research { padding: 5px 8px 4px; font-size: 9.5px; }
+    .nav-github span:not(.arrow) { display: none; }
+    .folio { grid-template-columns: 1fr auto; padding: 7px 14px; gap: 10px; }
+    .folio-center { display: none; }
+    .folio-right { justify-self: end; font-size: 7.5px; }
+    .workspace { margin: 0; border-left: 0; border-right: 0; border-bottom: 0; }
+    .column { padding: 17px 16px 0; }
+    .col-title { font-size: 24px; }
+    .entry-list { max-height: none; overflow: visible; flex: 0 0 auto; }
+    .entry-main { padding-top: 10px; padding-bottom: 6px; }
+    .entry-plain .entry-main { padding-bottom: 9px; }
+    .entry-note { display: none; }
+    .results-head { padding: 17px 16px 0; }
+    .results-title { font-size: 27px; }
+    .results-title-row { display: block; }
+    .results-sub { max-width: 100%; text-align: left; margin-top: 4px; }
+    .evidence-row { flex-wrap: wrap; gap: 8px; }
+    .evidence-count { margin-left: 0; width: 100%; }
+    .toolbar { flex-direction: column; align-items: flex-start; gap: 7px; }
+    .metric-tabs { gap: 15px; }
+    .toolbar-note { max-width: 100%; text-align: left; }
+    .results-body { padding: 16px; }
+    .plot { grid-template-columns: 33px minmax(0, 1fr); gap: 6px; }
+    .plot-field, .y-axis { height: 184px; }
+    .y-tick { font-size: 7px; }
+    .plot-bars { gap: 4px; padding: 0 4px; }
+    .bar-col { max-width: 26px; }
+    .bar-value { font-size: 6.5px; }
+    .fig-meta { margin-left: 0; width: 100%; }
+    .x-name { font-size: 9px; }
+    .x-sci { font-size: 8.5px; }
+    .fig-key { gap: 10px; font-size: 8.5px; }
+    .fig-caption { font-size: 10px; }
+    .table-hint { display: none; }
+    .table-scroll-note {
+      display: block;
+      margin: 6px 0 0;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.06em;
+      color: var(--ink-3);
+    }
+    .colophon {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      padding: 10px 16px 12px;
+      font-size: 7.5px;
+      line-height: 1.7;
+    }
+    .colophon-meta { flex-wrap: wrap; white-space: normal; gap: 12px; }
+    .notice { font-size: 9.5px; }
+    .empty-state { padding: 38px 4px 32px; }
+    .drawer { width: 100%; }
+    .drawer-head, .drawer-body { padding-left: 20px; padding-right: 20px; }
+    .research-sheet { width: 100%; }
+    .research-head, .research-body { padding-left: 20px; padding-right: 20px; }
+    .research-title { font-size: 27px; }
+    .flow { grid-template-columns: 1fr; gap: 18px; }
+    .use-grid { grid-template-columns: 1fr; gap: 14px; }
+    .pilot-table { min-width: 520px; }
+    .research-body { overflow-x: auto; }
+  }
+  @media (max-width: 400px) {
+    .metric-tabs { gap: 11px; }
+    .metric-tab { font-size: 9.5px; }
+    .nav-research .preview-mark { display: none; }
+    .evidence-track { gap: 6px; }
+    .ev-group { padding-right: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* Readability pass: larger type, calmer labels */
+  body { font-size: 15px; }
+  .brand-sub { font-size: 10.5px; letter-spacing: 0.08em; }
+  .nav-link { font-size: 11px; }
+  .folio { font-size: 10px; }
+  .col-eyebrow { font-size: 10px; }
+  .col-title { font-size: 31px; }
+  .col-deck { font-size: 13px; line-height: 1.6; }
+  .search-input { font-size: 13px; }
+  .entry-name { font-size: 16px; }
+  .entry-meta { font-size: 11px; line-height: 1.55; }
+  .entry-note { font-size: 12px; line-height: 1.55; }
+  .entry-status { font-size: 9px; }
+  .resource { font-size: 10.5px; }
+  .resource-state { font-size: 9px; }
+  .results-title { font-size: 34px; }
+  .results-sub { font-size: 12px; line-height: 1.55; }
+  .metric-tab { font-size: 11px; }
+  .toolbar-note { font-size: 10.5px; }
+  .evidence-label, .evidence-count { font-size: 9px; }
+  .fig-title { font-size: 27px; }
+  .fig-meta { font-size: 9.5px; }
+  .fig-caption { font-size: 12.5px; line-height: 1.7; }
+  .table-title { font-size: 25px; }
+  .th-name { font-size: 13px; }
+  .th-sci { font-size: 10px; }
+  .th-access { font-size: 9px; }
+  .row-name { font-size: 14px; }
+  .row-meta { font-size: 9.5px; }
+  .cell-value { font-size: 16px; }
+  .cell-status { font-size: 9px; }
+  .cell-sd { font-size: 9.5px; }
+  .table-foot { font-size: 10px; line-height: 1.6; }
+  .notice { font-size: 11.5px; line-height: 1.7; }
+  .y-tick { font-size: 9px; }
+  .bar-value { font-size: 9px; }
+  .x-name { font-size: 11px; }
+  .x-sci { font-size: 10px; }
+  .data-row { font-size: 11.5px; }
+  .artifact-row { font-size: 11.5px; }
+  .drawer-note { font-size: 11.5px; line-height: 1.7; }
+  .resource-tooltip { font-size: 11px; }
+  .text-link { font-size: 12px; }
+  .plot-scroll { overflow-x: auto; }
+  .fig-mobile-hint { display: none; }
+  @media (max-width: 680px) {
+    .plot { min-width: 620px; }
+    .fig-mobile-hint {
+      display: block;
+      margin: 7px 0 0;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--ink-3);
+      letter-spacing: .04em;
+    }
+    .folio-right { font-size: 9px; }
+  }
+  @media (max-width: 640px) {
+    .col-title { font-size: 29px; }
+    .results-title { font-size: 30px; }
+    .entry-name { font-size: 15.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="GSGP Bench 首页">
+      <svg class="chromosome" viewBox="0 0 20 30" fill="none" aria-hidden="true">
+        <rect x="6.5" y="1" width="7" height="28" rx="3.5" stroke="currentColor" stroke-width="1.2"/>
+        <rect x="8" y="5" width="4" height="3" fill="currentColor"/>
+        <rect x="8" y="11" width="4" height="1.8" fill="currentColor" opacity=".55"/>
+        <rect x="8" y="16" width="4" height="3.6" fill="currentColor" opacity=".82"/>
+        <rect x="8" y="23" width="4" height="1.6" fill="currentColor" opacity=".48"/>
+      </svg>
+      <span class="brand-text">
+        <span class="wordmark">GSGP<span class="wordmark-slash">/</span><span class="wordmark-bench">BENCH</span></span>
+        <span class="brand-sub">基因组预测 · 证据库</span>
+      </span>
+    </a>
+    <nav class="mast-nav" aria-label="主导航">
+      <a class="nav-link is-active" href="./">Benchmark</a>
+      <a class="nav-link" href="resources/methods/index.html">Methods</a>
+      <a class="nav-link" href="resources/generate/index.html">Generate</a>
+      <a class="nav-link" href="resources/submit/index.html">Submit</a>
+      <a class="nav-link nav-github" href="https://github.com/hhtttyy/GSGP-BENCH" target="_blank" rel="noreferrer" aria-label="在 GitHub 查看项目"><span>GitHub</span><span class="arrow">↗</span></a>
+    </nav>
+  </header>
+
+  <div class="folio" role="note" aria-label="版本与数据说明">
+    <span>VOL. 01 — 2026</span>
+    <span class="folio-center">同一数据 · 同一评测</span>
+    <span class="folio-right"><i aria-hidden="true"></i>演示数据 · 1 条探索 · 1 条流程测试</span>
+  </div>
+
+  <main class="workspace">
+    <!-- ============ Methods ============ -->
+    <section class="column" id="methods" aria-labelledby="methods-title">
+      <div class="col-eyebrow">
+        <span class="panel-letter">A.</span>
+        <span>方法</span>
+        <span class="eyebrow-rule"></span>
+        <span class="eyebrow-side">最多 4 个</span>
+      </div>
+      <h2 class="col-title" id="methods-title">算法</h2>
+      <p class="col-deck">选择要比较的算法。所有结果使用同一数据、划分和指标。</p>
+      <div class="search-row">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="search-input" id="algo-search" type="search" placeholder="搜索算法名称或类型" aria-label="搜索算法" />
+      </div>
+      <div class="entry-list" id="algo-list"></div>
+      <div class="col-foot">
+        <span><b id="algo-count">3</b> / 4 已选</span>
+        <button class="clear-btn" type="button" id="algo-clear">清空</button>
+      </div>
+    </section>
+
+    <!-- ============ Datasets ============ -->
+    <section class="column" id="datasets" aria-labelledby="datasets-title">
+      <div class="col-eyebrow">
+        <span class="panel-letter">B.</span>
+        <span>数据</span>
+        <span class="eyebrow-rule"></span>
+        <span class="eyebrow-side">最多 3 个</span>
+      </div>
+      <h2 class="col-title" id="datasets-title">数据集</h2>
+      <p class="col-deck">优先展示公开数据；受限数据只保留论文参考值。</p>
+      <div class="search-row">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="search-input" id="data-search" type="search" placeholder="搜索数据集、物种或性状" aria-label="搜索数据集" />
+      </div>
+      <div class="entry-list" id="data-list"></div>
+      <div class="col-foot">
+        <span><b id="data-count">2</b> / 3 已选</span>
+        <button class="clear-btn" type="button" id="data-clear">清空</button>
+      </div>
+    </section>
+
+    <!-- ============ Results ============ -->
+    <section class="column column-results" aria-labelledby="results-title">
+      <div class="results-head">
+        <div class="col-eyebrow">
+          <span class="panel-letter">C.</span>
+          <span>评测</span>
+          <span class="eyebrow-rule"></span>
+          <span class="eyebrow-side">更新于 2026-10-19</span>
+        </div>
+        <div class="results-title-row">
+          <h2 class="results-title" id="results-title">结果</h2>
+          <p class="results-sub" id="results-sub">选择算法与数据集后生成同条件比较</p>
+        </div>
+        <div class="evidence-row" id="evidence-row" hidden>
+          <span class="evidence-label">证据</span>
+          <div class="evidence-track" id="evidence-track" aria-hidden="true"></div>
+          <span class="evidence-count" id="evidence-count"></span>
+        </div>
+        <div class="toolbar">
+          <div class="metric-tabs" role="group" aria-label="指标切换">
+            <button class="metric-tab active" type="button" data-metric="pearson" aria-pressed="true">Pearson r</button>
+            <button class="metric-tab" type="button" data-metric="r2" aria-pressed="false">R²</button>
+            <button class="metric-tab" type="button" data-metric="auc" aria-pressed="false">AUC</button>
+            <button class="metric-tab" type="button" data-metric="runtime" aria-pressed="false">运行时间</button>
+          </div>
+          <div class="toolbar-note" id="metric-note">越高越好 · 误差条为折间标准差</div>
+        </div>
+      </div>
+      <div class="results-body" id="results-body"></div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p>GSGP·Bench 基于 <a href="https://github.com/jmiao24/Paper2Agent" target="_blank" rel="noreferrer">Paper2Agent</a>（MIT License）的论文可复现工作流改造。论文、数据与各算法代码遵循其原始许可。</p>
+    <p class="colophon-meta">
+      <span>VOL. 01 · 2026</span>
+      <a href="resources/generate/index.html">Generate</a>
+      <a href="resources/methods/index.html">Methods</a>
+      <a href="resources/submit/index.html">Submit</a>
+      <a href="./LICENSE">License</a>
+      <a href="https://github.com/hhtttyy/GSGP-BENCH" target="_blank" rel="noreferrer">Source ↗</a>
+    </p>
+  </footer>
+</div>
+
+<!-- ============ Run record drawer ============ -->
+<div class="scrim" id="drawer-overlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true" inert>
+  <div class="drawer-head">
+    <div class="drawer-head-top">
+      <div>
+        <div class="col-eyebrow">
+          <span class="panel-letter">R.</span>
+          <span>运行记录</span>
+          <span class="eyebrow-rule"></span>
+          <span class="eyebrow-side" id="drawer-status-top">—</span>
+        </div>
+        <h2 class="drawer-title" id="drawer-title">运行详情</h2>
+        <p class="drawer-subtitle" id="drawer-subtitle">—</p>
+      </div>
+      <button class="icon-btn" type="button" id="drawer-close" aria-label="关闭运行详情">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="resource-tooltip" id="resource-tooltip" role="tooltip"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------
+     Demo catalog. All values are illustrative.
+     ------------------------------------------------------------------ */
+  const RESOURCE_NOTES = {
+    skill: { tip: "暂无阅读包；完成来源核对和人工审校后会出现在这里。" },
+    mcp: { tip: "未认证；可以展示和自行使用，但我们尚未完成验证。" }
+  };
+
+  function normalizeResourceOverride(value) {
+    if (!value) return {};
+    return typeof value === "string" ? { tip: value } : value;
+  }
+
+  function buildResources(paperHref, paperTip, overrides = {}) {
+    return {
+      paper: { href: paperHref, tip: paperTip },
+      skill: { ...RESOURCE_NOTES.skill, ...normalizeResourceOverride(overrides.skill) },
+      mcp: { ...RESOURCE_NOTES.mcp, ...normalizeResourceOverride(overrides.mcp) }
+    };
+  }
+
+  const ALGOS = [
+    {
+      id: "gblup", name: "GBLUP / rrBLUP", family: "经典基线", input: "个体数据",
+      year: 2008, status: "verified", statusLabel: "L1",
+      color: "#3d5a47", note: "常用对照基线，计算快",
+      resources: buildResources(
+        "https://doi.org/10.3168/jds.2007-0980",
+        "VanRaden 2008 · J. Dairy Sci. 91:4414–4423",
+        {
+          skill: {
+            href: "resources/gblup-baseline/index.html",
+            badge: "基线",
+            tip: "GBLUP 基线说明：论文来源、模拟数据、运行工具和探索结果；不是自动生成的阅读包。"
+          },
+          mcp: {
+            href: "resources/gblup-baseline/index.html#mcp",
+            badge: "已认证",
+            tip: "已认证：中央团队验证过这个工具包（运行、输出和直接对照）。认证的是包，不是结果；我们不在线托管，用户自行使用。"
+          }
+        }
+      )
+    },
+    {
+      id: "bayesb", name: "BayesB", family: "贝叶斯方法", input: "个体数据",
+      year: 2001, status: "verified", statusLabel: "L1",
+      color: "#4a607c", note: "适合少量大效应位点",
+      resources: buildResources(
+        "https://doi.org/10.1093/genetics/157.4.1819",
+        "Meuwissen, Hayes & Goddard 2001 · Genetics 157:1819–1829"
+      )
+    },
+    {
+      id: "ifam", name: "IFAM", family: "注释增强", input: "个体 + 注释",
+      year: 2026, status: "verified", statusLabel: "L1",
+      color: "#8b5a43", note: "整合功能注释；首个试点",
+      resources: buildResources(
+        "https://doi.org/10.1038/s41467-026-72470-0",
+        "IFAM · Nature Communications 2026 · DOI 10.1038/s41467-026-72470-0",
+        {
+          skill: {
+            href: "resources/ifam-paper/index.html",
+            badge: "预览",
+            tip: "已审校，有限制：包含论文全文、6 张图和 3 个公式；不含数据、代码或结果认证。"
+          },
+          mcp: "未认证：有本地原型和流程测试结果；可查看、可自行使用，风险自担。完成真实引擎验证前保持未认证。"
+        }
+      )
+    },
+    {
+      id: "sbayesrc", name: "SBayesRC", family: "汇总数据", input: "汇总数据",
+      year: 2024, status: "planned", statusLabel: "第二批",
+      color: "#7b794d", note: "需要外部参考数据；第二批",
+      resources: buildResources(
+        "https://doi.org/10.1038/s41588-024-01704-y",
+        "SBayesRC · Nature Genetics 2024 · DOI 10.1038/s41588-024-01704-y",
+        {
+          mcp: "未认证 · SBayesRC 列入第二批；需先完成公开 LD/注释数据与长任务执行验证。"
+        }
+      )
+    },
+    {
+      id: "bayesr", name: "BayesR", family: "贝叶斯方法", input: "个体数据",
+      year: 2012, status: "planned", statusLabel: "待接入",
+      color: "#715c6e", note: "后续接入",
+      resources: buildResources(
+        "https://doi.org/10.3168/jds.2011-5019",
+        "Erbe et al. 2012 · J. Dairy Sci. 95:4114–4129"
+      )
+    },
+    {
+      id: "xgb", name: "XGBoost", family: "机器学习", input: "个体水平",
+      year: 2016, status: "planned", statusLabel: "待接入",
+      color: "#6b7470", note: "非线性方法；解释性较弱",
+      resources: buildResources(
+        "https://doi.org/10.1145/2939672.2939785",
+        "Chen & Guestrin 2016 · KDD · DOI 10.1145/2939672.2939785"
+      )
+    }
+  ];
+
+  const DATASETS = [
+    {
+      id: "sim1000g", name: "1000G 仿真", sci: "Homo sapiens", species: "人类",
+      n: "n ≈ 503", markers: "1.2M SNP", access: "open", accessLabel: "开放",
+      trait: "模拟性状 · h² = 0.5", type: "quant", version: "v1",
+      note: "欧洲样本；模拟性状；适合流程验证"
+    },
+    {
+      id: "sim500", name: "GSGP-Sim 500×5k", sci: "Sus scrofa (示例)", species: "动物",
+      n: "n = 500", markers: "5k SNP", access: "open", accessLabel: "开放",
+      trait: "模拟性状 · h² = 0.5", type: "quant", version: "v1",
+      note: "上游示例基因型子集；模拟性状；仅探索"
+    },
+    {
+      id: "duroc", name: "Duroc 猪", sci: "Sus scrofa", species: "动物",
+      n: "n ≈ 2.8k", markers: "11.3M SNP", access: "open", accessLabel: "开放",
+      trait: "背膘厚 / 眼肌深 / 乳头数", type: "quant", version: "v1",
+      note: "IFAM 论文使用；公开育种数据"
+    },
+    {
+      id: "rice", name: "3000 水稻", sci: "Oryza sativa", species: "植物",
+      n: "n = 3,024", markers: "333k SNP", access: "request", accessLabel: "需申请",
+      trait: "粒长 / 粒宽 / 抽穗期", type: "quant", version: "v1",
+      note: "IFAM 论文使用；需向 IRRI 申请"
+    },
+    {
+      id: "ukb", name: "UK Biobank", sci: "Homo sapiens", species: "人类",
+      n: "n ≈ 348.5k", markers: "1.09M SNP", access: "restricted", accessLabel: "受限",
+      trait: "身高 / BMI", type: "quant", version: "—",
+      note: "需申请；仅展示论文值"
+    },
+    {
+      id: "wtccc", name: "WTCCC1", sci: "Homo sapiens", species: "人类",
+      n: "≈4.8k / 病种", markers: "~450k SNP", access: "restricted", accessLabel: "受限",
+      trait: "T2D / CD / RA…", type: "binary", version: "—",
+      note: "7 种疾病；受限访问；仅展示论文值"
+    }
+  ];
+
+  /* status: reproduced | exploratory | paper_reported */
+  const RESULTS = {
+    "gblup|sim1000g":  { pearson: 0.512, pearsonSd: 0.011, r2: 0.262, r2Sd: 0.010, auc: null, runtime: 2.1, status: "reproduced" },
+    "gblup|sim500":    { pearson: 0.507512, pearsonSd: null, r2: 0.257568, r2Sd: null, auc: null, runtime: 0.0007, status: "exploratory", runId: "gblup-sim500-mcp-v1" },
+    "gblup|duroc":     { pearson: 0.604, pearsonSd: 0.009, r2: 0.365, r2Sd: 0.011, auc: null, runtime: 3.8, status: "reproduced" },
+    "gblup|rice":      { pearson: 0.702, pearsonSd: 0.008, r2: 0.493, r2Sd: 0.011, auc: null, runtime: null, status: "paper_reported" },
+    "gblup|ukb":       { pearson: 0.331, pearsonSd: null, r2: 0.110, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
+    "gblup|wtccc":     { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.641, runtime: null, status: "paper_reported" },
+
+    "bayesb|sim1000g": { pearson: 0.531, pearsonSd: 0.010, r2: 0.282, r2Sd: 0.009, auc: null, runtime: 18.4, status: "reproduced" },
+    "bayesb|duroc":    { pearson: 0.617, pearsonSd: 0.008, r2: 0.381, r2Sd: 0.010, auc: null, runtime: 24.7, status: "reproduced" },
+    "bayesb|rice":     { pearson: 0.715, pearsonSd: 0.007, r2: 0.511, r2Sd: 0.010, auc: null, runtime: null, status: "paper_reported" },
+    "bayesb|ukb":      { pearson: 0.339, pearsonSd: null, r2: 0.115, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
+    "bayesb|wtccc":    { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.652, runtime: null, status: "paper_reported" },
+
+    "ifam|sim1000g":   { pearson: 0.568, pearsonSd: 0.009, r2: 0.323, r2Sd: 0.010, auc: null, runtime: 45.2, status: "reproduced" },
+    "ifam|sim500":     { pearson: -0.031982, pearsonSd: null, r2: 0.001023, r2Sd: null, auc: null, runtime: null, status: "stub", runId: "ifam-stub-sim500-v1" },
+    "ifam|duroc":      { pearson: 0.641, pearsonSd: 0.007, r2: 0.411, r2Sd: 0.009, auc: null, runtime: 52.6, status: "reproduced" },
+    "ifam|rice":       { pearson: 0.741, pearsonSd: 0.006, r2: 0.549, r2Sd: 0.009, auc: null, runtime: null, status: "paper_reported" },
+    "ifam|ukb":        { pearson: 0.352, pearsonSd: null, r2: 0.124, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
+    "ifam|wtccc":      { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.678, runtime: null, status: "paper_reported" }
+  };
+
+  const METRICS = {
+    pearson: {
+      label: "Pearson r", max: 0.8, decimals: 3, axisDecimals: 1, better: "higher", type: "quant",
+      note: "越高越好 · 误差条为重复/折间标准差"
+    },
+    r2: {
+      label: "R²", max: 0.6, decimals: 3, axisDecimals: 2, better: "higher", type: "quant",
+      note: "越高越好 · 不同划分之间不可直接比较"
+    },
+    auc: {
+      label: "AUC", max: 1, decimals: 3, axisDecimals: 2, better: "higher", type: "binary",
+      note: "仅适用于二分类性状 · 越高越好"
+    },
+    runtime: {
+      label: "运行时间", max: null, decimals: 1, axisDecimals: 0, better: "lower", type: "any",
+      note: "墙钟分钟 · 越低越好 · 不同硬件不可直接比较"
+    }
+  };
+
+  const SPECIES_ORDER = { "人类": 0, "动物": 1, "植物": 2 };
+  const MAX_ALGOS = 4;
+  const MAX_DATASETS = 3;
+  const DEFAULT_STATE = {
+    algos: ["gblup", "bayesb", "ifam"],
+    datasets: ["sim1000g", "duroc", "sim500"],
+    metric: "pearson"
+  };
+
+  /* Populated by data/results/gblup-sim500.json; the inline fallback keeps the
+     page usable from file:// where fetch() is unavailable. */
+  const REAL_RECORDS = Object.create(null);
+
+  const $ = (sel) => document.querySelector(sel);
+  const state = readStateFromUrl() || { ...DEFAULT_STATE, algos: DEFAULT_STATE.algos.slice(), datasets: DEFAULT_STATE.datasets.slice() };
+  const drawer = $("#drawer");
+  const overlay = $("#drawer-overlay");
+  const resourceTooltip = $("#resource-tooltip");
+
+  let lastFocused = null;
+  let resourceTipTarget = null;
+  let toastTimer = null;
+
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+  const algoById = (id) => ALGOS.find((a) => a.id === id);
+  const dataById = (id) => DATASETS.find((d) => d.id === id);
+  const cellKey = (a, d) => `${a}|${d}`;
+  const fmt = (v, digits = 3) => (v == null || Number.isNaN(Number(v))) ? "—" : Number(v).toFixed(digits);
+  const fmtMetric = (v, metricId) => {
+    if (metricId === "runtime" && v != null && Number(v) > 0 && Number(v) < 0.05) return "<0.1";
+    return fmt(v, METRICS[metricId].decimals);
+  };
+  const fmtAxis = (v, metricId) => {
+    const metric = METRICS[metricId];
+    if (metricId === "runtime") return String(Math.round(v));
+    return Number(v).toFixed(metric.axisDecimals);
+  };
+
+  /* ------------------------------------------------------------------
+     URL state
+     ------------------------------------------------------------------ */
+  function readStateFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const algos = (params.get("algos") || "").split(",").filter((id) => ALGOS.some((a) => a.id === id));
+    const datasets = (params.get("datasets") || "").split(",").filter((id) => DATASETS.some((d) => d.id === id));
+    const metric = params.get("metric");
+    if (!algos.length && !datasets.length && !metric) return null;
+    return {
+      algos: algos.length ? algos.slice(0, MAX_ALGOS) : DEFAULT_STATE.algos.slice(),
+      datasets: datasets.length ? datasets.slice(0, MAX_DATASETS) : DEFAULT_STATE.datasets.slice(),
+      metric: METRICS[metric] ? metric : DEFAULT_STATE.metric
+    };
+  }
+  function writeStateToUrl() {
+    const params = new URLSearchParams();
+    if (state.algos.length) params.set("algos", state.algos.join(","));
+    if (state.datasets.length) params.set("datasets", state.datasets.join(","));
+    if (state.metric !== DEFAULT_STATE.metric) params.set("metric", state.metric);
+    const qs = params.toString();
+    history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+  }
+
+  /* ------------------------------------------------------------------
+     Sidebar rendering
+     ------------------------------------------------------------------ */
+  function algoStatusHtml(a) {
+    if (a.status === "verified") return "";
+    const cls = a.status === "converting" ? " is-pending" : " is-planned";
+    return `<span class="entry-status${cls}">${escapeHtml(a.statusLabel)}</span>`;
+  }
+  function accessStatusHtml(d) {
+    if (d.access === "open") return '<span class="entry-status">开放</span>';
+    if (d.access === "request") return '<span class="entry-status is-pending">需申请</span>';
+    return '<span class="entry-status is-pending">受限</span>';
+  }
+  function resourceChipHtml(a, kind, resource) {
+    const label = kind === "paper" ? "论文" : kind === "skill" ? "阅读包" : "工具";
+    const tip = resource && resource.tip ? resource.tip : "";
+    const id = `resource-${kind}-${a.id}`;
+    if (resource && resource.href) {
+      const badge = resource.badge ? `<span class="resource-state">${escapeHtml(resource.badge)}</span>` : "";
+      const accessibleLabel = resource.badge ? `${label} ${resource.badge}` : label;
+      return `<a class="resource is-link" id="${id}" href="${escapeHtml(resource.href)}" target="_blank" rel="noreferrer" data-resource-tip="${escapeHtml(tip)}" aria-label="${accessibleLabel}，在新窗口打开：${escapeHtml(tip)}"><span class="resource-label">${label}</span>${badge}<span class="resource-arrow" aria-hidden="true">↗</span></a>`;
+    }
+    const stateLabel = kind === "mcp" ? "未认证" : "暂无";
+    return `<span class="resource is-missing" id="${id}" tabindex="0" role="note" data-resource-tip="${escapeHtml(tip)}" aria-label="${label} ${stateLabel}：${escapeHtml(tip)}"><span class="resource-label">${label}</span><span class="resource-state">${stateLabel}</span></span>`;
+  }
+  function resourceStripHtml(a) {
+    const r = a.resources || {};
+    return `<div class="resource-strip" aria-label="${escapeHtml(a.name)} 资源状态">
+      ${resourceChipHtml(a, "paper", r.paper)}
+      ${resourceChipHtml(a, "skill", r.skill)}
+      ${resourceChipHtml(a, "mcp", r.mcp)}
+    </div>`;
+  }
+
+  function renderAlgos(filter = "") {
+    const list = $("#algo-list");
+    const focusId = document.activeElement && document.activeElement.id;
+    const prevScroll = list.scrollTop;
+    list.innerHTML = "";
+    const q = filter.trim().toLowerCase();
+    const visible = ALGOS.filter((a) => !q || `${a.name} ${a.family} ${a.input} ${a.year}`.toLowerCase().includes(q));
+    if (!visible.length) {
+      list.innerHTML = '<div class="list-empty">没有匹配的方法。试试更短的关键词，或清空搜索。</div>';
+    } else {
+      visible.forEach((a) => {
+        const selected = state.algos.includes(a.id);
+        const entry = document.createElement("div");
+        entry.className = `entry${selected ? " selected" : ""}`;
+        entry.dataset.algo = a.id;
+        const label = document.createElement("label");
+        label.className = "entry-main";
+        label.setAttribute("for", `algo-${a.id}`);
+        label.innerHTML = `
+          <input type="checkbox" id="algo-${a.id}" value="${a.id}" ${selected ? "checked" : ""} aria-label="选择算法 ${escapeHtml(a.name)}" />
+          <span class="entry-check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12.5l5 5L20 6.5"/></svg>
+          </span>
+          <span class="entry-body">
+            <span class="entry-top">
+              <span class="entry-key" style="--c:${a.color}"></span>
+              <span class="entry-name">${escapeHtml(a.name)}</span>
+              ${algoStatusHtml(a)}
+            </span>
+            <span class="entry-meta">${escapeHtml(a.family)} · ${escapeHtml(a.input)} · ${a.year}</span>
+            <span class="entry-note">${escapeHtml(a.note)}</span>
+          </span>`;
+        label.querySelector("input").addEventListener("change", (e) => toggleAlgo(a.id, e.target.checked));
+        entry.appendChild(label);
+        entry.insertAdjacentHTML("beforeend", resourceStripHtml(a));
+        list.appendChild(entry);
+      });
+    }
+    $("#algo-count").textContent = state.algos.length;
+    list.scrollTop = prevScroll;
+    if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
+  }
+
+  function renderDatasets(filter = "") {
+    const list = $("#data-list");
+    const focusId = document.activeElement && document.activeElement.id;
+    const prevScroll = list.scrollTop;
+    list.innerHTML = "";
+    const q = filter.trim().toLowerCase();
+    const visible = DATASETS
+      .slice()
+      .sort((a, b) => (SPECIES_ORDER[a.species] - SPECIES_ORDER[b.species]) || a.name.localeCompare(b.name, "zh"))
+      .filter((d) => !q || `${d.name} ${d.sci} ${d.species} ${d.trait} ${d.accessLabel}`.toLowerCase().includes(q));
+    if (!visible.length) {
+      list.innerHTML = '<div class="list-empty">没有匹配的数据集。试试物种、性状或访问级别。</div>';
+    } else {
+      visible.forEach((d) => {
+        const selected = state.datasets.includes(d.id);
+        const entry = document.createElement("div");
+        entry.className = `entry entry-plain${selected ? " selected" : ""}`;
+        entry.dataset.dataset = d.id;
+        const label = document.createElement("label");
+        label.className = "entry-main";
+        label.setAttribute("for", `data-${d.id}`);
+        label.innerHTML = `
+          <input type="checkbox" id="data-${d.id}" value="${d.id}" ${selected ? "checked" : ""} aria-label="选择数据集 ${escapeHtml(d.name)}" />
+          <span class="entry-check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12.5l5 5L20 6.5"/></svg>
+          </span>
+          <span class="entry-body">
+            <span class="entry-top">
+              <span class="entry-name">${escapeHtml(d.name)}</span>
+              ${accessStatusHtml(d)}
+            </span>
+            <span class="entry-meta"><em class="sci">${escapeHtml(d.sci)}</em> · ${escapeHtml(d.species)} · ${escapeHtml(d.n)} · ${escapeHtml(d.markers)}</span>
+            <span class="entry-note">${escapeHtml(d.note)}</span>
+            <span class="entry-meta">${escapeHtml(d.trait)} · ${d.type === "binary" ? "二分类" : "数量性状"} · ${escapeHtml(d.version)}</span>
+          </span>`;
+        label.querySelector("input").addEventListener("change", (e) => toggleDataset(d.id, e.target.checked));
+        entry.appendChild(label);
+        list.appendChild(entry);
+      });
+    }
+    $("#data-count").textContent = state.datasets.length;
+    list.scrollTop = prevScroll;
+    if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
+  }
+
+  /* ------------------------------------------------------------------
+     Selection
+     ------------------------------------------------------------------ */
+  function toggleAlgo(id, checked) {
+    if (checked) {
+      if (state.algos.length >= MAX_ALGOS) {
+        showToast(`最多同时比较 ${MAX_ALGOS} 个算法`);
+        renderAlgos($("#algo-search").value);
+        return;
+      }
+      state.algos.push(id);
+    } else {
+      state.algos = state.algos.filter((x) => x !== id);
+    }
+    afterSelectionChange();
+  }
+  function toggleDataset(id, checked) {
+    if (checked) {
+      if (state.datasets.length >= MAX_DATASETS) {
+        showToast(`最多同时比较 ${MAX_DATASETS} 个数据集`);
+        renderDatasets($("#data-search").value);
+        return;
+      }
+      state.datasets.push(id);
+    } else {
+      state.datasets = state.datasets.filter((x) => x !== id);
+    }
+    afterSelectionChange();
+  }
+  function afterSelectionChange() {
+    writeStateToUrl();
+    renderAlgos($("#algo-search").value);
+    renderDatasets($("#data-search").value);
+    renderResults();
+  }
+
+  /* ------------------------------------------------------------------
+     Results helpers
+     ------------------------------------------------------------------ */
+  function getValue(algoId, dsId, metricId) {
+    const ds = dataById(dsId);
+    const res = RESULTS[cellKey(algoId, dsId)];
+    if (!ds || !res) return { status: "not_run", reason: "尚未运行" };
+    if (metricId === "auc" && ds.type !== "binary") return { status: "not_applicable", reason: "该指标不适用于此性状类型" };
+    if ((metricId === "pearson" || metricId === "r2") && ds.type !== "quant") return { status: "not_applicable", reason: "该指标不适用于此性状类型" };
+    if (metricId === "runtime" && res.status === "paper_reported") return { status: "not_run", reason: "论文未报告同条件运行时间" };
+    const value = res[metricId];
+    if (value == null) return { status: "not_run", reason: "该指标未记录" };
+    return {
+      status: res.status,
+      value,
+      sd: res[metricId + "Sd"] != null ? res[metricId + "Sd"] : null
+    };
+  }
+
+  function renderResults() {
+    const body = $("#results-body");
+    const algos = state.algos.map(algoById).filter(Boolean);
+    const datasets = state.datasets.map(dataById).filter(Boolean);
+    const metric = METRICS[state.metric];
+
+    $("#metric-note").textContent = metric.note;
+    document.querySelectorAll(".metric-tab").forEach((btn) => {
+      const active = btn.dataset.metric === state.metric;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+
+    if (!algos.length || !datasets.length) {
+      $("#results-sub").textContent = "选择算法与数据集后生成同条件比较";
+      $("#evidence-row").hidden = true;
+      body.innerHTML = `
+        <div class="empty-state">
+          <span class="empty-no">图 1 · 等待选择</span>
+          <h3>从左侧开始选择</h3>
+          <p>先选 2–4 个算法，再选 1–3 个数据集。结果区会生成一张带坐标轴与误差条的对照图、一张结果矩阵，以及可追溯的运行记录。</p>
+          <a class="text-link" href="resources/methods/index.html">查看方法档案 →</a>
+        </div>`;
+      return;
+    }
+
+    const total = algos.length * datasets.length;
+    let reproduced = 0, reference = 0, exploratory = 0, stub = 0, missing = 0;
+    algos.forEach((a) => datasets.forEach((d) => {
+      const v = getValue(a.id, d.id, state.metric);
+      if (v.status === "reproduced") reproduced++;
+      else if (v.status === "exploratory") exploratory++;
+      else if (v.status === "stub") stub++;
+      else if (v.status === "paper_reported") reference++;
+      else missing++;
+    }));
+
+    $("#results-sub").textContent =
+      `${algos.length} 个算法 × ${datasets.length} 个数据集 · ${total} 个结果 · ${metric.label}`;
+    renderEvidence(algos, datasets, reproduced, exploratory, stub, reference, missing);
+
+    const hasRestricted = datasets.some((d) => d.access !== "open");
+    const hasSummary = algos.some((a) => a.input.includes("汇总"));
+    const hasExploratory = exploratory > 0;
+    const hasStub = stub > 0;
+    let notices = "";
+    if (hasExploratory) {
+      notices += `<div class="notice is-info"><span class="notice-label">说明</span><span>当前视图包含 <b>探索</b>：真实单次划分计算，来自公开示例基因型上的模拟性状。它不是正式复现，不参与主榜。</span></div>`;
+    }
+    if (hasStub) {
+      notices += `<div class="notice"><span class="notice-label">说明</span><span>当前视图包含 <b>流程测试</b>：数值来自替代计算引擎，只证明流程，不能作为科学结果。</span></div>`;
+    }
+    if (hasRestricted) {
+      notices += `<div class="notice"><span class="notice-label">说明</span><span>当前视图包含需申请或受限数据。斜线标记的 论文值未在本站复现，划分与指标可能不同，不参与主榜排名。</span></div>`;
+    }
+    if (hasSummary) {
+      notices += `<div class="notice is-info"><span class="notice-label">说明</span><span>当前视图混合了输入模态：个体水平与汇总统计方法需要不同的训练输入。请先阅读详情中的可比性说明，再下结论。</span></div>`;
+    }
+
+    body.innerHTML = notices + `
+      <figure class="figure" id="figure-block"></figure>
+      <section class="table-block" id="table-block" aria-label="结果矩阵"></section>`;
+
+    renderFigure(algos, datasets, metric);
+    renderMatrix(algos, datasets, metric);
+  }
+
+  function renderEvidence(algos, datasets, reproduced, exploratory, stub, reference, missing) {
+    const row = $("#evidence-row");
+    const track = $("#evidence-track");
+    row.hidden = false;
+    track.innerHTML = datasets.map((d) => {
+      const ticks = algos.map((a) => {
+        const v = getValue(a.id, d.id, state.metric);
+        const cls = v.status === "reproduced" ? "" : v.status === "exploratory" ? " is-exp" : v.status === "stub" ? " is-stub" : v.status === "paper_reported" ? " is-l3" : " is-none";
+        const label = v.status === "reproduced" ? "演示" : v.status === "exploratory" ? "探索性" : v.status === "stub" ? "流程测试" : v.status === "paper_reported" ? "论文值" : "无同条件结果";
+        return `<span class="ev${cls}" style="--c:${a.color}" title="${escapeHtml(a.name)} × ${escapeHtml(d.name)}：${label}"></span>`;
+      }).join("");
+      return `<span class="ev-group" title="${escapeHtml(d.name)}">${ticks}</span>`;
+    }).join("");
+    $("#evidence-count").innerHTML = `<b>${reproduced}</b> 演示 · <b>${exploratory}</b> 探索 · <b>${stub}</b> 流程测试 · <b>${reference}</b> 论文值 · <b>${missing}</b> 未运行`;
+  }
+
+  function axisScale(metricId, groups) {
+    const metric = METRICS[metricId];
+    let maxVal = 0;
+    groups.forEach((g) => g.bars.forEach((b) => {
+      maxVal = Math.max(maxVal, b.value + (b.sd || 0));
+    }));
+    if (metricId === "runtime") {
+      const step = maxVal > 40 ? 15 : maxVal > 20 ? 10 : 5;
+      return { max: Math.max(step * 2, Math.ceil((maxVal * 1.05) / step) * step), intervals: 4 };
+    }
+    return { max: Math.max(metric.max, Math.ceil(maxVal * 1.04 * 10) / 10), intervals: 4 };
+  }
+
+  function renderFigure(algos, datasets, metric) {
+    const block = $("#figure-block");
+    const groups = datasets.map((ds) => {
+      const bars = algos.map((a) => ({ algo: a, ...getValue(a.id, ds.id, state.metric) }))
+        .filter((b) => b.value != null);
+      return { ds, bars };
+    }).filter((g) => g.bars.length);
+
+    if (!groups.length) {
+      block.innerHTML = `
+        <div class="fig-head">
+          <span class="fig-no">图 1</span>
+          <h3 class="fig-title">${escapeHtml(metric.label)} · 暂无可比较结果</h3>
+        </div>
+        <div class="figure-empty">当前指标下没有可比较数据。${state.metric === "auc" ? "AUC 仅适用于 WTCCC1 等二分类数据集。" : "请确认所选数据集包含该性状类型。"}</div>`;
+      return;
+    }
+
+    const scale = axisScale(state.metric, groups);
+    const usedAlgos = algos.filter((a) => groups.some((g) => g.bars.some((b) => b.algo.id === a.id)));
+
+    const gridlines = [25, 50, 75, 100].map((p) =>
+      `<span class="gridline" style="bottom:${p}%"></span>`).join("");
+    const yTicks = [0, 25, 50, 75, 100].map((p) => {
+      const value = scale.max * p / 100;
+      return `<span class="y-tick" style="bottom:${p}%">${fmtAxis(value, state.metric)}</span>`;
+    }).join("");
+
+    const groupHtml = groups.map((g) => {
+      const bars = g.bars.map((b) => {
+        const pct = Math.max(1.2, Math.min(100, (b.value / scale.max) * 100));
+        const paper = b.status === "paper_reported";
+        const exp = b.status === "exploratory";
+        const stub = b.status === "stub";
+        const barClass = paper ? " is-paper" : exp ? " is-exp" : stub ? " is-stub" : "";
+        const valueText = fmtMetric(b.value, state.metric) + (b.sd != null ? " ± " + fmt(b.sd, METRICS[state.metric].decimals) : "");
+        let err = "";
+        if (b.sd != null && b.value > 0) {
+          const bottom = Math.max(0, ((b.value - b.sd) / b.value) * 100);
+          const height = Math.min(120, ((2 * b.sd) / b.value) * 100);
+          err = `<span class="bar-err" style="bottom:${bottom.toFixed(2)}%;height:${height.toFixed(2)}%"></span>`;
+        }
+        return `
+          <div class="bar-col" style="--h:${pct.toFixed(2)}%">
+            <span class="bar-value">${fmtMetric(b.value, state.metric)}</span>
+            <div class="bar${barClass}" style="height:${pct.toFixed(2)}%;--c:${b.algo.color}" title="${escapeHtml(b.algo.name)} · ${escapeHtml(g.ds.name)} · ${escapeHtml(valueText)}">
+              ${err}
+            </div>
+          </div>`;
+      }).join("");
+      return `
+        <div class="plot-group">
+          <div class="plot-bars">${bars}</div>
+        </div>`;
+    }).join("");
+
+    const xLabels = groups.map((g) => `
+      <div class="x-label">
+        <span class="x-name">${escapeHtml(g.ds.name)}</span>
+        <span class="x-sci">${escapeHtml(g.ds.sci)}</span>
+      </div>`).join("");
+
+    const legend = usedAlgos.map((a) =>
+      `<span class="key-item"><span class="key-swatch" style="--c:${a.color}"></span>${escapeHtml(a.name)}</span>`).join("");
+
+    const ariaSummary = groups.map((g) =>
+      `${g.ds.name}：` + g.bars.map((b) => `${b.algo.name} ${fmtMetric(b.value, state.metric)}${b.sd != null ? " ± " + fmt(b.sd, METRICS[state.metric].decimals) : ""}`).join("，")
+    ).join("；");
+
+    block.innerHTML = `
+      <div class="fig-head">
+        <span class="fig-no">图 1</span>
+        <h3 class="fig-title">各方法的预测表现 · ${escapeHtml(metric.label)}</h3>
+        <span class="fig-meta">实心：演示 · 点状：探索 · 交叉线：流程测试 · 斜线：论文值</span>
+      </div>
+      <div class="plot-scroll" tabindex="0" role="group" aria-label="图表，可左右滑动">
+        <div class="plot" role="img" aria-label="${escapeHtml(ariaSummary)}">
+          <div class="y-axis" aria-hidden="true">${yTicks}</div>
+          <div class="plot-main" aria-hidden="true">
+            <div class="plot-field">
+              ${gridlines}
+              <div class="plot-groups" style="grid-template-columns:repeat(${groups.length}, minmax(0, 1fr))">${groupHtml}</div>
+            </div>
+            <div class="x-axis" style="grid-template-columns:repeat(${groups.length}, minmax(0, 1fr))">${xLabels}</div>
+          </div>
+        </div>
+      </div>
+      <p class="fig-mobile-hint">左右滑动查看完整图表 →</p>
+      <div class="fig-key">
+        ${legend}
+        <span class="key-sep">|</span>
+        <span class="key-status"><span class="key-bar" style="--c:var(--moss)"></span>演示</span>
+        <span class="key-status"><span class="key-bar is-exp" style="--c:var(--ink-2)"></span>探索</span>
+        <span class="key-status"><span class="key-bar is-stub" style="--c:#6f6a5f"></span>流程测试</span>
+        <span class="key-status"><span class="key-bar is-paper" style="--c:var(--rust)"></span>论文值</span>
+      </div>
+      <figcaption class="fig-caption">
+        <b>图 1.</b> 所选方法在各数据集上的平均 ${escapeHtml(metric.label)}；误差条为重复/折间标准差。实线为演示值，点线为真实单次探索，交叉线为流程测试，斜线为论文报告值。
+        <span class="demo">部分数值仅用于版式确认；探索结果未认证；流程测试使用替代引擎，不能作为科学结果。</span>
+      </figcaption>`;
+  }
+
+  function renderMatrix(algos, datasets, metric) {
+    const block = $("#table-block");
+    const head = datasets.map((d) => `
+      <th scope="col">
+        <span class="th-name">${escapeHtml(d.name)}</span>
+        <span class="th-sci">${escapeHtml(d.sci)}</span>
+        <span class="th-access">${escapeHtml(d.accessLabel)} · ${escapeHtml(d.trait)}</span>
+      </th>`).join("");
+
+    const rows = algos.map((a) => {
+      const cells = datasets.map((d) => {
+        const v = getValue(a.id, d.id, state.metric);
+        if (v.status === "not_applicable") {
+          return `<td><span class="cell-na" title="${escapeHtml(v.reason)}">不适用</span></td>`;
+        }
+        const valueText = v.value == null ? "未运行" : fmtMetric(v.value, state.metric);
+        const sdText = v.sd != null ? `<span class="cell-sd">± ${fmt(v.sd, METRICS[state.metric].decimals)}</span>` : "";
+        const statusText = v.value == null ? "未运行" : v.status === "reproduced" ? "演示" : v.status === "exploratory" ? "探索" : v.status === "stub" ? "流程测试" : "论文值";
+        const statusClass = v.value == null ? "" : v.status === "reproduced" ? " status-l1" : v.status === "exploratory" ? " status-exp" : v.status === "stub" ? " status-stub" : " status-l3";
+        return `<td>
+          <button class="cell-btn" type="button" data-algo="${a.id}" data-ds="${d.id}" ${v.value == null ? `title="${escapeHtml(v.reason || "尚未运行")}"` : ""} aria-label="查看 ${escapeHtml(a.name)} 在 ${escapeHtml(d.name)} 的运行记录">
+            <span class="cell-value"${v.value == null ? ' style="color:#adb5ab"' : ""}>${valueText}${sdText}</span>
+            <span class="cell-status${statusClass}">${statusText}</span>
+          </button>
+        </td>`;
+      }).join("");
+      return `
+        <tr>
+          <th scope="row">
+            <span class="row-name"><span class="entry-key" style="--c:${a.color}"></span>${escapeHtml(a.name)}</span>
+            <span class="row-meta">${escapeHtml(a.family)} · ${escapeHtml(a.input)}</span>
+          </th>
+          ${cells}
+        </tr>`;
+    }).join("");
+
+    block.innerHTML = `
+      <div class="table-head">
+        <span class="table-no">表 1</span>
+        <h3 class="table-title">结果表 · ${escapeHtml(metric.label)}</h3>
+        <span class="table-hint">点击单元格查看结果详情</span>
+      </div>
+      <p class="table-scroll-note">横向滑动查看全部数据集与指标 →</p>
+      <div class="table-wrap">
+        <table class="matrix">
+          <thead><tr><th scope="col"><span class="th-name">方法</span><span class="th-sci">算法</span></th>${head}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span class="foot-l1"><span class="foot-mark"></span>演示 = 版式占位，不可引用</span>
+        <span class="foot-l3"><span class="foot-mark"></span>论文值 = 论文报告，仅参考</span>
+        <span class="foot-na"><span class="foot-mark" style="background:#adb5ab"></span>不适用 = 指标不适用于此性状</span>
+      </div>`;
+
+    block.querySelectorAll(".cell-btn").forEach((btn) => {
+      btn.addEventListener("click", () => openDrawer(btn.dataset.algo, btn.dataset.ds));
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     Drawer
+     ------------------------------------------------------------------ */
+  function syncModalState() {
+    const anyOpen = drawer.classList.contains("open");
+    document.body.style.overflow = anyOpen ? "hidden" : "";
+    const app = document.querySelector(".app");
+    if (anyOpen) app.setAttribute("inert", "");
+    else app.removeAttribute("inert");
+  }
+
+  function trapModalFocus(e) {
+    const modal = drawer.classList.contains("open") ? drawer : null;
+    if (!modal) return;
+    const focusables = Array.from(modal.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter((node) => node.getClientRects().length > 0);
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (!modal.contains(document.activeElement)) {
+      e.preventDefault();
+      first.focus();
+      return;
+    }
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  function openDrawer(algoId, dsId) {
+    const a = algoById(algoId);
+    const d = dataById(dsId);
+    if (!a || !d) return;
+    lastFocused = document.activeElement;
+    const v = getValue(algoId, dsId, state.metric);
+    const metric = METRICS[state.metric];
+    const result = RESULTS[cellKey(algoId, dsId)];
+    const realRecord = REAL_RECORDS[cellKey(algoId, dsId)] || null;
+    const statusBadge = v.status === "reproduced"
+      ? '<span class="run-level is-l1">演示</span>'
+      : v.status === "exploratory"
+        ? '<span class="run-level is-exp">探索</span>'
+        : v.status === "stub"
+          ? '<span class="run-level is-stub">流程测试</span>'
+          : v.status === "paper_reported"
+            ? '<span class="run-level is-l3">论文值</span>'
+            : '<span class="run-level">未运行</span>';
+
+    $("#drawer-title").textContent = `${a.name} × ${d.name}`;
+    $("#drawer-subtitle").textContent = `${metric.label} · ${d.trait} · ${d.species}`;
+    $("#drawer-status-top").textContent = v.status === "reproduced" ? "演示" : v.status === "exploratory" ? "探索" : v.status === "stub" ? "流程" : v.status === "paper_reported" ? "论文" : "—";
+
+    const valueBlock = v.value != null
+      ? `<div class="run-metric">
+           <div>
+             <div class="run-metric-label">${escapeHtml(metric.label)}${state.metric === "runtime" ? " / minutes" : ""}</div>
+             <div class="run-metric-value">${fmtMetric(v.value, state.metric)}${v.sd != null ? ` <small>± ${fmt(v.sd, metric.decimals)}</small>` : ""}</div>
+           </div>
+           <div class="run-metric-note">${v.status === "exploratory" ? "真实单次运行<br>未认证 · 不参与主榜" : v.status === "stub" ? "流程测试<br>仅证明管线 · 不可引用" : v.sd != null ? "重复 / 折间标准差<br>多次重复" : "论文报告值<br>未在本地复现"}<br>${metric.better === "lower" ? "越低越好" : "越高越好"}</div>
+         </div>`
+      : `<div class="run-metric">
+           <div>
+             <div class="run-metric-label">${escapeHtml(metric.label)}</div>
+             <div class="run-metric-value" style="color:#adb5ab">—</div>
+           </div>
+           <div class="run-metric-note">${escapeHtml(v.reason || "尚未运行")}</div>
+         </div>`;
+
+    const metricsRows = result ? `
+      <div class="detail-section">
+        <h3 class="detail-title">所有指标</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>Pearson r</dt><dd>${fmt(result.pearson, 3)}</dd></div>
+          <div class="data-row"><dt>R²</dt><dd>${fmt(result.r2, 3)}</dd></div>
+          <div class="data-row"><dt>AUC</dt><dd>${fmt(result.auc, 3)}</dd></div>
+          <div class="data-row"><dt>运行时间</dt><dd>${result.runtime != null ? fmtMetric(result.runtime, "runtime") + " 分钟" : "—"}</dd></div>
+        </dl>
+      </div>` : "";
+
+    const expProvenance = (() => {
+      const rec = realRecord;
+      const firstHash = rec ? Object.values(rec.dataset.input_sha256 || {})[0] : null;
+      const nVal = rec ? rec.split.n_validation : null;
+      const envText = rec && rec.provenance.environment
+        ? Object.entries(rec.provenance.environment).map(([key, value]) => `${key}: ${value}`).join(" · ")
+        : "本地环境";
+      return `
+      <div class="detail-section">
+        <h3 class="detail-title">运行与溯源</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>Run ID</dt><dd><code>${escapeHtml(rec ? rec.run_id : (result.runId || "—"))}</code></dd></div>
+          ${v.status === "stub" ? '<div class="data-row"><dt>运行模式</dt><dd><strong>流程测试</strong> · 替代计算引擎 · 不是 IFAM 科学结果</dd></div>' : ""}
+          <div class="data-row"><dt>论文来源</dt><dd>${rec && rec.algorithm.paper_doi ? `<a href="https://doi.org/${escapeHtml(rec.algorithm.paper_doi)}" target="_blank" rel="noreferrer">${escapeHtml(rec.algorithm.paper_title || rec.algorithm.paper_doi)}</a>` : "VanRaden 2008 · J. Dairy Sci. 91:4414–4423"}</dd></div>
+          <div class="data-row"><dt>数据来源</dt><dd>${escapeHtml(rec ? rec.dataset.source : "上游示例数据 + 模拟性状")}</dd></div>
+          <div class="data-row"><dt>划分</dt><dd>单次 80/20 · 验证集 n = ${nVal != null ? nVal : "—"} · 未认证</dd></div>
+          <div class="data-row"><dt>实现</dt><dd>${escapeHtml(rec ? rec.algorithm.implementation : "GBLUP baseline")}</dd></div>
+          ${rec && rec.mcp ? `<div class="data-row"><dt>运行工具</dt><dd>${escapeHtml(rec.mcp.server)} ${escapeHtml(rec.mcp.version)} · ${escapeHtml(rec.mcp.transport)} · ${rec.mcp.tools.length} 个工具</dd></div>` : ""}
+          <div class="data-row"><dt>环境</dt><dd>${escapeHtml(envText)}</dd></div>
+          <div class="data-row"><dt>数据校验</dt><dd><code>${escapeHtml(firstHash ? firstHash.slice(0, 16) + "…" : "—")}</code> · 模拟性状 h² = ${rec && rec.dataset.trait.heritability != null ? rec.dataset.trait.heritability : "0.5"}</dd></div>
+          <div class="data-row"><dt>审核</dt><dd>未认证 · 单次划分，不进入正式复现榜</dd></div>
+        </dl>
+      </div>
+      <div class="detail-section">
+        <h3 class="detail-title">产物</h3>
+        <div class="artifact-row"><span>公开结果 JSON</span><code>${escapeHtml(rec && rec.artifacts && rec.artifacts.site_json ? rec.artifacts.site_json : "data/results/gblup-sim500.json")}</code></div>
+        <div class="artifact-row"><span>证据账本</span><code>benchmark/runs/${escapeHtml(rec ? rec.run_id : "gblup-sim500-v1")}/result.json</code></div>
+        <div class="artifact-row"><span>预测值</span><code>local only · 未公开</code></div>
+      </div>`;
+    })();
+
+    const provenance = v.status === "reproduced" ? `
+      <div class="detail-section">
+        <h3 class="detail-title">运行与溯源</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>Run ID</dt><dd><code>${escapeHtml(algoId)}__${escapeHtml(dsId)}__${escapeHtml(state.metric)}__5fold-s42__20261018</code></dd></div>
+          <div class="data-row"><dt>划分</dt><dd>5 折 × 3 seeds · 划分文件已提交 · 训练/验证不重叠</dd></div>
+          <div class="data-row"><dt>代码版本</dt><dd>${escapeHtml(a.name)} · commit <code>a1b2c3d</code></dd></div>
+          <div class="data-row"><dt>环境</dt><dd>Docker · linux/amd64 · 镜像 digest <code>sha256:9f2c…</code></dd></div>
+          <div class="data-row"><dt>数据校验</dt><dd><code>sha256:6ab1…</code> · ${escapeHtml(d.version)}</dd></div>
+          <div class="data-row"><dt>审核</dt><dd>维护者已复核 · 2026-10-18</dd></div>
+        </dl>
+      </div>
+      <div class="detail-section">
+        <h3 class="detail-title">产物</h3>
+        <div class="artifact-row"><span>预测值</span><code>pred.tsv</code></div>
+        <div class="artifact-row"><span>运行日志</span><code>run.log</code></div>
+        <div class="artifact-row"><span>环境清单</span><code>manifest.json</code></div>
+      </div>` : v.status === "paper_reported" ? `
+      <div class="detail-section">
+        <h3 class="detail-title">来源</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>数据类型</dt><dd>论文报告值，未在本地复现</dd></div>
+          <div class="data-row"><dt>论文</dt><dd>${a.year} · DOI 待补 · 演示占位</dd></div>
+          <div class="data-row"><dt>可比性</dt><dd>论文值 · 数据访问、划分或指标可能不同，不参与主榜排名</dd></div>
+        </dl>
+      </div>` : v.status === "exploratory" || v.status === "stub" ? expProvenance : `
+      <div class="detail-section">
+        <h3 class="detail-title">为什么没有结果</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>状态</dt><dd>${escapeHtml(v.reason || "尚未运行")}</dd></div>
+          <div class="data-row"><dt>下一步</dt><dd>等待方法接入或该数据集运行完成；失败原因也会保留，而不是留空。</dd></div>
+        </dl>
+      </div>`;
+
+    $("#drawer-body").innerHTML = `
+      <div class="run-status-line">
+        ${statusBadge}
+        <span class="run-sep">/</span><span>${escapeHtml(a.input)}</span>
+        <span class="run-sep">/</span><span>${escapeHtml(d.accessLabel)}</span>
+        <span class="run-sep">/</span><span>${escapeHtml(d.species)}</span>
+      </div>
+      ${valueBlock}
+      ${metricsRows}
+      ${provenance}
+      <div class="drawer-note">${v.status === "exploratory" ? "真实记录：数值来自结果 JSON 与独立评测；这是一次单次划分的探索，不是正式复现，不可作为论文复现或主榜引用。" : v.status === "stub" ? "流程测试：真实 IFAM 编排，但计算引擎是替代品；数值没有科学意义，只用于展示生成与运行管线。" : "演示记录：以上数值、run ID 与文件均为占位内容。正式记录必须能追溯到结果 JSON、划分文件、代码版本与运行日志；论文值与复现值不混排。"}</div>`;
+
+    drawer.classList.add("open");
+    overlay.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+    drawer.inert = false;
+    syncModalState();
+    $("#drawer-close").focus();
+  }
+
+  function closeDrawer() {
+    if (!drawer.classList.contains("open")) return;
+    drawer.classList.remove("open");
+    overlay.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+    syncModalState();
+    if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+    drawer.inert = true;
+  }
+
+  /* ------------------------------------------------------------------
+     Misc
+     ------------------------------------------------------------------ */
+  function showToast(message) {
+    const toast = $("#toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2100);
+  }
+
+  function hideResourceTip(target) {
+    const active = target || resourceTipTarget;
+    if (!active) return;
+    if (active === resourceTipTarget) {
+      resourceTooltip.classList.remove("is-visible");
+      resourceTipTarget = null;
+    }
+    if (active.getAttribute("aria-describedby") === "resource-tooltip") {
+      active.removeAttribute("aria-describedby");
+    }
+  }
+  function showResourceTip(target) {
+    const tip = target.getAttribute("data-resource-tip");
+    if (!tip) return;
+    if (resourceTipTarget && resourceTipTarget !== target) hideResourceTip(resourceTipTarget);
+    resourceTipTarget = target;
+    resourceTooltip.textContent = tip;
+    resourceTooltip.classList.remove("is-visible");
+    resourceTooltip.style.left = "-9999px";
+    resourceTooltip.style.top = "0px";
+    const tipRect = resourceTooltip.getBoundingClientRect();
+    const rect = target.getBoundingClientRect();
+    const left = Math.min(Math.max(8, rect.left), window.innerWidth - tipRect.width - 8);
+    let top = rect.top - tipRect.height - 7;
+    if (top < 8) top = Math.min(rect.bottom + 7, window.innerHeight - tipRect.height - 8);
+    resourceTooltip.style.left = `${Math.round(left)}px`;
+    resourceTooltip.style.top = `${Math.max(8, Math.round(top))}px`;
+    resourceTooltip.classList.add("is-visible");
+    target.setAttribute("aria-describedby", "resource-tooltip");
+  }
+  document.addEventListener("pointerover", (e) => {
+    const target = e.target.closest("[data-resource-tip]");
+    if (target) showResourceTip(target);
+  });
+  document.addEventListener("pointerout", (e) => {
+    const target = e.target.closest("[data-resource-tip]");
+    if (!target) return;
+    if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+    hideResourceTip(target);
+  });
+  document.addEventListener("focusin", (e) => {
+    const target = e.target.closest("[data-resource-tip]");
+    if (target) showResourceTip(target);
+  });
+  document.addEventListener("focusout", (e) => {
+    const target = e.target.closest("[data-resource-tip]");
+    if (!target) return;
+    if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+    hideResourceTip(target);
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("[data-resource-tip]")) hideResourceTip();
+  });
+  window.addEventListener("scroll", () => hideResourceTip(), true);
+  window.addEventListener("resize", () => hideResourceTip());
+  window.addEventListener("blur", () => hideResourceTip());
+
+  /* ------------------------------------------------------------------
+     Events
+     ------------------------------------------------------------------ */
+  $("#algo-search").addEventListener("input", (e) => renderAlgos(e.target.value));
+  $("#data-search").addEventListener("input", (e) => renderDatasets(e.target.value));
+  $("#algo-clear").addEventListener("click", () => {
+    state.algos = [];
+    afterSelectionChange();
+  });
+  $("#data-clear").addEventListener("click", () => {
+    state.datasets = [];
+    afterSelectionChange();
+  });
+  document.querySelectorAll(".metric-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.metric = btn.dataset.metric;
+      writeStateToUrl();
+      renderResults();
+    });
+  });
+  $("#drawer-close").addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hideResourceTip();
+      if (drawer.classList.contains("open")) closeDrawer();
+      return;
+    }
+    if (e.key === "Tab") trapModalFocus(e);
+  });
+
+  /* ------------------------------------------------------------------
+     Real evidence record
+     ------------------------------------------------------------------ */
+  async function loadRealResults() {
+    const files = [
+      "data/results/gblup-sim500.json",
+      "data/results/ifam-stub-sim500.json"
+    ];
+    try {
+      const responses = await Promise.all(files.map((file) => fetch(file, { cache: "no-store" })));
+      for (const response of responses) {
+        if (!response.ok) continue;
+        const record = await response.json();
+        if (record.schema_version !== "gsgp.result.v1" || !record.site) continue;
+        const key = `${record.site.algorithm_id}|${record.site.dataset_id}`;
+        REAL_RECORDS[key] = record;
+        RESULTS[key] = {
+          pearson: record.metrics.pearson_r,
+          pearsonSd: null,
+          r2: record.metrics.r2,
+          r2Sd: null,
+          auc: record.metrics.auc,
+          runtime: record.metrics.runtime_seconds != null ? record.metrics.runtime_seconds / 60 : null,
+          status: record.site.status,
+          runId: record.run_id
+        };
+      }
+      renderResults();
+    } catch (error) {
+      console.warn("Real result JSON unavailable; keeping the checked-in fallback.", error);
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Init
+     ------------------------------------------------------------------ */
+  renderAlgos();
+  renderDatasets();
+  renderResults();
+  loadRealResults();
+})();
+</script>
+</body>
+</html>

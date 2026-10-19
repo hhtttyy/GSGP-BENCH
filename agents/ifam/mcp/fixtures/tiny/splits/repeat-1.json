@@ -1,0 +1,21 @@
+{
+  "schema_version": "ifam.split.v1",
+  "split_id": "repeat-1",
+  "seed": 20261018,
+  "training_ids": [
+    "I01",
+    "I02",
+    "I03",
+    "I04",
+    "I05",
+    "I06",
+    "I07",
+    "I08"
+  ],
+  "validation_ids": [
+    "I09",
+    "I10",
+    "I11",
+    "I12"
+  ]
+}

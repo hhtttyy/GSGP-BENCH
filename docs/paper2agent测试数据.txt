@@ -1,0 +1,15 @@
+paper2Agent: 测试数据
+
+(1)
+https://www.nature.com/articles/s41467-026-72470-0
+
+ IFAM扩展了具有多个随机效应的线性混合模型，以适应更多类型的基因功能注释，从而提高对复杂性状的预测准确性。
+
+Improving genomic prediction accuracy of complex traits by integrating massive types of functional annotation information
+
+(2)
+https://www.nature.com/articles/s41588-024-01704-y
+
+SBayesRC（R）整合全基因组关联研究（GWAS）汇总统计数据与功能基因组注释，以改进复杂性状的多基因预测。
+
+Leveraging functional genomic annotations and genome coverage to improve polygenic prediction of complex traits within and between ancestries

@@ -1,0 +1,50 @@
+{
+  "schema_version": "gsgp.mcp-certification.v1",
+  "mcp_id": "gblup",
+  "name": "GBLUP baseline MCP",
+  "version": "0.1.0",
+  "status": "certified",
+  "certified": true,
+  "scope": "central-package-test",
+  "hosted": false,
+  "certified_at": "2026-10-19T11:40:23Z",
+  "reviewer": "GSGP-Bench central validation",
+  "summary": "Central team verified the submitted package with a reference dataset. This certifies the MCP package, not a scientific result and not an online service.",
+  "checks": {
+    "contract_present": true,
+    "stdio_initialize_tools_list": true,
+    "inspect_fit_export": true,
+    "no_truth_input": true,
+    "no_metrics_in_mcp": true,
+    "direct_vs_mcp_metrics_match": true,
+    "tolerance": 1e-06,
+    "schema_valid": true,
+    "tests": [
+      "benchmark/tests/test_gblup_mcp.py",
+      "benchmark/tests/test_result.py"
+    ]
+  },
+  "artifacts": {
+    "skill": "benchmark/algorithms/gblup/SKILL.md",
+    "server": "benchmark/algorithms/gblup/server.py",
+    "tools": "benchmark/algorithms/gblup/tools.json",
+    "result": "benchmark/runs/gblup-sim500-mcp-v1/result.json",
+    "direct_control": "benchmark/runs/gblup-sim500-v1/result.json",
+    "site_json": "site/data/results/gblup-sim500.json"
+  },
+  "hashes": {
+    "server_sha256": "e5d9213035ec365e7e19f6e73a420986b464b1cf0c069ef7540b64f08cba17b9",
+    "tools_sha256": "310e95dbeb4ae395a0d5e08e75955d360c239ce3c6e82fb873e2df98b5d173a9",
+    "skill_sha256": "0afad4838c415c1eac693fba109e1127448a51ed484e4a648e26a24db0a7ab09",
+    "runner_sha256": "54ad2b370480752405df392a40309480c167db44701619285c30e7a0af9b0fdd",
+    "result_sha256": "72de3e9a73dbf9ed6db9cd90cc40e5ab830391c17274e637cf22847bcd7b0169",
+    "direct_result_sha256": "ffbec3f3567cde4b1fbd19ef96477af11616181e70b696b75ac9f8f08ce5425e"
+  },
+  "result_level": "exploratory",
+  "boundaries": [
+    "Certifies the MCP package at this version, not any benchmark result.",
+    "The result remains EXP until the benchmark protocol and review say otherwise.",
+    "GSGP-Bench does not host or execute this MCP for users.",
+    "A new package version or new dataset contract requires re-testing."
+  ]
+}

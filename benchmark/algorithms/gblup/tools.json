@@ -1,0 +1,92 @@
+{
+  "schema_version": "gblup.mcp.contract.v1",
+  "server_name": "gblup",
+  "status": "local-prototype",
+  "source": {
+    "paper_doi": "10.3168/jds.2007-0980",
+    "paper_title": "VanRaden 2008, Efficient methods to compute genomic predictions, J. Dairy Sci. 91:4414–4423",
+    "implementation": "GSGP-Bench GBLUP v0.1 (VanRaden GRM, single random effect REML)",
+    "license": "MIT for this repository",
+    "note": "Manual baseline implementation, not a Paper2Agent-generated MCP."
+  },
+  "tools": [
+    {
+      "name": "gblup_inspect_inputs",
+      "title": "Inspect GBLUP inputs",
+      "description": "Read-only validation of a PLINK genotype set, phenotype and optional validation split. Does not fit and never reads truth.",
+      "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false},
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "input_root": {"type": "string", "default": "."},
+          "bfile": {"type": "string", "description": "PLINK prefix relative to input_root."},
+          "phenotype": {"type": "string", "description": "Fit phenotype; column 1 ID, selected target column may be NA."},
+          "phenotype_index": {"type": "integer", "minimum": 2, "default": 2},
+          "validation_split": {"type": "string", "description": "Optional split JSON relative to input_root."}
+        },
+        "required": ["bfile", "phenotype"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["schema_version", "status", "counts", "phenotype", "split", "checks", "warnings"],
+        "properties": {
+          "schema_version": {"const": "gblup.inspect.v1"},
+          "status": {"enum": ["ready", "blocked"]}
+        }
+      }
+    },
+    {
+      "name": "gblup_fit",
+      "title": "Fit GBLUP",
+      "description": "Fit GBLUP/REML on the training phenotypes and return validation predictions plus provenance. It does not read held-out truth and does not compute metrics.",
+      "annotations": {"readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": false},
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "input_root": {"type": "string", "default": "."},
+          "bfile": {"type": "string"},
+          "phenotype": {"type": "string"},
+          "phenotype_index": {"type": "integer", "minimum": 2, "default": 2},
+          "validation_split": {"type": "string"}
+        },
+        "required": ["bfile", "phenotype"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["schema_version", "run_id", "predictions", "validation_ids", "provenance"],
+        "properties": {
+          "schema_version": {"const": "gblup.fit.v1"},
+          "run_id": {"type": "string"},
+          "predictions": {"type": "array"},
+          "validation_ids": {"type": "array"},
+          "provenance": {"type": "object"}
+        }
+      }
+    },
+    {
+      "name": "gblup_export",
+      "title": "Export GBLUP predictions",
+      "description": "Return a completed GBLUP run's predictions and provenance. Metrics remain the independent runner's job.",
+      "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false},
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {"run_id": {"type": "string", "minLength": 8, "maxLength": 80}},
+        "required": ["run_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["schema_version", "run_id", "predictions", "provenance"],
+        "properties": {
+          "schema_version": {"const": "gblup.fit.v1"},
+          "run_id": {"type": "string"}
+        }
+      }
+    }
+  ]
+}

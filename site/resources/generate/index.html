@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>本地生成 Skill/MCP · Paper2Agent · GSGP·Bench</title>
+<meta name="description" content="用 Paper2Agent 本地生成论文 Skill/MCP：下载套件、复制提示词、运行、提交认证。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="stylesheet" href="../ifam-paper/reader.css" />
+<style>
+  .generate-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 46px;
+    padding-bottom: 38px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .generate-kicker {
+    margin: 0 0 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--moss);
+  }
+  .generate-title {
+    margin: 0 0 16px;
+    font-family: var(--serif);
+    font-size: clamp(38px, 5vw, 58px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+  .generate-lede {
+    max-width: 640px;
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 18px;
+    line-height: 1.65;
+  }
+  .generate-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+  .generate-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--plate);
+    font-family: var(--sans); font-size: 11px; letter-spacing: .03em;
+    text-decoration: none;
+  }
+  .generate-btn.secondary { background: transparent; color: var(--ink); }
+  .generate-btn:hover { background: var(--moss); border-color: var(--moss); color: #fff; }
+  .generate-facts {
+    padding: 16px 18px;
+    border: 1px solid var(--rule);
+    background: var(--plate);
+    font-family: var(--mono);
+    font-size: 9px;
+    line-height: 1.8;
+    color: var(--ink-2);
+  }
+  .generate-facts b { display: block; margin-bottom: 8px; color: var(--ink); letter-spacing: .1em; text-transform: uppercase; }
+  .generate-facts .fact { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--rule-soft); padding-top: 7px; margin-top: 7px; }
+  .generate-section { margin: 42px 0; }
+  .generate-section h2 { margin-top: 0; }
+  .generate-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .generate-card { border-top: 2px solid var(--ink); padding-top: 13px; }
+  .generate-card h3 { margin: 0 0 8px; font-size: 15px; }
+  .generate-card p { margin: 0; color: var(--ink-2); font-size: 13px; }
+  .steps { counter-reset: step; margin: 0; padding: 0; list-style: none; }
+  .steps li { counter-increment: step; position: relative; padding: 0 0 22px 45px; border-left: 1px solid var(--rule); margin-left: 13px; }
+  .steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: -14px; top: -2px; width: 27px; height: 27px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--ink); background: var(--paper); font-family: var(--mono); font-size: 8px; color: var(--ink); }
+  .steps strong { display: block; margin-bottom: 4px; }
+  .steps p { margin: 0; color: var(--ink-2); font-size: 13px; }
+  .prompt-wrap { position: relative; margin-top: 14px; border: 1px solid var(--rule); background: #f7f8f4; }
+  .prompt-wrap pre { margin: 0; border: 0; max-height: 340px; overflow: auto; font-size: 11.5px; line-height: 1.65; }
+  .copy-btn { position: absolute; top: 9px; right: 9px; border: 1px solid var(--rule); background: var(--plate); color: var(--ink-2); font-family: var(--mono); font-size: 8px; padding: 5px 7px; cursor: pointer; }
+  .copy-btn:hover { border-color: var(--ink-2); color: var(--ink); }
+  .kit-list { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 32px; font-size: 13px; color: var(--ink-2); }
+  .kit-list li { break-inside: avoid; padding: 5px 0; border-bottom: 1px solid var(--rule-soft); }
+  .generate-callout { margin: 32px 0; padding: 17px 19px; border-left: 3px solid var(--rust); background: var(--rust-soft); color: var(--ink-2); font-size: 13px; line-height: 1.7; }
+  .generate-callout b { color: var(--ink); }
+  .generate-links a { color: var(--moss); }
+  @media (max-width: 760px) {
+    .generate-hero { grid-template-columns: 1fr; gap: 26px; }
+    .generate-grid { grid-template-columns: 1fr; }
+    .kit-list { columns: 1; }
+    .generate-actions { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body class="reader-page">
+<header class="reader-top">
+  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="面包屑">
+    <a href="../../index.html">方法库</a>
+    <span aria-hidden="true">/</span>
+    <span>本地生成</span>
+  </nav>
+  <span class="reader-status">LOCAL ONLY · NO RUNTIME</span>
+</header>
+
+<main class="reader" style="width:min(1040px, calc(100% - 48px));">
+  <section class="generate-hero">
+    <div>
+      <p class="generate-kicker">Paper2Agent · Local Generation Kit</p>
+      <h1 class="generate-title">把论文变成<br />你自己的 Skill / MCP</h1>
+      <p class="generate-lede">
+        下载本地套件，在你自己的编码 Agent 里运行 Paper2Agent。
+        GSGP-Bench 不在网页执行论文代码，也不接收论文、数据或凭据；
+        你生成、你运行、你提交，我们负责统一认证。
+      </p>
+      <div class="generate-actions">
+        <a class="generate-btn" href="paper2agent-local-kit.zip" download>下载本地套件 <span aria-hidden="true">↓</span></a>
+        <a class="generate-btn secondary" href="../submit/index.html">提交 MCP 认证 <span aria-hidden="true">→</span></a>
+        <a class="generate-btn secondary" href="kit-manifest.json">查看套件清单</a>
+      </div>
+    </div>
+    <aside class="generate-facts" aria-label="套件信息">
+      <b>Kit facts</b>
+      <div class="fact"><span>文件</span><span id="kit-files">73</span></div>
+      <div class="fact"><span>大小</span><span id="kit-size">5.0 MB</span></div>
+      <div class="fact"><span>顶层目录</span><span>paper2agent/</span></div>
+      <div class="fact"><span>许可证</span><span>MIT</span></div>
+      <div class="fact"><span>网站执行</span><span>不执行</span></div>
+      <div class="fact"><span>认证</span><span>提交后检测</span></div>
+      <div class="fact"><span>SHA-256</span><span id="kit-sha" title="kit-manifest.json">4b52…0043</span></div>
+    </aside>
+  </section>
+
+  <section class="generate-section">
+    <h2>为什么是本地套件</h2>
+    <div class="generate-grid">
+      <div class="generate-card">
+        <h3>网站只做静态展示</h3>
+        <p>Cloudflare 免费静态站不执行 Python/R、不运行论文代码，也不托管 MCP。所有生成都发生在你的电脑上。</p>
+      </div>
+      <div class="generate-card">
+        <h3>认证只看包，不看来源</h3>
+        <p>手动、Paper2Agent 或其他方式生成的 MCP 都可以提交；我们统一检测后给出 <b>已认证 / 未认证</b>。</p>
+      </div>
+      <div class="generate-card">
+        <h3>认证不是结果认证</h3>
+        <p>MCP 通过检测，不代表某个数据集上的结果是 正式复现；结果等级仍单独记录。</p>
+      </div>
+      <div class="generate-card">
+        <h3>未认证也能被看到</h3>
+        <p>未认证条目可展示、可自行使用，但风险自担；通过检测后升级为已认证。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="generate-section" id="steps">
+    <h2>五步生成</h2>
+    <ol class="steps">
+      <li>
+        <strong>下载并解压套件</strong>
+        <p>把顶层的 <code>paper2agent/</code> 目录复制到你的编码 Agent skills 目录，重启 Agent。</p>
+      </li>
+      <li>
+        <strong>准备论文和代码</strong>
+        <p>准备论文 PDF/链接、代码仓库或本地路径、输出目录。受限数据不要交给 Agent，也不要在网页上传。</p>
+      </li>
+      <li>
+        <strong>复制提示词运行</strong>
+        <p>把下面的提示词填入 Agent，替换占位符。Agent 会生成 Paper2Skill、MCP 包和验证记录。</p>
+        <div class="prompt-wrap">
+          <button class="copy-btn" id="copy-prompt" type="button">复制</button>
+          <pre id="prompt-text">Read the paper2agent skill and use it to agentify this paper and its code.
+
+Paper and associated files:
+- &lt;PAPER_PDF_OR_URL_OR_LOCAL_PATH&gt;
+
+Code repository (if available):
+- &lt;GITHUB_URL_OR_LOCAL_PATH&gt;
+
+Output directory:
+- &lt;PROJECT_DIR&gt;
+
+Task focus (optional):
+- &lt;METHOD / TUTORIAL / SOURCE_URL&gt;
+
+Requirements:
+1. Follow the paper2agent workflow: paper understanding, code audit,
+   Skill/MCP generation, runtime verification, and final delivery.
+2. Keep the paper, code, and generated artifacts traceable.
+3. Do not download or upload restricted data.
+4. Do not execute untrusted code outside the isolated project environment.
+5. Record runtime versions, commands, test data, and known limitations.
+6. The MCP must not receive held-out truth and must not compute benchmark metrics.
+7. Produce a package that can be submitted to GSGP-Bench for MCP certification.</pre>
+        </div>
+      </li>
+      <li>
+        <strong>本地检查并运行</strong>
+        <p>确认 Skill/MCP 的输入、输出、依赖、许可证和限制；用公开或合成数据跑一次，保存日志和产物。</p>
+      </li>
+      <li>
+        <strong>提交认证</strong>
+        <p>通过 GitHub Issue 提交 MCP。中央团队检测契约、运行、truth 隔离和安全边界；通过后显示已认证。</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="generate-section">
+    <h2>套件里有什么</h2>
+    <ul class="kit-list">
+      <li>Paper2Agent 主 Skill</li>
+      <li>paper2agent-paper / paper2skill / paper2mcp</li>
+      <li>论文理解、代码审计与 MCP 生成参考</li>
+      <li>运行时验证脚本</li>
+      <li>本地套件 README</li>
+      <li>可复制提示词 PROMPT.md</li>
+      <li>MCP submission Issue 模板</li>
+      <li>MIT 许可证</li>
+    </ul>
+    <p class="generate-links">不包含：论文原文、代码 checkout、数据集、生成好的 MCP、API 凭据。清单和哈希见 <a href="kit-manifest.json">kit-manifest.json</a>。</p>
+  </section>
+
+  <section class="generate-section">
+    <h2>认证路径</h2>
+    <div class="generate-grid">
+      <div class="generate-card">
+        <h3>未认证</h3>
+        <p>包已提交但未通过/未完成中央检测。网站可展示，用户可自行使用，风险自担。</p>
+      </div>
+      <div class="generate-card">
+        <h3>已认证</h3>
+        <p>中央团队实践验证过固定版本：契约、启动、参考数据、输出、direct 对照、truth 隔离和安全边界。</p>
+      </div>
+    </div>
+    <div class="generate-callout">
+      <b>注意：</b>认证的是 MCP 包，不是论文结果，也不是在线服务。结果等级仍单独使用
+      演示 / 流程测试 / 探索 / 正式复现 / 论文值；GBLUP 当前是探索，IFAM 当前是流程测试。
+    </div>
+    <p class="generate-links">规则：<a href="../../resources/methods/index.html">方法档案</a> · <a href="../../resources/submit/index.html">提交 MCP</a> · <a href="../../resources/gblup-baseline/index.html">GBLUP baseline</a></p>
+  </section>
+</main>
+
+<footer class="reader-foot">
+  <p><b>GSGP·Bench</b> · Local Paper2Agent kit · 2026-10-19</p>
+  <p>No paper/code execution, data upload, or MCP hosting on this site. Generated packages are certified separately.</p>
+</footer>
+
+<script>
+  const files = document.getElementById("kit-files");
+  const size = document.getElementById("kit-size");
+  const sha = document.getElementById("kit-sha");
+  fetch("kit-manifest.json", { cache: "no-store" })
+    .then((response) => response.ok ? response.json() : null)
+    .then((manifest) => {
+      if (!manifest) return;
+      files.textContent = manifest.file_count;
+      size.textContent = (manifest.zip_bytes / (1024 * 1024)).toFixed(1) + " MB";
+      sha.textContent = manifest.zip_sha256.slice(0, 8) + "…" + manifest.zip_sha256.slice(-4);
+      sha.title = manifest.zip_sha256;
+    })
+    .catch(() => {});
+  document.getElementById("copy-prompt").addEventListener("click", async () => {
+    const text = document.getElementById("prompt-text").innerText;
+    const button = document.getElementById("copy-prompt");
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = "已复制";
+      setTimeout(() => { button.textContent = "复制"; }, 1600);
+    } catch (error) {
+      button.textContent = "请手动复制";
+      setTimeout(() => { button.textContent = "复制"; }, 2200);
+    }
+  });
+</script>
+</body>
+</html>

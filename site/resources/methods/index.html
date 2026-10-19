@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>方法档案 · GBLUP & IFAM · GSGP·Bench</title>
+<meta name="description" content="GSGP-Bench 方法档案：GBLUP baseline 与 IFAM 的论文、Skill、MCP、验证和证据状态。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%233d5a47' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%233d5a47'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%233d5a47' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%233d5a47' opacity='.8'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../ifam-paper/reader.css" />
+<style>
+  .dossier { width: min(1040px, calc(100% - 48px)); }
+  .dossier table { margin: 18px 0 30px; }
+  .dossier th, .dossier td { vertical-align: top; }
+  .dossier .status { font-family: var(--mono); font-size: 10px; letter-spacing: .04em; white-space: nowrap; }
+  .dossier .stub { color: #6f6a5f; }
+  .dossier .exp { color: var(--ink-2); }
+  .dossier .draft { color: var(--rust); }
+  .dossier h2 { margin-top: 38px; }
+  .dossier .lede { color: var(--ink-2); font-size: 17px; }
+  @media (max-width: 760px) {
+    .dossier { width: calc(100% - 32px); }
+    .dossier table { display: block; overflow-x: auto; }
+    .dossier th, .dossier td { min-width: 160px; }
+  }
+</style>
+</head>
+<body class="reader-page">
+<header class="reader-top">
+  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="面包屑">
+    <a href="../../index.html">方法库</a>
+    <span aria-hidden="true">/</span>
+    <span>方法档案</span>
+  </nav>
+  <span class="reader-status">GBLUP 探索 · IFAM 流程测试</span>
+</header>
+<main class="reader dossier">
+  <h1>方法档案</h1>
+  <p class="lede">把 GBLUP 和 IFAM 的论文、Skill、MCP、验证和证据放在同一张表里。MCP 只有“已认证/未认证”；当前没有 复现，也没有在线托管 MCP。</p>
+
+  <h2>能力与证据</h2>
+  <table>
+    <thead>
+      <tr><th>层</th><th>GBLUP / rrBLUP</th><th>IFAM</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>论文来源</th>
+        <td>VanRaden 2008, <em>J. Dairy Sci.</em> 91:4414–4423，DOI <a href="https://doi.org/10.3168/jds.2007-0980">10.3168/jds.2007-0980</a></td>
+        <td>Tang et al. 2026, <em>Nature Communications</em> 17:5686，DOI <a href="https://doi.org/10.1038/s41467-026-72470-0">10.1038/s41467-026-72470-0</a></td>
+      </tr>
+      <tr>
+        <th>方法角色</th>
+        <td>单随机效应 GBLUP 基线；所有比较的参照。</td>
+        <td>多注释随机效应 + 10 倍方差合并；本批核心论文。</td>
+      </tr>
+      <tr>
+        <th>Skill</th>
+        <td><a href="../../resources/gblup-baseline/index.html">自建 baseline Skill</a>（manual）</td>
+        <td><a href="../../resources/ifam-paper/index.html">Paper2Skill 阅读包</a>（reviewed_with_limitations）</td>
+      </tr>
+      <tr>
+        <th>MCP</th>
+        <td>本地 stdio baseline：inspect / fit / export；<span class="status">已认证</span> MCP 包，不在网页执行。</td>
+        <td>本地 stdio 四工具：inspect / fit / status / export；<span class="status draft">未认证</span>，仅替代引擎流程测试。</td>
+      </tr>
+      <tr>
+        <th>数据</th>
+        <td>500×5k 上游 IFAM demo 基因型子集 + 模拟性状 h²=0.5；单次 80/20。</td>
+        <td>同一 500×5k 基因型 + 注释 + 模拟性状；流程测试数值。</td>
+      </tr>
+      <tr>
+        <th>验证状态</th>
+        <td><span class="status exp">探索</span>：真实计算、单次划分；direct 与 MCP 指标一致。</td>
+        <td><span class="status stub">流程测试</span>：真实 IFAM.R 编排、替代引擎；数值不可引用。</td>
+      </tr>
+      <tr>
+        <th>指标</th>
+        <td>Pearson r 0.5075 · R² 0.2576 · bias 1.2117</td>
+        <td>流程测试：Pearson r -0.0320 · R² 0.0010；只用于管线展示。</td>
+      </tr>
+      <tr>
+        <th>证据记录</th>
+        <td><a href="../../data/results/gblup-sim500.json">gblup-sim500.json</a></td>
+        <td><a href="../../data/results/ifam-stub-sim500.json">ifam-stub-sim500.json</a></td>
+      </tr>
+      <tr>
+        <th>限制</th>
+        <td>单随机效应；没有多注释；单次划分；MCP 未在线部署。</td>
+        <td>HIBLUP v1.1.0 不可得；fake engine；没有真实 IFAM 科学结果；MCP 未认证。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><a href="../../resources/generate/index.html">本地生成套件 →</a> 在自己的 Agent 里运行 Paper2Agent；<a href="../../resources/submit/index.html">提交 MCP →</a> 中央团队统一验证。</p>
+
+  <h2>状态说明</h2>
+  <ul>
+    <li><strong>DEMO</strong>：页面占位值，不可引用；站点大部分结果仍是 demo。</li>
+    <li><strong>流程测试</strong>：真实接口/编排，假数值引擎；只证明管线。</li>
+    <li><strong>探索</strong>：真实单次划分计算；未审核，不是正式复现。</li>
+    <li><strong>复现 / 不同协议 / 论文值 / 认证</strong>：当前没有 正式复现或认证结果；论文值 真实论文值尚未录入。</li>
+  </ul>
+  <p>规则细节见仓库文档 <code>docs/证据等级与记录.md</code> 和 <code>docs/MCP认证与展示.md</code>。</p>
+
+  <h2>目前能展示什么</h2>
+  <ul>
+    <li>两篇论文的来源和角色；</li>
+    <li>GBLUP 的 baseline Skill 与已认证 MCP 包；</li>
+    <li>IFAM 的 Paper2Skill 阅读包和本地 MCP 契约；</li>
+    <li>GBLUP 的真实探索 结果，以及 IFAM 的 流程测试管线结果；</li>
+    <li>每条记录的 public JSON、状态和限制。</li>
+  </ul>
+
+  <h2>目前不能声称什么</h2>
+  <ul>
+    <li>不能在网页内执行 GBLUP/IFAM MCP；</li>
+    <li>不能把 IFAM 流程测试当作论文复现；</li>
+    <li>不能把 GBLUP 探索升级为正式复现；</li>
+    <li>不能把“已认证 MCP 包”写成“在线可用服务”；</li>
+    <li>不能把演示 复现 数值当成真实复现。</li>
+  </ul>
+</main>
+<footer class="reader-foot">
+  <p><b>GSGP·Bench</b> · 方法档案 · 2026-10-19</p>
+  <p>Source code and evidence records live in the repository; raw data and individual predictions are not published.</p>
+</footer>
+</body>
+</html>

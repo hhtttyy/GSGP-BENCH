@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Fake HIBLUP engine for testing the real IFAM.R orchestration.
+
+It creates the filenames and columns IFAM.R expects, with deterministic dummy
+numbers. It performs no GRM, variance-component or BLUP computation.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import sys
+from pathlib import Path
+
+
+def opt(name: str, default: str | None = None) -> str | None:
+    return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
+
+
+out = opt("--out")
+if not out:
+    raise SystemExit("missing --out")
+out_path = Path(out)
+out_path.parent.mkdir(parents=True, exist_ok=True)
+args = sys.argv[1:]
+
+if "--make-xrm" in args:
+    Path(str(out_path) + ".GA.bin").write_bytes(b"STUB-GRM")
+    Path(str(out_path) + ".GA.id").write_text("ID\n", encoding="utf-8")
+    print("fake hiblup: make-xrm", out_path.name)
+    raise SystemExit(0)
+
+xrm = [item for item in (opt("--xrm") or "").split(",") if item]
+if "--single-trait" in args:
+    if out_path.name.endswith("_vc"):
+        with open(str(out_path) + ".vars", "w", encoding="utf-8") as handle:
+            handle.write("Item\tVar\tVar_SE\th2\th2_SE\th2_Pr(Chisq)\n")
+            for index, path in enumerate(xrm):
+                name = Path(path).name[:-3]  # strip .GA
+                handle.write(f"{name}\t{1.0 / (10 ** index)}\t0.1\t0.5\t0.05\t1e-3\n")
+            handle.write("e\t1.0\t0.1\t0.5\t0.05\t1e-3\n")
+    else:
+        phenotype = Path(opt("--pheno", ""))
+        ids = [line.split("\t")[0] for line in phenotype.read_text(encoding="utf-8").splitlines()[1:] if line.strip()]
+        columns = [Path(path).name for path in xrm]
+        with open(str(out_path) + ".rand", "w", encoding="utf-8") as handle:
+            handle.write("ID\t" + "\t".join(columns) + "\tresidual\n")
+            for sample_id in ids:
+                digest = int(hashlib.sha256(sample_id.encode()).hexdigest()[:8], 16)
+                values = [round((digest % 1000) / 1000.0 * 0.1 + index * 0.01, 6) for index in range(len(columns))]
+                handle.write(sample_id + "\t" + "\t".join(f"{value:.6f}" for value in values) + "\t0.0\n")
+        with open(str(out_path) + ".vars", "w", encoding="utf-8") as handle:
+            handle.write("Item\tVar\tVar_SE\th2\th2_SE\th2_Pr(Chisq)\n")
+            for path in xrm:
+                handle.write(f"{Path(path).name}\t0.5\t0.1\t0.3\t0.03\t1e-3\n")
+            handle.write("e\t1.0\t0.1\t0.5\t0.05\t1e-3\n")
+    print("fake hiblup: single-trait", out_path.name)
+    raise SystemExit(0)
+
+raise SystemExit("unknown fake hiblup command")

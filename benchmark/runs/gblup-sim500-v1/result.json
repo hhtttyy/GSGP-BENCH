@@ -1,0 +1,103 @@
+{
+  "schema_version": "gsgp.result.v1",
+  "run_id": "gblup-sim500-v1",
+  "algorithm": {
+    "id": "gblup",
+    "name": "GBLUP / rrBLUP",
+    "implementation": "GSGP-Bench GBLUP v0.1 (VanRaden GRM, single random effect REML)",
+    "paper_doi": "10.3168/jds.2007-0980",
+    "paper_title": "VanRaden 2008, Efficient methods to compute genomic predictions, J. Dairy Sci. 91:4414\u20134423",
+    "code_commit": null
+  },
+  "dataset": {
+    "id": "sim500",
+    "name": "GSGP-Sim 500\u00d75k",
+    "species": "Sus scrofa (demo genotype)",
+    "source": "Genotype: 500 individuals \u00d7 5,000 SNPs derived from the public upstream IFAM demo. Trait: simulated quantitative phenotype, h\u00b2=0.5, 200 causal SNPs, seed 20261019. Raw data stays local.",
+    "n_individuals": 500,
+    "n_snps": 5000,
+    "trait": {
+      "name": "simulated_trait",
+      "type": "quantitative",
+      "simulated": true,
+      "heritability": 0.5
+    },
+    "license_note": "Raw genotype, phenotype and predictions remain local; only aggregate metrics and hashes are public.",
+    "input_sha256": {
+      "geno/demo.bed": "f8fc2bbec495a7e00d2032d1f1369cdaa3309c71d4b84c8c50639a27da8ac59e",
+      "geno/demo.bim": "671e3675bb33a2449b8d105768f7d5ef1a8d3224668a33474a409e127711e2f4",
+      "geno/demo.fam": "a5deb5a684b1cbe5f880ad0e011723db6311b0e688379a80a52ea2b3cb8ecad0",
+      "pheno/phenotype.fit.txt": "a40576e66b59cd6cd3df14e9f28fea8945b5dc9e5bcd41ec45abcdeeddb3ffd2",
+      "pheno/phenotype.truth.txt": "d125fb787a335b1ea0fba05879441937691641761467a071923e98a92150c6eb",
+      "splits/repeat-1.json": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+    }
+  },
+  "split": {
+    "split_id": "sim500-repeat-1",
+    "seed": 20261019,
+    "n_training": 400,
+    "n_validation": 100,
+    "split_sha256": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+  },
+  "metrics": {
+    "pearson_r": 0.5075119052365452,
+    "r2": 0.25756833395682804,
+    "prediction_bias_slope": 1.2116827511533754,
+    "auc": null,
+    "runtime_seconds": 0.0393
+  },
+  "fit": {
+    "lambda": 0.9783617313059536,
+    "sigma_g2": 0.5228124954536923,
+    "sigma_e2": 0.5114997382004605,
+    "n_snps": 5000,
+    "n_snps_used": 5000,
+    "n_training": 400,
+    "n_validation": 100,
+    "reml_objective": -20.05353639250928,
+    "missing_genotypes_imputed": 4181,
+    "simulation_causal_snps": 200,
+    "simulation_seed": 20261019
+  },
+  "evidence": {
+    "level": "exploratory",
+    "status": "complete",
+    "certified": false,
+    "single_split": true,
+    "reviewed_by": null,
+    "notes": [
+      "Single 80/20 split; not a multi-fold L1 record.",
+      "Trait is simulated; not the IFAM paper's Duroc phenotype.",
+      "Genotype subset derives from the public upstream demo and is not committed.",
+      "No held-out truth was read by the MCP or by the fitting code; the independent runner computed the metrics."
+    ]
+  },
+  "provenance": {
+    "command": "python3 benchmark/run_gblup_sim.py --run-id gblup-sim500-v1",
+    "environment": {
+      "python": "3.9.6",
+      "numpy": "2.0.2",
+      "scipy": "1.13.1",
+      "platform": "macOS-15.6-arm64-arm-64bit"
+    },
+    "code_sha256": "064261d164ef87d57e5002fdb0c9ad4b114411eeeb4f135814768ea238f86f0e",
+    "predictions_sha256": "0ddd9db657f444e993a84f22498b9199a34d837648532fc77aaae8db6d41f95b",
+    "runner_sha256": "54ad2b370480752405df392a40309480c167db44701619285c30e7a0af9b0fdd",
+    "created_at": "2026-10-18T16:32:06Z",
+    "notes": [
+      "Prediction and truth files are local only.",
+      "Runner output was computed outside the fitting code."
+    ]
+  },
+  "artifacts": {
+    "result_json": "benchmark/runs/gblup-sim500-v1/result.json",
+    "metrics_json": "benchmark/runs/gblup-sim500-v1/metrics.json",
+    "predictions_private": "local_data/gblup-sim500/predictions.tsv"
+  },
+  "site": {
+    "algorithm_id": "gblup",
+    "dataset_id": "sim500",
+    "status": "exploratory",
+    "label": "\u5355\u6b21\u5212\u5206 \u00b7 \u63a2\u7d22\u6027"
+  }
+}

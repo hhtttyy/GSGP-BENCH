@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsgp-bench.local/schema/result.v1.json",
+  "title": "GSGP-Bench result record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "algorithm",
+    "dataset",
+    "split",
+    "metrics",
+    "evidence",
+    "provenance",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {"const": "gsgp.result.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "algorithm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "implementation", "paper_doi", "code_commit"],
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "implementation": {"type": "string"},
+        "paper_doi": {"type": ["string", "null"]},
+        "paper_title": {"type": ["string", "null"]},
+        "code_commit": {"type": ["string", "null"]}
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "species", "source", "n_individuals", "n_snps", "trait", "input_sha256"],
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "species": {"type": "string"},
+        "source": {"type": "string"},
+        "n_individuals": {"type": "integer", "minimum": 1},
+        "n_snps": {"type": "integer", "minimum": 1},
+        "trait": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "type", "simulated"],
+          "properties": {
+            "name": {"type": "string"},
+            "type": {"enum": ["quantitative", "binary"]},
+            "simulated": {"type": "boolean"},
+            "heritability": {"type": ["number", "null"]}
+          }
+        },
+        "license_note": {"type": "string"},
+        "input_sha256": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["split_id", "seed", "n_training", "n_validation", "split_sha256"],
+      "properties": {
+        "split_id": {"type": "string"},
+        "seed": {"type": ["integer", "null"]},
+        "n_training": {"type": "integer", "minimum": 1},
+        "n_validation": {"type": "integer", "minimum": 1},
+        "split_sha256": {"type": "string"}
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pearson_r", "r2", "prediction_bias_slope", "auc", "runtime_seconds"],
+      "properties": {
+        "pearson_r": {"type": ["number", "null"]},
+        "r2": {"type": ["number", "null"]},
+        "prediction_bias_slope": {"type": ["number", "null"]},
+        "auc": {"type": ["number", "null"]},
+        "runtime_seconds": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "status", "certified", "single_split", "notes"],
+      "properties": {
+        "level": {"enum": ["stub", "exploratory", "l1", "l2", "l3"]},
+        "status": {"enum": ["complete", "failed", "not_comparable"]},
+        "certified": {"type": "boolean"},
+        "single_split": {"type": "boolean"},
+        "reviewed_by": {"type": ["string", "null"]},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "environment", "code_sha256", "predictions_sha256", "runner_sha256", "created_at"],
+      "properties": {
+        "command": {"type": "string"},
+        "environment": {"type": "object", "additionalProperties": {"type": "string"}},
+        "code_sha256": {"type": "string"},
+        "predictions_sha256": {"type": "string"},
+        "runner_sha256": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_json", "metrics_json"],
+      "properties": {
+        "result_json": {"type": "string"},
+        "metrics_json": {"type": "string"},
+        "site_json": {"type": "string"},
+        "predictions_private": {"type": ["string", "null"]}
+      }
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm_id", "dataset_id", "status", "label"],
+      "properties": {
+        "algorithm_id": {"type": "string"},
+        "dataset_id": {"type": "string"},
+        "status": {"type": "string"},
+        "label": {"type": "string"}
+      }
+    },
+    "fit": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Optional model-specific fit diagnostics. Never contains held-out truth values."
+    },
+    "mcp": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Optional MCP transport/tool provenance for results produced through an MCP."
+    }
+  }
+}

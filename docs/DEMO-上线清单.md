@@ -1,0 +1,128 @@
+# GSGP-Bench Demo 上线清单
+
+> 目标：把 `site/index.html` 变成一个可访问的 Cloudflare Pages 演示站，并验证“push 后自动部署”。
+> 当前阶段不接真实算法运行，页面数值均为演示值。
+
+## 0. 当前已完成
+
+- 三列交互式演示站（学术期刊风格）：`site/index.html`
+- 算法卡片 Paper / Skill / MCP 证据链：论文 DOI 可打开；IFAM Skill 有真实阅读预览；缺项显示“未上传 / 未认证”并支持悬浮、键盘聚焦、触屏点按提示
+- IFAM Paper2Skill 包：`agents/ifam/skill/ifam-paper/`（`reviewed_with_limitations`，严格校验通过）
+- 公开阅读预览：`site/resources/ifam-paper/`，含 ZIP、SHA-256 清单和限制说明
+- 预览已在本地浏览器检查：桌面与 390px 移动端均可读，6 图 3 公式内嵌显示，链接、下载、图片和键盘提示正常，无横向溢出或控制台错误
+- IFAM MCP 本地 stdio 原型：`agents/ifam/mcp/`（4 工具、tiny 黄金测试通过、未部署、未认证、未跑真实 IFAM）
+- IFAM 上游归档核对：用户已下载 `main.zip`；归档/脚本哈希、demo 表头、注释自动发现规则、`anno_spec` 语义和 `.rand` 列名已记录在 `agents/ifam/mcp/UPSTREAM.md`；执行环境尚未安装
+- GBLUP 手动 baseline Skill/MCP：`benchmark/algorithms/gblup/`；站点 Skill 页面与本地 stdio MCP（已认证 MCP 包、不在线托管）
+- 第一条真实 GBLUP exploratory 记录：`site/data/results/gblup-sim500.json` + `benchmark/runs/gblup-sim500-mcp-v1/result.json`；经 MCP inspect/fit/export，500×5k 模拟性状，单次 80/20，EXP 非 L1
+- IFAM STUB 记录：`site/data/results/ifam-stub-sim500.json` + `benchmark/runs/ifam-stub-sim500-v1/result.json`；fake HIBLUP，仅管线展示
+- 方法档案页：`site/resources/methods/index.html`；MCP 认证规则：`docs/MCP认证与展示.md`
+- 本地 Paper2Agent 生成套件：`site/resources/generate/`（页面 + 73 文件 ZIP + SHA-256 清单）；网站不执行任何生成
+- 提交/认证入口：`site/resources/submit/index.html` + `.github/ISSUE_TEMPLATE/mcp-submission.yml`
+- 结果 schema 与证据账本：`benchmark/schema/result.v1.json`、`benchmark/README.md`
+- 站点 MIT 归属：`site/LICENSE`
+- 本地预览方式：`python3 -m http.server 8000 --directory site`（当前开发服务器常用 8765）
+- 规划文档：`docs/GSGP-Bench-规划.md`
+- 证据等级规范：`docs/证据等级与记录.md`
+- MCP 认证与展示规则：`docs/MCP认证与展示.md`
+- GBLUP 端到端示例：`docs/端到端示例-GBLUP.md`
+- 研究赋能评估：`docs/MCP与Skill-研究赋能.md`
+- 静态站部署说明：`site/README.md`
+
+> 当前大部分评测仍为演示值；GBLUP 是真实探索记录，IFAM 是流程测试。MCP 认证只有已认证/未认证，网站不运行、不托管 MCP。
+
+## 1. 在 GitHub 创建你的项目
+
+当前本地仓库的 `origin` 仍指向上游 `jmiao24/Paper2Agent`。请先在 GitHub 网页上 fork 到你的账号（建议命名为 `GSGP-Bench`），然后在本地把远端改成自己的：
+
+```bash
+# 把原来的 origin 改名为 upstream，保留同步上游的能力
+git remote rename origin upstream
+
+# 添加你自己的 fork
+git remote add origin git@github.com:<你的账号>/GSGP-Bench.git
+
+# 确认
+git remote -v
+```
+
+> 不要直接在 `jmiao24/Paper2Agent` 上推送。fork 后，`upstream` 用于同步原项目，`origin` 用于你自己的项目。
+
+## 2. 提交并推送
+
+先把站点里的 GitHub 链接改成你的 fork（保留页脚对上游 Paper2Agent 的 MIT 归属）：
+
+```bash
+grep -n "jmiao24/Paper2Agent" site/index.html
+# 建议只改导航 GitHub 和页脚 Source；页脚“基于 Paper2Agent”的归属链接保留 upstream
+```
+
+再提交：
+
+```bash
+git add .gitignore .github agents benchmark docs scripts site
+git commit -m "Build GSGP-Bench static site, local generation kit and evidence layer"
+git push -u origin main
+```
+
+> `docs/*.pdf` 已加入 `.gitignore`，避免把许可不明的论文 PDF 推到公开仓库。
+> 如果 GitHub 上 fork 的默认分支不是 `main`，先确认分支名再推送。
+
+## 3. 连接 Cloudflare Pages
+
+1. 登录 Cloudflare Dashboard。
+2. 进入 **Workers & Pages** → **Create** → **Pages** → **Connect to Git**。
+3. 授权 GitHub，选择你的 `GSGP-Bench` 仓库。
+4. 构建配置：
+   - Production branch: `main`
+   - Root directory: `site`
+   - Build command: 留空（若必填，用 `exit 0`）
+   - Build output directory: `.`
+5. 点击 **Save and Deploy**。
+6. 记下 `https://<project>.pages.dev`。
+
+如果控制台的校验不通过，改用：
+
+- Root directory: 留空
+- Build command: `exit 0`
+- Build output directory: `site`
+
+## 4. 验证自动部署
+
+1. 打开生产地址，确认三列布局、筛选、指标切换、详情抽屉都正常。
+2. 确认算法卡的论文链接能打开 DOI；IFAM 阅读包显示“预览”，其他阅读包显示“暂无”，运行工具显示“已认证/未认证”；悬浮、键盘聚焦和触屏点按都能看到说明。
+3. 确认 GBLUP × GSGP-Sim 500×5k 显示 **探索**（真实单次划分），IFAM × 同一数据集显示 **流程测试**；打开详情能看到 run ID、划分、实现和证据账本路径。
+4. 打开 Generate，确认本地套件可下载、清单 SHA-256 一致；打开 Methods / 方法档案，确认 GBLUP/IFAM 的论文、阅读包、工具、验证和证据都列出。
+5. 确认页脚显示 Paper2Agent / MIT 归属，`/LICENSE` 可访问。
+6. 在 390px 左右宽度检查：三列已纵向重排、页面无横向滚动、结果表可横向滑动、图表可左右滑动。
+7. 打开 Generate / Methods / Submit 页面，确认桌面和移动端都可读。
+8. 随便改一个页面文案（例如页脚版本号），push 到 `main`。
+9. 确认 Cloudflare 自动触发新部署。
+10. 新建一个分支并提 PR，确认生成 Preview Deployment。
+
+## 5. 可选：绑定自定义域名
+
+- Pages 项目 → **Custom domains** → **Set up a custom domain**。
+- 按提示在 Cloudflare DNS 添加 CNAME，TLS 会自动签发。
+- 上线前实测中国大陆网络访问；`pages.dev` 在部分网络环境可能不稳定。
+
+## 6. 下一步：把演示值换成真实结果
+
+按以下顺序推进，避免一次性引入太多变量：
+
+1. 定稿结果 JSON schema（参考规划文档第 6.3 节）。
+2. 用 GBLUP 在一个 tiny fixture 上跑出真实预测，生成第一个结果 JSON。
+3. 把 `site/index.html` 的内联演示数据替换为 `site/data/results/*.json`。
+4. 继续 IFAM 垂直切片：Paper Skill 已完成；用户已下载上游归档，脚本、demo 表头、注释发现规则和输出列名已校准；MCP 四工具 stdio 原型和独立 runner 已实现。下一步由用户安装 R/HIBLUP 并运行最小执行验收。
+5. IFAM 打通后，再做 SBayesRC 的公开数据 L2 探索。
+6. 最后加 GitHub 论文提交表单、自动检查和人工审核流程。
+
+> 大文件下载前先确认磁盘、带宽和数据许可；受限数据（UKB/WTCCC/Yorkshire 等）只允许在受控环境使用，不上传公开仓库或站点。
+> 当前所有下载由用户执行，助手不自动抓取；IFAM 归档已由用户下载并核对，哈希见 `agents/ifam/mcp/UPSTREAM.md`。
+
+## 不要做的事
+
+- 不要在 Cloudflare Worker 里执行 R/GCTB 或不可信论文代码。
+- 不要把 UKB/WTCCC 等受限数据提交到公开仓库。
+- 不要把演示值包装成实测结论；页面上必须保留“演示数据”提示。
+- 不要把未认证工具宣传为已认证或在线服务。
+- 不要在没有统一划分和指标的情况下做跨论文排名。

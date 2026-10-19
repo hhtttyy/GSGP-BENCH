@@ -1,0 +1,43 @@
+{
+  "schema_version": "ifam.fixture.v1",
+  "name": "tiny",
+  "status": "synthetic-design-fixture",
+  "purpose": "Exercise the IFAM MCP contract and inspection logic without real or restricted data.",
+  "not_for": "Scientific claims, benchmark evidence, or model ranking.",
+  "seed": 20261018,
+  "generator": {
+    "path": "generate.py",
+    "sha256": "880911dd294a5cb1fe3215204e57bbadc4e1b924a9a5e3c4a9c5d30686a23516"
+  },
+  "counts": {
+    "individuals": 12,
+    "snps": 24,
+    "annotations": 4,
+    "training_ids": 8,
+    "validation_ids": 4
+  },
+  "upstream": {
+    "repository": "https://github.com/xiaolei-lab/IFAM",
+    "commit": "62f8e4cd8ee53d70b3324ec5cd40d3f2ffbf7649",
+    "archive_sha256": "b66f1a6d9b01115d955552a1252a4ea3d22ad25b335fce1fcf8b41ba8a91bd2b",
+    "inspected_on": "2026-10-18",
+    "executed": false,
+    "note": "Format calibrated against IFAM.R 1.0.0 (sha256 1ff7efa4e0ecaf2c4998202a3e5658e5cc2987878f3304479e39d18d210e0f11); not executed through IFAM.R or HIBLUP v1.1.0."
+  },
+  "expected": "expected/inspect_inputs.json",
+  "files_sha256": {
+    "README.md": "44455819d264cf7eed98cf169fcd7e93dd78aaffa94f27c9412b691a197ddb09",
+    "annotations/enhancer.txt": "96c2373bee8f0683b3f7a255aa1f424761aee5f795f669d0de60c88afa562717",
+    "annotations/promoter.txt": "5bc25abc6de452a58c16e6885a667bcfbe748e8a8cc867eb63ff506814252749",
+    "annotations/tfbs.txt": "d278966b0cd260d10bfff3372bebae006d4f18d368e529ecfaa54e09332ff231",
+    "annotations/trait_snps.txt": "af8a3b629668b8b614771ec5d567e891e33f3b6e881aa31ba9972a66681bb392",
+    "expected/inspect_inputs.json": "55c369194c6ba452a2562fdd7321a703e6b605a437f1a249de590a58d87e28e4",
+    "generate.py": "880911dd294a5cb1fe3215204e57bbadc4e1b924a9a5e3c4a9c5d30686a23516",
+    "geno/tiny.bed": "74a4edb91b82957a048ab920628e3319be8317a85a15d743a7fb4632f49d0860",
+    "geno/tiny.bim": "fa85bbb73243f93a79808ccd37c6d4a825c756346f906c73f486583619a5d74c",
+    "geno/tiny.fam": "24107ef96701e1378ffe94d7ecbf48a9acc686c36343e4c3ac327016971acfe0",
+    "pheno/phenotype.fit.txt": "f2358a1ac560ef6d34d2226fbde7da5753565e370fc07f86a9b5ee2f8ba807bc",
+    "pheno/phenotype.truth.txt": "21bd35c2b014f9aa6ac0ff374a227c7a2e7399a4537c3e8c7b9512e89e5aaee2",
+    "splits/repeat-1.json": "140af285883b1522f9db75a182c536dc742197abd2b3bec5eb6d3c0710be99a6"
+  }
+}

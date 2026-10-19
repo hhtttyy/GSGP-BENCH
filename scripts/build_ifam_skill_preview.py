@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+"""Build the public IFAM Paper Skill preview under site/resources/ifam-paper.
+
+The source of truth is agents/ifam/skill/ifam-paper. This script:
+  1. copies the reviewed bundle into site/resources/ifam-paper/skill/
+  2. renders the Markdown files to readable HTML without changing the source
+  3. writes a deterministic ZIP for agent installation
+  4. writes a SHA-256 manifest for the copied files and the ZIP
+
+It does not download anything and does not include data or MCP fixtures.
+Requires Python 3.9+ and the `markdown` package (Python-Markdown 3.x).
+"""
+
+from __future__ import annotations
+
+import hashlib
+import html
+import json
+import re
+import shutil
+import zipfile
+from datetime import date
+from pathlib import Path
+
+import markdown
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "agents" / "ifam" / "skill" / "ifam-paper"
+OUT = ROOT / "site" / "resources" / "ifam-paper"
+SKILL_OUT = OUT / "skill"
+ZIP_PATH = OUT / "ifam-paper-skill.zip"
+MANIFEST_PATH = OUT / "skill-manifest.json"
+
+PAPER_DOI = "10.1038/s41467-026-72470-0"
+PAPER_CITATION = "Tang et al., Nature Communications (2026) 17:5686"
+ZIP_DATE = (2026, 10, 18, 0, 0, 0)
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def strip_frontmatter(text: str) -> str:
+    return re.sub(r"\A---\r?\n.*?\r?\n---\r?\n", "", text, count=1, flags=re.S)
+
+
+def rewrite_markdown_links(fragment: str) -> str:
+    return re.sub(
+        r'href="([^"]+?)\.md(#[^"]*)?"',
+        lambda match: f'href="{match.group(1)}.html{match.group(2) or ""}"',
+        fragment,
+    )
+
+
+def embed_figure_links(fragment: str) -> str:
+    """Show packaged figure and equation links inline on the reading page.
+
+    The reviewed Markdown keeps each asset as a standalone link paragraph. The
+    public reader inlines that asset for reading while preserving the link to
+    the original file. The ZIP and raw Markdown remain unchanged.
+    """
+
+    def replace(match: re.Match[str]) -> str:
+        href, label = match.group(1), match.group(2)
+        kind = "equation" if "/equation-" in href else "figure"
+        return (
+            f'<figure class="reader-figure reader-figure--{kind}">'
+            f'<a href="{href}" target="_blank" rel="noreferrer">'
+            f'<img src="{href}" alt="{label}" /></a>'
+            "</figure>"
+        )
+
+    pattern = re.compile(
+        r'<p><a href="([^"]+/assets/figure/(?:figure|equation)-\d+\.jpg)">([^<]+)</a></p>'
+    )
+    return pattern.sub(replace, fragment)
+
+
+def render_page(source: Path, target: Path, label: str, title: str) -> None:
+    text = strip_frontmatter(source.read_text(encoding="utf-8"))
+    converter = markdown.Markdown(
+        extensions=["tables", "fenced_code", "sane_lists", "toc"],
+        output_format="html5",
+    )
+    body = embed_figure_links(rewrite_markdown_links(converter.convert(text)))
+    relative_depth = len(target.relative_to(SKILL_OUT).parts) - 1
+    css = "../" * (relative_depth + 1) + "reader.css"
+    landing = "../" * (relative_depth + 1) + "index.html"
+    home = "../" * (relative_depth + 3) + "index.html"
+    raw_name = source.name
+    page = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{html.escape(title)} · IFAM Paper Skill</title>
+<meta name="description" content="IFAM Paper Skill 阅读预览；来源审校状态 reviewed_with_limitations。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%233d5a47' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%233d5a47'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%233d5a47' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%233d5a47' opacity='.8'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="{css}" />
+</head>
+<body class="reader-page">
+<header class="reader-top">
+  <a class="reader-brand" href="{home}">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="面包屑">
+    <a href="{landing}">IFAM Paper Skill</a>
+    <span aria-hidden="true">/</span>
+    <span>{html.escape(label)}</span>
+  </nav>
+  <span class="reader-status">reviewed_with_limitations</span>
+</header>
+<main class="reader">
+{body}
+</main>
+<footer class="reader-foot">
+  <p><b>Source.</b> <a href="{raw_name}">{html.escape(raw_name)}</a> — 渲染页仅供阅读，原始 Markdown 为准。</p>
+  <p><b>Attribution.</b> {html.escape(PAPER_CITATION)}, DOI
+    <a href="https://doi.org/{PAPER_DOI}">{PAPER_DOI}</a>.
+    Open access under
+    <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+  <p>Generated by the GSGP-Bench Paper2Skill workflow. This preview contains paper
+    material only; it is not a benchmark result, a data/code distribution, or an
+    MCP service.</p>
+  <p><a href="{landing}">← 返回 IFAM Paper Skill</a></p>
+</footer>
+</body>
+</html>
+"""
+    target.write_text(page, encoding="utf-8")
+
+
+def copy_bundle() -> None:
+    if SKILL_OUT.exists():
+        shutil.rmtree(SKILL_OUT)
+    shutil.copytree(SOURCE, SKILL_OUT)
+
+
+def build_zip() -> dict:
+    files = sorted(path for path in SOURCE.rglob("*") if path.is_file())
+    with zipfile.ZipFile(ZIP_PATH, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for path in files:
+            rel = path.relative_to(SOURCE).as_posix()
+            info = zipfile.ZipInfo(f"ifam-paper/{rel}", date_time=ZIP_DATE)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            archive.writestr(info, path.read_bytes())
+    return {
+        "path": ZIP_PATH.name,
+        "bytes": ZIP_PATH.stat().st_size,
+        "sha256": sha256(ZIP_PATH),
+        "top_level_directory": "ifam-paper",
+        "file_count": len(files),
+    }
+
+
+def write_manifest(zip_info: dict) -> None:
+    source_files = sorted(path for path in SOURCE.rglob("*") if path.is_file())
+    rendered = sorted(path for path in SKILL_OUT.rglob("*.html") if path.is_file())
+    manifest = {
+        "schema_version": "ifam.paper-skill.preview.v1",
+        "name": "ifam-paper",
+        "review_status": "reviewed_with_limitations",
+        "generated_on": date.today().isoformat(),
+        "source_path": "agents/ifam/skill/ifam-paper",
+        "paper": {
+            "doi": PAPER_DOI,
+            "citation": PAPER_CITATION,
+            "license": "CC BY 4.0",
+        },
+        "not_for": [
+            "benchmark evidence or model ranking",
+            "data or code distribution",
+            "a callable MCP service",
+        ],
+        "source_bundle": {
+            "file_count": len(source_files),
+            "files": [
+                {
+                    "path": path.relative_to(SOURCE).as_posix(),
+                    "bytes": path.stat().st_size,
+                    "sha256": sha256(path),
+                }
+                for path in source_files
+            ],
+        },
+        "rendered_pages": [
+            {
+                "path": path.relative_to(SKILL_OUT).as_posix(),
+                "sha256": sha256(path),
+            }
+            for path in rendered
+        ],
+        "zip": zip_info,
+    }
+    MANIFEST_PATH.write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+
+def main() -> None:
+    required = [
+        SOURCE / "SKILL.md",
+        SOURCE / "references" / "index.md",
+        SOURCE / "references" / "paper.md",
+        SOURCE / "references" / "supplement.md",
+    ]
+    missing = [str(path) for path in required if not path.is_file()]
+    if missing:
+        raise SystemExit(f"Missing source files: {missing}")
+    assets = sorted((SOURCE / "assets" / "figure").glob("*.jpg"))
+    if len(assets) != 9:
+        raise SystemExit(f"Expected 9 figure/equation assets, found {len(assets)}")
+
+    copy_bundle()
+    render_page(SOURCE / "SKILL.md", SKILL_OUT / "SKILL.html", "Skill 使用说明", "IFAM Paper Skill 使用说明")
+    render_page(
+        SOURCE / "references" / "index.md",
+        SKILL_OUT / "references" / "index.html",
+        "阅读导航",
+        "IFAM 阅读导航",
+    )
+    render_page(
+        SOURCE / "references" / "paper.md",
+        SKILL_OUT / "references" / "paper.html",
+        "论文全文",
+        "IFAM 论文全文",
+    )
+    render_page(
+        SOURCE / "references" / "supplement.md",
+        SKILL_OUT / "references" / "supplement.html",
+        "补充材料",
+        "IFAM 补充材料状态",
+    )
+    zip_info = build_zip()
+    write_manifest(zip_info)
+    print(f"Built IFAM Paper Skill preview at {OUT}")
+    print(f"Files copied: 13 | ZIP: {ZIP_PATH.name} ({zip_info['bytes']} bytes)")
+    print(f"ZIP SHA-256: {zip_info['sha256']}")
+
+
+if __name__ == "__main__":
+    main()

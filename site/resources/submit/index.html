@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>提交 MCP · GSGP·Bench</title>
+<meta name="description" content="向 GSGP-Bench 提交 Paper2Agent 生成的 Skill/MCP 包，接受统一验证和认证。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="stylesheet" href="../ifam-paper/reader.css" />
+</head>
+<body class="reader-page">
+<header class="reader-top">
+  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="面包屑">
+    <a href="../../index.html">方法库</a>
+    <span aria-hidden="true">/</span>
+    <span>提交 MCP</span>
+  </nav>
+  <span class="reader-status">已认证 / 未认证</span>
+</header>
+<main class="reader">
+  <h1>提交 MCP</h1>
+  <p>我们用 <strong>已认证 / 未认证</strong> 两个状态，不托管在线 MCP。已认证表示中央团队实践验证过这个版本的 MCP 包；它不代表论文结果认证，也不代表网站在线执行。</p>
+
+  <p><a href="../../resources/generate/index.html">还没有生成包？先下载本地 Paper2Agent 套件 →</a></p>
+
+  <h2>流程</h2>
+  <ol>
+    <li><a href="../../resources/generate/index.html">用本地 Paper2Agent 套件生成包</a>，准备 Skill、MCP 服务、工具契约、运行说明和公开/合成测试数据。</li>
+    <li>在仓库的 <strong>Issues → New issue → MCP submission</strong> 提交表单（模板：<code>.github/ISSUE_TEMPLATE/mcp-submission.yml</code>）。</li>
+    <li>中央团队统一运行参考数据、检查输入输出、truth 隔离、安全边界和 provenance。</li>
+    <li>通过 → 标记 <strong>已认证</strong>；未通过或尚未审核 → 保持 <strong>未认证</strong>，仍可被查看和使用，但风险自担。</li>
+  </ol>
+
+  <h2>提交需要包含</h2>
+  <ul>
+    <li>论文标题、DOI/链接；</li>
+    <li>官方代码仓库、commit、许可证；</li>
+    <li>Paper2Agent Skill 和 MCP 包/入口；</li>
+    <li>MCP transport、运行方式、依赖；</li>
+    <li>一条可复现测试命令和参考数据；</li>
+    <li>期望输出与已知限制；</li>
+    <li>明确声明：MCP 不接收 held-out truth，不计算 benchmark 指标。</li>
+  </ul>
+
+  <h2>认证边界</h2>
+  <p>已认证的是 <strong>这个 MCP 包和固定版本</strong>，不是任何一次运行结果，也不是在线服务。用户仍然需要自己安装、运行并核对结果。结果等级仍单独记录为 演示 / 流程测试 / 探索 / 正式复现 / 论文值。</p>
+  <p>未认证条目允许公开查看和自行使用，但网站不会为它背书；使用前请检查来源、许可证和限制。</p>
+
+  <h2>当前认证状态</h2>
+  <ul>
+    <li><strong>GBLUP baseline MCP</strong>：已认证；本地 stdio 测试和 direct 对照通过。</li>
+    <li><strong>IFAM MCP</strong>：未认证；只有替代引擎的流程测试，真实引擎未验证。</li>
+  </ul>
+
+  <h2>相关页面</h2>
+  <p><a href="../../resources/methods/index.html">方法档案</a> · <a href="../../resources/gblup-baseline/index.html">GBLUP baseline</a> · <a href="../../resources/ifam-paper/index.html">IFAM Skill</a></p>
+</main>
+<footer class="reader-foot">
+  <p><b>GSGP·Bench</b> · MCP submission and central validation · 2026-10-19</p>
+  <p>No online MCP hosting. Certification covers the package, not scientific results.</p>
+</footer>
+</body>
+</html>

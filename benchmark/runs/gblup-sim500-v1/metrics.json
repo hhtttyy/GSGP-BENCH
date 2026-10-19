@@ -1,0 +1,30 @@
+{
+  "schema_version": "ifam.evaluation.v1",
+  "evidence_level": "exploratory",
+  "split_id": "sim500-repeat-1",
+  "metrics": {
+    "pearson_r": 0.5075119052365452,
+    "r2": 0.25756833395682804,
+    "prediction_bias_slope": 1.2116827511533754,
+    "auc": null
+  },
+  "n_validation": 100,
+  "n_training": 400,
+  "checks": {
+    "split_disjoint": true,
+    "truth_within_validation": true,
+    "predictions_complete": true,
+    "fit_phenotype_masked": true,
+    "truth_binary": false
+  },
+  "warnings": [
+    "truth is not binary 0/1"
+  ],
+  "provenance": {
+    "predictions_sha256": "0ddd9db657f444e993a84f22498b9199a34d837648532fc77aaae8db6d41f95b",
+    "truth_sha256": "d125fb787a335b1ea0fba05879441937691641761467a071923e98a92150c6eb",
+    "split_sha256": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57",
+    "truth_column": 2,
+    "fit_column": 2
+  }
+}

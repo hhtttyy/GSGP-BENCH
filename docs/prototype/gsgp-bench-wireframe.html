@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GSGP·Bench — 界面线框</title>
+<style>
+  :root {
+    --bg: #f2f4f6;
+    --panel: #ffffff;
+    --ink: #17212b;
+    --ink-2: #4b5866;
+    --ink-3: #7b8794;
+    --line: #dfe4ea;
+    --line-soft: #ecf0f4;
+    --accent: #0f766e;
+    --accent-soft: #e8f6f3;
+    --accent-ink: #0b5d57;
+    --amber: #9a6407;
+    --amber-soft: #fdf4e3;
+    --red: #a13a3a;
+    --red-soft: #fbecec;
+    --blue: #2f5d8a;
+    --blue-soft: #eaf1f8;
+    --violet: #6b5b95;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(23, 33, 43, 0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  a { color: var(--accent-ink); }
+
+  .app { height: 100%; display: flex; flex-direction: column; }
+
+  /* ---------- Header ---------- */
+  header.topbar {
+    flex: 0 0 auto;
+    height: 62px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+  .brand-mark {
+    font-family: "Iowan Old Style", "Songti SC", "Noto Serif CJK SC", Georgia, serif;
+    font-size: 23px;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .brand-mark span { color: var(--accent); }
+  .brand-sub {
+    color: var(--ink-3);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .ghost-btn {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 7px;
+    padding: 6px 10px;
+    color: var(--ink-2);
+    font-size: 12px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .ghost-btn:hover { border-color: #c6d0da; color: var(--ink); }
+  .ghost-btn.strong { border-color: var(--ink); color: var(--ink); }
+
+  /* ---------- Demo banner ---------- */
+  .demo-banner {
+    flex: 0 0 auto;
+    background: var(--amber-soft);
+    border-bottom: 1px solid #f0dfbc;
+    color: var(--amber);
+    padding: 7px 20px;
+    font-size: 11.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .demo-banner b { font-weight: 650; }
+  .demo-banner .dot { width: 6px; height: 6px; border-radius: 50%; background: #c98a1b; flex: 0 0 auto; }
+
+  /* ---------- Three columns ---------- */
+  main.workspace {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 272px 306px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-head {
+    flex: 0 0 auto;
+    padding: 13px 15px 11px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--ink-3);
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    font-weight: 650;
+  }
+  .eyebrow .num { color: var(--accent); letter-spacing: 0.04em; }
+  .panel-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 3px; }
+  .panel-title { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+  .panel-hint { color: var(--ink-3); font-size: 11px; white-space: nowrap; }
+  .search-wrap { position: relative; margin-top: 10px; }
+  .search-wrap svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--ink-3); }
+  .search {
+    width: 100%;
+    height: 31px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 0 10px 0 29px;
+    background: #fbfcfd;
+    outline: none;
+    font-size: 12px;
+  }
+  .search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.08); background: #fff; }
+  .panel-scroll { flex: 1 1 auto; overflow-y: auto; padding: 9px; scrollbar-width: thin; }
+  .panel-foot {
+    flex: 0 0 auto;
+    padding: 8px 13px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--ink-3);
+    font-size: 11px;
+    background: #fcfdfe;
+  }
+  .link-btn { border: 0; background: none; padding: 0; color: var(--ink-2); font-size: 11px; text-decoration: underline; text-underline-offset: 2px; }
+  .link-btn:hover { color: var(--ink); }
+
+  /* ---------- Selectable cards ---------- */
+  .option {
+    position: relative;
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 10px 9px 30px;
+    margin-bottom: 7px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+  }
+  .option:hover { border-color: #c9d3dd; background: #fcfdfe; }
+  .option:focus-within { outline: 2px solid rgba(15, 118, 110, 0.35); outline-offset: 1px; }
+  .option.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.15); }
+  .option input[type="checkbox"] {
+    position: absolute;
+    left: 10px;
+    top: 12px;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+  .option-main { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .option-name { font-weight: 650; font-size: 12.5px; letter-spacing: -0.005em; }
+  .option-meta { color: var(--ink-3); font-size: 10.5px; margin-top: 2px; line-height: 1.45; }
+  .option-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 999px;
+    padding: 1px 7px;
+    font-size: 10px;
+    line-height: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge .bdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .badge.green { background: #e7f5ef; color: #1d7350; }
+  .badge.amber { background: var(--amber-soft); color: var(--amber); }
+  .badge.gray { background: #f0f2f4; color: #6c7681; }
+  .badge.blue { background: var(--blue-soft); color: var(--blue); }
+  .badge.red { background: var(--red-soft); color: var(--red); }
+  .badge.violet { background: #f0edf7; color: var(--violet); }
+  .badge.outline { background: transparent; border: 1px solid var(--line); color: var(--ink-3); }
+
+  .trait-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .trait {
+    font-size: 10px;
+    color: var(--ink-2);
+    background: #f5f7f9;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .option.selected .trait { background: rgba(255,255,255,0.7); }
+
+  /* ---------- Results ---------- */
+  .results-head {
+    flex: 0 0 auto;
+    padding: 13px 17px 0;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .results-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .results-title { margin: 0; font-size: 15px; font-weight: 650; }
+  .results-sub { color: var(--ink-3); font-size: 11px; margin-top: 2px; }
+  .summary-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .chip {
+    border: 1px solid var(--line);
+    background: #fbfcfd;
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 10.5px;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .chip b { color: var(--ink); font-weight: 650; }
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+  }
+  .metric-tabs { display: inline-flex; background: #f1f4f6; border-radius: 8px; padding: 2px; gap: 2px; }
+  .metric-tab {
+    border: 0;
+    background: transparent;
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: var(--ink-2);
+    font-size: 11.5px;
+    font-weight: 550;
+  }
+  .metric-tab:hover { color: var(--ink); }
+  .metric-tab.active { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(23,33,43,0.1); font-weight: 650; }
+  .toolbar-note { color: var(--ink-3); font-size: 10.5px; }
+  .results-body { flex: 1 1 auto; overflow-y: auto; padding: 14px 17px 22px; }
+
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border: 1px solid #f0dfbc;
+    background: var(--amber-soft);
+    color: #7f5608;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+  .notice.info { border-color: #d8e4ef; background: var(--blue-soft); color: #2c527a; }
+  .notice svg { flex: 0 0 auto; margin-top: 1px; }
+  .notice b { font-weight: 650; }
+
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 2px 0 8px; }
+  .section-head h3 { margin: 0; font-size: 12px; font-weight: 650; letter-spacing: 0.01em; }
+  .section-head .hint { color: var(--ink-3); font-size: 10.5px; }
+
+  .chart-card {
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 13px 15px 10px;
+    background: #fff;
+    margin-bottom: 16px;
+  }
+  .chart {
+    height: 208px;
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    padding: 6px 2px 0;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .chart::before, .chart::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    border-top: 1px dashed var(--line-soft);
+    pointer-events: none;
+  }
+  .chart::before { top: 25%; }
+  .chart::after { top: 58%; }
+  .chart-group { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; }
+  .chart-bars { flex: 1 1 auto; display: flex; align-items: flex-end; justify-content: center; gap: 8px; padding: 0 6px; position: relative; }
+  .bar-wrap { flex: 1 1 0; max-width: 44px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+  .bar-value { font-size: 9.5px; font-variant-numeric: tabular-nums; color: var(--ink-2); margin-bottom: 3px; white-space: nowrap; }
+  .bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    position: relative;
+    min-height: 2px;
+    transition: height 0.25s ease;
+  }
+  .bar-err {
+    position: absolute;
+    width: 7px;
+    height: 1px;
+    background: var(--ink-2);
+    left: 50%;
+    transform: translateX(-50%);
+    top: -1px;
+  }
+  .bar-err::before, .bar-err::after {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 4px;
+    background: var(--ink-2);
+    top: -2px;
+  }
+  .bar-err::before { left: 0; }
+  .bar-err::after { right: 0; }
+  .chart-x { text-align: center; font-size: 10.5px; color: var(--ink-2); padding-top: 6px; line-height: 1.35; }
+  .chart-x small { display: block; color: var(--ink-3); font-size: 9.5px; }
+  .chart-legend { display: flex; gap: 12px; flex-wrap: wrap; padding-top: 9px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--ink-2); }
+  .swatch { width: 8px; height: 8px; border-radius: 2px; }
+  .chart-empty {
+    height: 208px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    font-size: 11.5px;
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ---------- Matrix table ---------- */
+  .table-card { border: 1px solid var(--line); border-radius: 9px; overflow: auto; background: #fff; }
+  table.matrix { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 540px; }
+  table.matrix th, table.matrix td { padding: 9px 10px; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: middle; }
+  table.matrix thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: #fbfcfd;
+    color: var(--ink-3);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--line);
+  }
+  table.matrix thead th .th-sub { display: block; margin-top: 1px; color: var(--ink-3); font-size: 9.5px; letter-spacing: 0; text-transform: none; font-weight: 400; }
+  table.matrix tbody tr:last-child td { border-bottom: 0; }
+  table.matrix tbody tr:hover td { background: #fcfdfe; }
+  .algo-cell { min-width: 138px; }
+  .algo-cell .an { font-weight: 600; font-size: 11.5px; }
+  .algo-cell .am { color: var(--ink-3); font-size: 9.5px; margin-top: 1px; }
+  .metric-cell {
+    border: 0; background: transparent; padding: 2px 0; text-align: left; width: 100%;
+    display: flex; flex-direction: column; gap: 3px; border-radius: 5px;
+  }
+  .metric-cell:hover { background: #f4f8f8; }
+  .metric-cell:focus-visible { outline: 2px solid rgba(15,118,110,0.4); outline-offset: 1px; }
+  .cell-value { font-variant-numeric: tabular-nums; font-weight: 650; font-size: 12.5px; letter-spacing: -0.01em; }
+  .cell-sd { font-weight: 400; color: var(--ink-3); font-size: 10px; margin-left: 1px; }
+  .cell-status { font-size: 9.5px; color: var(--ink-3); display: inline-flex; align-items: center; gap: 3px; }
+  .cell-status .sdot { width: 5px; height: 5px; border-radius: 50%; }
+  .status-reproduced { color: #1d7350; }
+  .status-reproduced .sdot { background: #2f9a6a; }
+  .status-paper { color: var(--amber); }
+  .status-paper .sdot { background: #c98a1b; }
+  .status-none { color: #98a2ad; }
+  .status-none .sdot { background: #c3cbd3; }
+  .cell-na { color: #aeb7c0; font-size: 11px; }
+
+  .legend-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 9px; color: var(--ink-3); font-size: 10px; }
+  .legend-bar .item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-bar .sdot { width: 5px; height: 5px; border-radius: 50%; }
+
+  .empty-state {
+    border: 1px dashed #cfd8e1;
+    border-radius: 9px;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--ink-3);
+    background: #fbfcfd;
+  }
+  .empty-state h3 { margin: 0 0 6px; color: var(--ink-2); font-size: 13px; font-weight: 650; }
+  .empty-state p { margin: 0 auto; max-width: 360px; font-size: 11.5px; line-height: 1.6; }
+
+  /* ---------- Drawer ---------- */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(15, 23, 32, 0.28);
+    opacity: 0; pointer-events: none; transition: opacity 0.18s; z-index: 40;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; right: 0; height: 100vh; width: min(430px, 92vw);
+    background: #fff; box-shadow: -12px 0 32px rgba(15,23,32,0.14);
+    transform: translateX(102%); transition: transform 0.2s ease; z-index: 50;
+    display: flex; flex-direction: column;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { padding: 15px 18px 13px; border-bottom: 1px solid var(--line); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .drawer-head .eyebrow { justify-content: flex-start; }
+  .drawer-head h2 { margin: 4px 0 0; font-size: 16px; font-weight: 650; letter-spacing: -0.01em; }
+  .drawer-head p { margin: 3px 0 0; color: var(--ink-3); font-size: 11px; }
+  .close-btn {
+    border: 1px solid var(--line); background: #fff; border-radius: 7px;
+    width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+    color: var(--ink-2); flex: 0 0 auto;
+  }
+  .close-btn:hover { background: #f5f7f9; }
+  .drawer-body { overflow-y: auto; padding: 16px 18px 26px; }
+  .drawer-status { display: flex; align-items: center; gap: 7px; margin-bottom: 14px; flex-wrap: wrap; }
+  .metric-hero {
+    border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    background: #fbfcfd; margin-bottom: 16px;
+  }
+  .metric-hero .label { color: var(--ink-3); font-size: 10.5px; }
+  .metric-hero .value { font-size: 26px; font-weight: 650; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .metric-hero .value small { font-size: 11px; color: var(--ink-3); font-weight: 400; letter-spacing: 0; }
+  .detail-section { margin-bottom: 17px; }
+  .detail-section h3 { margin: 0 0 7px; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 650; }
+  .kv { border: 1px solid var(--line-soft); border-radius: 8px; overflow: hidden; }
+  .kv-row { display: grid; grid-template-columns: 104px 1fr; gap: 10px; padding: 7px 10px; border-bottom: 1px solid var(--line-soft); font-size: 11px; }
+  .kv-row:last-child { border-bottom: 0; }
+  .kv-row dt { color: var(--ink-3); margin: 0; }
+  .kv-row dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+  .kv-row code { font-family: "SF Mono", "Cascadia Code", Menlo, monospace; font-size: 10px; background: #f4f6f8; padding: 1px 4px; border-radius: 3px; }
+  .artifact-list { display: flex; flex-direction: column; gap: 6px; }
+  .artifact {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border: 1px solid var(--line-soft); border-radius: 7px; padding: 7px 9px; font-size: 11px;
+  }
+  .artifact span { color: var(--ink-2); }
+  .artifact code { color: var(--ink-3); font-size: 9.5px; }
+  .drawer-note { color: var(--ink-3); font-size: 10.5px; line-height: 1.6; border-top: 1px solid var(--line-soft); padding-top: 12px; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(8px);
+    background: #17212b; color: #fff; border-radius: 8px; padding: 8px 13px;
+    font-size: 11.5px; opacity: 0; pointer-events: none; transition: opacity 0.18s, transform 0.18s;
+    z-index: 60; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1120px) {
+    main.workspace { grid-template-columns: 260px 286px minmax(0, 1fr); }
+    .brand-sub { display: none; }
+  }
+  @media (max-width: 900px) {
+    header.topbar { height: auto; padding: 10px 14px; flex-wrap: wrap; }
+    main.workspace {
+      display: flex; flex-direction: column; overflow-y: auto; padding: 10px;
+    }
+    .panel { min-height: 0; max-height: none; flex: 0 0 auto; }
+    .panel-scroll { max-height: 320px; }
+    .results-body { overflow: visible; }
+    .results-head { position: static; }
+    .summary-chips { justify-content: flex-start; }
+    .toolbar { flex-wrap: wrap; }
+    .chart { gap: 6px; }
+    .bar-wrap { max-width: 34px; }
+    .demo-banner { align-items: flex-start; }
+  }
+  @media (max-width: 560px) {
+    .brand-mark { font-size: 20px; }
+    .top-actions .ghost-btn.hide-sm { display: none; }
+    .results-head { padding: 12px 13px 0; }
+    .results-body { padding: 12px 13px 20px; }
+    .chart-bars { gap: 4px; }
+    .bar-value { font-size: 8.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">GSGP<span>·</span>Bench</div>
+      <div class="brand-sub">可复现的基因组预测算法基准 · 同数据 · 同划分 · 同指标</div>
+    </div>
+    <nav class="top-actions" aria-label="页面导航">
+      <a class="ghost-btn hide-sm" href="#" onclick="return false;" title="线框占位">方法学</a>
+      <a class="ghost-btn hide-sm" href="#" onclick="return false;" title="线框占位">数据来源</a>
+      <a class="ghost-btn strong" href="https://github.com/jmiao24/Paper2Agent" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <div class="demo-banner" role="note">
+    <span class="dot" aria-hidden="true"></span>
+    <span><b>界面线框 / 非真实结果。</b> 页面中的算法、数据集与全部数值均为示意，仅用于确认三列布局、筛选与状态表达；真实结果将由 benchmark runner 产出的 JSON 驱动。</span>
+  </div>
+
+  <main class="workspace">
+    <!-- ============ Algorithms ============ -->
+    <section class="panel" aria-labelledby="algo-title">
+      <div class="panel-head">
+        <div class="eyebrow"><span><span class="num">01</span> Algorithms</span><span>多选</span></div>
+        <div class="panel-title-row">
+          <h2 class="panel-title" id="algo-title">算法</h2>
+          <span class="panel-hint">最多对比 4 个</span>
+        </div>
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="search" id="algo-search" type="search" placeholder="搜索算法、方法家族…" aria-label="搜索算法" />
+        </div>
+      </div>
+      <div class="panel-scroll" id="algo-list"></div>
+      <div class="panel-foot">
+        <span><b id="algo-count">3</b> / 4 已选</span>
+        <button class="link-btn" type="button" id="algo-clear">清空</button>
+      </div>
+    </section>
+
+    <!-- ============ Datasets ============ -->
+    <section class="panel" aria-labelledby="data-title">
+      <div class="panel-head">
+        <div class="eyebrow"><span><span class="num">02</span> Datasets</span><span>多选</span></div>
+        <div class="panel-title-row">
+          <h2 class="panel-title" id="data-title">数据集</h2>
+          <span class="panel-hint">最多对比 3 个</span>
+        </div>
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="search" id="data-search" type="search" placeholder="搜索物种、性状、访问级别…" aria-label="搜索数据集" />
+        </div>
+      </div>
+      <div class="panel-scroll" id="data-list"></div>
+      <div class="panel-foot">
+        <span><b id="data-count">2</b> / 3 已选</span>
+        <button class="link-btn" type="button" id="data-clear">清空</button>
+      </div>
+    </section>
+
+    <!-- ============ Results ============ -->
+    <section class="panel" aria-labelledby="result-title">
+      <div class="results-head">
+        <div class="results-title-row">
+          <div>
+            <div class="eyebrow"><span><span class="num">03</span> Results</span><span>对比视图</span></div>
+            <h2 class="results-title" id="result-title">结果</h2>
+            <div class="results-sub" id="results-sub">选择算法与数据集后查看同条件对比</div>
+          </div>
+          <div class="summary-chips" id="summary-chips"></div>
+        </div>
+        <div class="toolbar">
+          <div class="metric-tabs" role="group" aria-label="指标切换">
+            <button class="metric-tab active" type="button" data-metric="pearson" aria-pressed="true">Pearson r</button>
+            <button class="metric-tab" type="button" data-metric="r2" aria-pressed="false">R²</button>
+            <button class="metric-tab" type="button" data-metric="auc" aria-pressed="false">AUC</button>
+            <button class="metric-tab" type="button" data-metric="runtime" aria-pressed="false">运行时间</button>
+          </div>
+          <div class="toolbar-note" id="metric-note">数值越高越好；误差条为重复/折间标准差</div>
+        </div>
+      </div>
+      <div class="results-body" id="results-body"></div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ Drawer ============ -->
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <div class="eyebrow"><span>Run detail</span><span id="drawer-status-top"></span></div>
+      <h2 id="drawer-title">运行详情</h2>
+      <p id="drawer-subtitle">—</p>
+    </div>
+    <button class="close-btn" type="button" id="drawer-close" aria-label="关闭详情">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------
+     Mock catalog. All numbers are illustrative wireframe data.
+     ------------------------------------------------------------------ */
+  const ALGOS = [
+    {
+      id: "gblup", name: "GBLUP / rrBLUP", family: "BLUP 基线", input: "个体水平",
+      year: 2008, status: "verified", statusLabel: "已复现", color: "#0f766e",
+      note: "所有提升的参照基线；闭式解，运行快"
+    },
+    {
+      id: "bayesb", name: "BayesB", family: "贝叶斯变量选择", input: "个体水平",
+      year: 2001, status: "verified", statusLabel: "已复现", color: "#2f5d8a",
+      note: "经典 GS 方法；稀疏效应先验"
+    },
+    {
+      id: "ifam", name: "IFAM", family: "注释 + 多随机效应", input: "个体 + 注释",
+      year: 2026, status: "verified", statusLabel: "已复现", color: "#6b5b95",
+      note: "多组学注释整合；本批核心论文"
+    },
+    {
+      id: "sbayesrc", name: "SBayesRC", family: "汇总统计 + 注释", input: "汇总 + LD",
+      year: 2024, status: "converting", statusLabel: "转换中", color: "#9a7b2f",
+      note: "需要 LD 参考与注释矩阵；第二批"
+    },
+    {
+      id: "bayesr", name: "BayesR", family: "贝叶斯混合分布", input: "个体水平",
+      year: 2012, status: "planned", statusLabel: "待接入", color: "#8a5a44",
+      note: "四类效应混合；后续扩展"
+    },
+    {
+      id: "xgb", name: "XGBoost", family: "机器学习", input: "个体水平",
+      year: 2016, status: "planned", statusLabel: "待接入", color: "#5f7180",
+      note: "非线性基线；解释性较弱"
+    }
+  ];
+
+  const DATASETS = [
+    {
+      id: "sim1000g", name: "1000G 仿真", species: "人类", speciesShort: "HUMAN",
+      n: "n ≈ 503", markers: "1.2M SNP", access: "open", accessLabel: "开放",
+      trait: "模拟性状 · h²=0.5", type: "quant", version: "v1", status: "ready",
+      note: "EUR 样本；真值已知；含注释富集场景"
+    },
+    {
+      id: "duroc", name: "Duroc 猪", species: "动物", speciesShort: "ANIMAL",
+      n: "n ≈ 1k", markers: "50k SNP", access: "open", accessLabel: "开放",
+      trait: "背膘厚 / 生长性状", type: "quant", version: "v1", status: "ready",
+      note: "真实育种表型；GigaDB 公开数据"
+    },
+    {
+      id: "rice", name: "3000 水稻", species: "植物", speciesShort: "PLANT",
+      n: "n = 3,024", markers: "~2M SNP", access: "request", accessLabel: "需获取",
+      trait: "粒长 / 粒宽", type: "quant", version: "v1", status: "pending",
+      note: "IRRI 获取；植物育种代表"
+    },
+    {
+      id: "ukb", name: "UK Biobank", species: "人类", speciesShort: "HUMAN",
+      n: "n ≈ 342k", markers: "7M SNP", access: "restricted", accessLabel: "受限",
+      trait: "身高 / BMI", type: "quant", version: "—", status: "reference",
+      note: "需申请；仅展示论文报告值"
+    },
+    {
+      id: "wtccc", name: "WTCCC1", species: "人类", speciesShort: "HUMAN",
+      n: "7 种疾病", markers: "500k SNP", access: "restricted", accessLabel: "受限",
+      trait: "T2D / CD / RA…", type: "binary", version: "—", status: "reference",
+      note: "受控访问；仅展示论文报告值"
+    }
+  ];
+
+  /* status: reproduced | paper_reported | not_run */
+  const RESULTS = {
+    "gblup|sim1000g":  { pearson: 0.512, pearsonSd: 0.011, r2: 0.262, r2Sd: 0.010, auc: null, runtime: 2.1, status: "reproduced" },
+    "gblup|duroc":     { pearson: 0.604, pearsonSd: 0.009, r2: 0.365, r2Sd: 0.011, auc: null, runtime: 3.8, status: "reproduced" },
+    "gblup|rice":      { pearson: 0.702, pearsonSd: 0.008, r2: 0.493, r2Sd: 0.011, auc: null, runtime: null, status: "paper_reported" },
+    "gblup|ukb":       { pearson: 0.331, pearsonSd: null, r2: 0.110, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
+    "gblup|wtccc":     { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.641, runtime: null, status: "paper_reported" },
+
+    "bayesb|sim1000g": { pearson: 0.531, pearsonSd: 0.010, r2: 0.282, r2Sd: 0.009, auc: null, runtime: 18.4, status: "reproduced" },
+    "bayesb|duroc":    { pearson: 0.617, pearsonSd: 0.008, r2: 0.381, r2Sd: 0.010, auc: null, runtime: 24.7, status: "reproduced" },
+    "bayesb|rice":     { pearson: 0.715, pearsonSd: 0.007, r2: 0.511, r2Sd: 0.010, auc: null, runtime: null, status: "paper_reported" },
+    "bayesb|ukb":      { pearson: 0.339, pearsonSd: null, r2: 0.115, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
+    "bayesb|wtccc":    { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.652, runtime: null, status: "paper_reported" },
+
+    "ifam|sim1000g":   { pearson: 0.568, pearsonSd: 0.009, r2: 0.323, r2Sd: 0.010, auc: null, runtime: 45.2, status: "reproduced" },
+    "ifam|duroc":      { pearson: 0.641, pearsonSd: 0.007, r2: 0.411, r2Sd: 0.009, auc: null, runtime: 52.6, status: "reproduced" },
+    "ifam|rice":       { pearson: 0.741, pearsonSd: 0.006, r2: 0.549, r2Sd: 0.009, auc: null, runtime: null, status: "paper_reported" },
+    "ifam|ukb":        { pearson: 0.352, pearsonSd: null, r2: 0.124, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
+    "ifam|wtccc":      { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.678, runtime: null, status: "paper_reported" }
+  };
+
+  const METRICS = {
+    pearson: { label: "Pearson r", unit: "", max: 0.8, better: "higher", type: "quant",
+      note: "预测值与观测值的相关；数值越高越好；误差条为重复/折间标准差" },
+    r2: { label: "R²", unit: "", max: 0.6, better: "higher", type: "quant",
+      note: "预测值与观测值的平方相关；数值越高越好；不同划分间不可直接比较" },
+    auc: { label: "AUC", unit: "", max: 1.0, better: "higher", type: "binary",
+      note: "仅适用于二分类性状；数值越高越好；当前选择需包含 WTCCC1 等二分类数据" },
+    runtime: { label: "运行时间", unit: "分钟", max: 60, better: "lower", type: "any",
+      note: "墙钟时间（分钟），越低越好；不同硬件不可直接比较" }
+  };
+
+  const SPECIES_ORDER = { "人类": 0, "动物": 1, "植物": 2 };
+
+  /* ------------------------------------------------------------------
+     State
+     ------------------------------------------------------------------ */
+  const DEFAULT_STATE = {
+    algos: ["gblup", "bayesb", "ifam"],
+    datasets: ["sim1000g", "duroc"],
+    metric: "pearson"
+  };
+  const MAX_ALGOS = 4;
+  const MAX_DATASETS = 3;
+
+  const state = readStateFromUrl() || { ...DEFAULT_STATE };
+
+  const $ = (sel) => document.querySelector(sel);
+  const el = (tag, cls, html) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (html != null) node.innerHTML = html;
+    return node;
+  };
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+  const fmt = (v, digits = 3) => (v == null || Number.isNaN(v)) ? "—" : Number(v).toFixed(digits).replace(/0$/, "").replace(/\.$/, "");
+  const algoById = (id) => ALGOS.find((a) => a.id === id);
+  const dataById = (id) => DATASETS.find((d) => d.id === id);
+  const cellKey = (a, d) => `${a}|${d}`;
+
+  /* ------------------------------------------------------------------
+     URL state
+     ------------------------------------------------------------------ */
+  function readStateFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const algos = (params.get("algos") || "").split(",").filter((id) => ALGOS.some((a) => a.id === id));
+    const datasets = (params.get("datasets") || "").split(",").filter((id) => DATASETS.some((d) => d.id === id));
+    const metric = params.get("metric");
+    if (!algos.length && !datasets.length && !metric) return null;
+    return {
+      algos: algos.length ? algos.slice(0, MAX_ALGOS) : DEFAULT_STATE.algos.slice(),
+      datasets: datasets.length ? datasets.slice(0, MAX_DATASETS) : DEFAULT_STATE.datasets.slice(),
+      metric: METRICS[metric] ? metric : DEFAULT_STATE.metric
+    };
+  }
+  function writeStateToUrl() {
+    const params = new URLSearchParams();
+    if (state.algos.length) params.set("algos", state.algos.join(","));
+    if (state.datasets.length) params.set("datasets", state.datasets.join(","));
+    if (state.metric !== DEFAULT_STATE.metric) params.set("metric", state.metric);
+    const qs = params.toString();
+    history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+  }
+
+  /* ------------------------------------------------------------------
+     Sidebar rendering
+     ------------------------------------------------------------------ */
+  function badgeForAlgo(status) {
+    if (status === "verified") return '<span class="badge green"><span class="bdot"></span>已复现</span>';
+    if (status === "converting") return '<span class="badge amber"><span class="bdot"></span>转换中</span>';
+    return '<span class="badge gray"><span class="bdot"></span>待接入</span>';
+  }
+  function badgeForAccess(ds) {
+    if (ds.access === "open") return '<span class="badge green"><span class="bdot"></span>开放</span>';
+    if (ds.access === "request") return '<span class="badge blue"><span class="bdot"></span>需获取</span>';
+    return '<span class="badge amber"><span class="bdot"></span>受限</span>';
+  }
+
+  function renderAlgos(filter = "") {
+    const list = $("#algo-list");
+    list.innerHTML = "";
+    const q = filter.trim().toLowerCase();
+    const visible = ALGOS.filter((a) => !q || `${a.name} ${a.family} ${a.input}`.toLowerCase().includes(q));
+    if (!visible.length) {
+      list.appendChild(el("div", "empty-state", "<h3>没有匹配的算法</h3><p>试试更短的关键词，或清空搜索。</p>"));
+      return;
+    }
+    visible.forEach((a) => {
+      const selected = state.algos.includes(a.id);
+      const label = el("label", `option${selected ? " selected" : ""}`);
+      label.setAttribute("for", `algo-${a.id}`);
+      label.innerHTML = `
+        <input type="checkbox" id="algo-${a.id}" value="${a.id}" ${selected ? "checked" : ""} aria-label="选择算法 ${escapeHtml(a.name)}" />
+        <span class="option-main">
+          <span class="option-name">${escapeHtml(a.name)}</span>
+          ${badgeForAlgo(a.status)}
+        </span>
+        <span class="option-meta">${escapeHtml(a.family)} · ${escapeHtml(a.input)} · ${a.year}</span>
+        <span class="option-line">
+          <span class="badge outline">${escapeHtml(a.note)}</span>
+        </span>
+      `;
+      const input = label.querySelector("input");
+      input.addEventListener("change", () => toggleAlgo(a.id, input.checked));
+      list.appendChild(label);
+    });
+    $("#algo-count").textContent = state.algos.length;
+  }
+
+  function renderDatasets(filter = "") {
+    const list = $("#data-list");
+    list.innerHTML = "";
+    const q = filter.trim().toLowerCase();
+    const visible = DATASETS
+      .slice()
+      .sort((a, b) => (SPECIES_ORDER[a.species] - SPECIES_ORDER[b.species]) || a.name.localeCompare(b.name, "zh"))
+      .filter((d) => !q || `${d.name} ${d.species} ${d.trait} ${d.accessLabel}`.toLowerCase().includes(q));
+    if (!visible.length) {
+      list.appendChild(el("div", "empty-state", "<h3>没有匹配的数据集</h3><p>试试物种、性状或访问级别。</p>"));
+      return;
+    }
+    visible.forEach((d) => {
+      const selected = state.datasets.includes(d.id);
+      const label = el("label", `option${selected ? " selected" : ""}`);
+      label.setAttribute("for", `data-${d.id}`);
+      label.innerHTML = `
+        <input type="checkbox" id="data-${d.id}" value="${d.id}" ${selected ? "checked" : ""} aria-label="选择数据集 ${escapeHtml(d.name)}" />
+        <span class="option-main">
+          <span class="option-name">${escapeHtml(d.name)}</span>
+          ${badgeForAccess(d)}
+        </span>
+        <span class="option-meta">${escapeHtml(d.species)} · ${escapeHtml(d.n)} · ${escapeHtml(d.markers)}</span>
+        <span class="option-meta">${escapeHtml(d.note)}</span>
+        <span class="trait-row">
+          <span class="trait">${escapeHtml(d.trait)}</span>
+          <span class="trait">${d.type === "binary" ? "二分类" : "数量性状"}</span>
+          <span class="trait">${escapeHtml(d.version)}</span>
+        </span>
+      `;
+      const input = label.querySelector("input");
+      input.addEventListener("change", () => toggleDataset(d.id, input.checked));
+      list.appendChild(label);
+    });
+    $("#data-count").textContent = state.datasets.length;
+  }
+
+  /* ------------------------------------------------------------------
+     Selection
+     ------------------------------------------------------------------ */
+  function toggleAlgo(id, checked) {
+    if (checked) {
+      if (state.algos.length >= MAX_ALGOS) {
+        showToast(`最多同时对比 ${MAX_ALGOS} 个算法`);
+        renderAlgos($("#algo-search").value);
+        return;
+      }
+      state.algos.push(id);
+    } else {
+      state.algos = state.algos.filter((x) => x !== id);
+    }
+    afterSelectionChange();
+  }
+  function toggleDataset(id, checked) {
+    if (checked) {
+      if (state.datasets.length >= MAX_DATASETS) {
+        showToast(`最多同时对比 ${MAX_DATASETS} 个数据集`);
+        renderDatasets($("#data-search").value);
+        return;
+      }
+      state.datasets.push(id);
+    } else {
+      state.datasets = state.datasets.filter((x) => x !== id);
+    }
+    afterSelectionChange();
+  }
+  function afterSelectionChange() {
+    writeStateToUrl();
+    renderAlgos($("#algo-search").value);
+    renderDatasets($("#data-search").value);
+    renderResults();
+  }
+
+  /* ------------------------------------------------------------------
+     Results
+     ------------------------------------------------------------------ */
+  function getValue(algoId, dsId, metric) {
+    const ds = dataById(dsId);
+    const res = RESULTS[cellKey(algoId, dsId)];
+    if (!ds) return { status: "not_run" };
+    if (!res) return { status: "not_run" };
+    if (metric === "auc" && ds.type !== "binary") return { status: "not_applicable" };
+    if ((metric === "pearson" || metric === "r2") && ds.type !== "quant") return { status: "not_applicable" };
+    if (metric === "runtime" && res.status === "paper_reported") return { status: "not_run", reason: "论文未报告同条件运行时间" };
+    const value = res[metric];
+    if (value == null) return { status: "not_run", reason: "该指标未记录" };
+    return {
+      status: res.status,
+      value,
+      sd: res[metric + "Sd"] != null ? res[metric + "Sd"] : null
+    };
+  }
+
+  function renderResults() {
+    const body = $("#results-body");
+    const algos = state.algos.map(algoById).filter(Boolean);
+    const datasets = state.datasets.map(dataById).filter(Boolean);
+    const metric = METRICS[state.metric];
+
+    $("#metric-note").textContent = metric.note;
+    document.querySelectorAll(".metric-tab").forEach((btn) => {
+      const active = btn.dataset.metric === state.metric;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+
+    if (!algos.length || !datasets.length) {
+      $("#summary-chips").innerHTML = "";
+      $("#results-sub").textContent = "选择算法与数据集后查看同条件对比";
+      body.innerHTML = `
+        <div class="empty-state">
+          <h3>从左侧开始选择</h3>
+          <p>先选 2–3 个算法，再选 1–2 个数据集。结果区会自动生成对比图、结果矩阵和可追溯的运行详情。</p>
+        </div>`;
+      return;
+    }
+
+    const total = algos.length * datasets.length;
+    let reproduced = 0, reference = 0;
+    algos.forEach((a) => datasets.forEach((d) => {
+      const v = getValue(a.id, d.id, state.metric);
+      if (v.status === "reproduced") reproduced++;
+      if (v.status === "paper_reported") reference++;
+    }));
+
+    $("#results-sub").textContent =
+      `${algos.length} 个算法 × ${datasets.length} 个数据集 · ${total} 个结果单元 · 更新于 2026-10-18（示意）`;
+    $("#summary-chips").innerHTML = `
+      <span class="chip">可复现 <b>${reproduced}</b></span>
+      <span class="chip">参考值 <b>${reference}</b></span>
+      <span class="chip">指标 <b>${escapeHtml(metric.label)}</b></span>
+    `;
+
+    const hasRestricted = datasets.some((d) => d.access !== "open");
+    const hasSummary = algos.some((a) => a.input.includes("汇总"));
+    const notices = [];
+    if (hasRestricted) {
+      notices.push(`<div class="notice"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><span><b>当前视图包含受限/参考数据集。</b> 琥珀色“论文值”来自论文，未在本站复现，划分与指标可能不同，不参与主榜排名。</span></div>`);
+    }
+    if (hasSummary) {
+      notices.push(`<div class="notice info"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span><b>当前视图混合了输入模态。</b> 个体水平与汇总统计方法需要不同的训练输入；请查看详情页的可比性说明，避免直接下结论。</span></div>`);
+    }
+
+    const noteHtml = notices.join("");
+    body.innerHTML = noteHtml + `
+      <div class="section-head">
+        <h3>条件对比</h3>
+        <span class="hint">${escapeHtml(metric.label)} · ${metric.better === "lower" ? "越低越好" : "越高越好"}${metric.unit ? " · " + metric.unit : ""}</span>
+      </div>
+      <div class="chart-card" id="chart-card"></div>
+      <div class="section-head">
+        <h3>结果矩阵</h3>
+        <span class="hint">点击单元格查看运行详情</span>
+      </div>
+      <div class="table-card" id="matrix-card"></div>
+      <div class="legend-bar">
+        <span class="item"><span class="sdot" style="background:#2f9a6a"></span>已复现（L1，可排名）</span>
+        <span class="item"><span class="sdot" style="background:#c98a1b"></span>论文值（L3，仅参考）</span>
+        <span class="item"><span class="sdot" style="background:#c3cbd3"></span>未运行 / 不适用</span>
+      </div>
+    `;
+
+    renderChart(algos, datasets, metric);
+    renderMatrix(algos, datasets, metric);
+  }
+
+  function renderChart(algos, datasets, metric) {
+    const card = $("#chart-card");
+    const groups = datasets.map((ds) => {
+      const bars = algos.map((a) => {
+        const v = getValue(a.id, ds.id, state.metric);
+        return { algo: a, ...v };
+      }).filter((b) => b.value != null);
+      return { ds, bars };
+    }).filter((g) => g.bars.length);
+
+    if (!groups.length) {
+      card.innerHTML = `<div class="chart-empty">当前指标下暂无可比较数据。${state.metric === "auc" ? "AUC 仅适用于二分类数据集，请选择 WTCCC1。" : "请确认所选数据集包含该性状类型。"}</div>`;
+      return;
+    }
+
+    let maxVal = 0;
+    groups.forEach((g) => g.bars.forEach((b) => { maxVal = Math.max(maxVal, b.value + (b.sd || 0)); }));
+    const scaleMax = metric.better === "lower"
+      ? Math.max(1, maxVal * 1.15)
+      : (metric.max ? Math.max(metric.max, maxVal * 1.05) : maxVal * 1.15);
+
+    const usedAlgos = algos.filter((a) => groups.some((g) => g.bars.some((b) => b.algo.id === a.id)));
+
+    const chartHtml = groups.map((g) => {
+      const barsHtml = g.bars.map((b) => {
+        const pct = Math.max(1.5, Math.min(100, (b.value / scaleMax) * 100));
+        const valueLabel = `${fmt(b.value, state.metric === "runtime" ? 1 : 3)}${b.sd != null ? " ± " + fmt(b.sd, 3) : ""}`;
+        return `
+          <div class="bar-wrap" title="${escapeHtml(b.algo.name)} · ${escapeHtml(g.ds.name)} · ${valueLabel}">
+            <div class="bar-value">${fmt(b.value, state.metric === "runtime" ? 1 : 3)}</div>
+            <div class="bar" style="height:${pct}%;background:${b.algo.color};opacity:${b.status === "paper_reported" ? 0.45 : 1}">
+              ${b.sd != null ? '<span class="bar-err"></span>' : ""}
+            </div>
+          </div>`;
+      }).join("");
+      return `
+        <div class="chart-group">
+          <div class="chart-bars">${barsHtml}</div>
+          <div class="chart-x">${escapeHtml(g.ds.name)}<small>${escapeHtml(g.ds.trait)}</small></div>
+        </div>`;
+    }).join("");
+
+    const legend = usedAlgos.map((a) => `
+      <span class="legend-item"><span class="swatch" style="background:${a.color}"></span>${escapeHtml(a.name)}</span>
+    `).join("");
+
+    card.innerHTML = `
+      <div class="chart">${chartHtml}</div>
+      <div class="chart-legend">${legend}
+        <span class="legend-item" style="margin-left:auto;color:#7b8794">半透明 = 论文值</span>
+      </div>
+    `;
+  }
+
+  function renderMatrix(algos, datasets, metric) {
+    const card = $("#matrix-card");
+    const head = datasets.map((d) => `
+      <th scope="col">${escapeHtml(d.name)}
+        <span class="th-sub">${escapeHtml(d.trait)} · ${d.accessLabel}</span>
+      </th>`).join("");
+
+    const rows = algos.map((a) => {
+      const cells = datasets.map((d) => {
+        const v = getValue(a.id, d.id, state.metric);
+        if (v.status === "not_applicable") {
+          return `<td><span class="cell-na">—</span></td>`;
+        }
+        if (v.value == null) {
+          return `<td>
+            <button class="metric-cell" type="button" data-algo="${a.id}" data-ds="${d.id}" aria-label="查看 ${escapeHtml(a.name)} 在 ${escapeHtml(d.name)} 的运行详情">
+              <span class="cell-value" style="color:#aeb7c0">未运行</span>
+              <span class="cell-status status-none"><span class="sdot"></span>${escapeHtml(v.reason || "尚未运行")}</span>
+            </button>
+          </td>`;
+        }
+        const statusClass = v.status === "reproduced" ? "status-reproduced" : "status-paper";
+        const statusLabel = v.status === "reproduced" ? "已复现" : "论文值";
+        return `<td>
+          <button class="metric-cell" type="button" data-algo="${a.id}" data-ds="${d.id}" aria-label="查看 ${escapeHtml(a.name)} 在 ${escapeHtml(d.name)} 的运行详情">
+            <span class="cell-value">${fmt(v.value, state.metric === "runtime" ? 1 : 3)}${v.sd != null ? `<span class="cell-sd">± ${fmt(v.sd, 3)}</span>` : ""}</span>
+            <span class="cell-status ${statusClass}"><span class="sdot"></span>${statusLabel}</span>
+          </button>
+        </td>`;
+      }).join("");
+      return `
+        <tr>
+          <td class="algo-cell">
+            <div class="an">${escapeHtml(a.name)}</div>
+            <div class="am">${escapeHtml(a.family)} · ${escapeHtml(a.input)}</div>
+          </td>
+          ${cells}
+        </tr>`;
+    }).join("");
+
+    card.innerHTML = `
+      <table class="matrix">
+        <thead><tr><th scope="col">算法</th>${head}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+
+    card.querySelectorAll(".metric-cell").forEach((btn) => {
+      btn.addEventListener("click", () => openDrawer(btn.dataset.algo, btn.dataset.ds));
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     Drawer
+     ------------------------------------------------------------------ */
+  const drawer = $("#drawer");
+  const overlay = $("#drawer-overlay");
+  let lastFocused = null;
+
+  function openDrawer(algoId, dsId) {
+    const a = algoById(algoId);
+    const d = dataById(dsId);
+    if (!a || !d) return;
+    const v = getValue(algoId, dsId, state.metric);
+    const metric = METRICS[state.metric];
+    lastFocused = document.activeElement;
+
+    const statusBadge = v.status === "reproduced"
+      ? '<span class="badge green"><span class="bdot"></span>已复现 · L1</span>'
+      : v.status === "paper_reported"
+        ? '<span class="badge amber"><span class="bdot"></span>论文值 · L3</span>'
+        : '<span class="badge gray"><span class="bdot"></span>未运行</span>';
+
+    $("#drawer-title").textContent = `${a.name} × ${d.name}`;
+    $("#drawer-subtitle").textContent = `${metric.label} · ${d.trait} · ${d.species}`;
+    $("#drawer-status-top").textContent = v.status === "reproduced" ? "L1" : v.status === "paper_reported" ? "L3" : "—";
+
+    const valueBlock = v.value != null
+      ? `<div class="metric-hero">
+           <div><div class="label">${escapeHtml(metric.label)}${metric.unit ? "（" + metric.unit + "）" : ""}</div>
+           <div class="value">${fmt(v.value, state.metric === "runtime" ? 1 : 3)}${v.sd != null ? ` <small>± ${fmt(v.sd, 3)}</small>` : ""}</div></div>
+           <div class="label" style="text-align:right">${v.sd != null ? "重复/折间标准差" : "论文报告值"}<br>${metric.better === "lower" ? "越低越好" : "越高越好"}</div>
+         </div>`
+      : `<div class="metric-hero"><div><div class="label">${escapeHtml(metric.label)}</div><div class="value" style="color:#aeb7c0">—</div></div><div class="label" style="text-align:right">${escapeHtml(v.reason || "尚未运行")}</div></div>`;
+
+    const metricsRows = v.value != null ? `
+      <div class="detail-section">
+        <h3>指标</h3>
+        <dl class="kv">
+          <div class="kv-row"><dt>Pearson r</dt><dd>${fmt(RESULTS[cellKey(algoId, dsId)]?.pearson)}</dd></div>
+          <div class="kv-row"><dt>R²</dt><dd>${fmt(RESULTS[cellKey(algoId, dsId)]?.r2)}</dd></div>
+          <div class="kv-row"><dt>AUC</dt><dd>${fmt(RESULTS[cellKey(algoId, dsId)]?.auc)}</dd></div>
+          <div class="kv-row"><dt>运行时间</dt><dd>${RESULTS[cellKey(algoId, dsId)]?.runtime != null ? RESULTS[cellKey(algoId, dsId)].runtime + " 分钟" : "—"}</dd></div>
+        </dl>
+      </div>` : "";
+
+    const provenance = v.status === "reproduced" ? `
+      <div class="detail-section">
+        <h3>运行与溯源</h3>
+        <dl class="kv">
+          <div class="kv-row"><dt>Run ID</dt><dd><code>${escapeHtml(algoId)}__${escapeHtml(dsId)}__${escapeHtml(state.metric)}__5fold-s42__20261018</code></dd></div>
+          <div class="kv-row"><dt>划分</dt><dd>5 折 × 3 seeds · 划分文件已提交 · 训练/验证不重叠</dd></div>
+          <div class="kv-row"><dt>算法版本</dt><dd>${escapeHtml(a.name)} · commit <code>a1b2c3d</code></dd></div>
+          <div class="kv-row"><dt>环境</dt><dd>Docker · linux/amd64 · 镜像 digest <code>sha256:9f2c…</code></dd></div>
+          <div class="kv-row"><dt>数据校验</dt><dd><code>sha256:6ab1…</code> · ${escapeHtml(d.version)}</dd></div>
+          <div class="kv-row"><dt>审核</dt><dd>已由维护者复核 · 2026-10-18</dd></div>
+        </dl>
+      </div>
+      <div class="detail-section">
+        <h3>产物</h3>
+        <div class="artifact-list">
+          <div class="artifact"><span>预测值</span><code>pred.tsv</code></div>
+          <div class="artifact"><span>运行日志</span><code>run.log</code></div>
+          <div class="artifact"><span>环境清单</span><code>manifest.json</code></div>
+        </div>
+      </div>` : v.status === "paper_reported" ? `
+      <div class="detail-section">
+        <h3>来源</h3>
+        <dl class="kv">
+          <div class="kv-row"><dt>数据类型</dt><dd>论文报告值，未在本站复现</dd></div>
+          <div class="kv-row"><dt>论文</dt><dd>${a.year} · DOI 见算法页面</dd></div>
+          <div class="kv-row"><dt>可比性</dt><dd>L3 · 数据访问/划分/指标可能不同，不参与主榜排名</dd></div>
+        </dl>
+      </div>` : `
+      <div class="detail-section">
+        <h3>为什么没有结果</h3>
+        <dl class="kv">
+          <div class="kv-row"><dt>状态</dt><dd>${escapeHtml(v.reason || "尚未运行")}</dd></div>
+          <div class="kv-row"><dt>下一步</dt><dd>等待算法接入或该数据集运行完成后自动出现</dd></div>
+        </dl>
+      </div>`;
+
+    $("#drawer-body").innerHTML = `
+      <div class="drawer-status">${statusBadge}
+        <span class="badge outline">${escapeHtml(a.input)}</span>
+        <span class="badge outline">${escapeHtml(d.accessLabel)}</span>
+        <span class="badge outline">${escapeHtml(d.species)}</span>
+      </div>
+      ${valueBlock}
+      ${metricsRows}
+      ${provenance}
+      <div class="drawer-note">
+        线框演示：以上数值与 run ID 均为占位内容。真实页面中，每个可复现单元格都必须能追溯到结果 JSON、划分文件、代码 commit 与运行日志；论文值与复现值不混排。
+      </div>
+    `;
+
+    drawer.classList.add("open");
+    overlay.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    $("#drawer-close").focus();
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove("open");
+    overlay.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+  }
+
+  /* ------------------------------------------------------------------
+     Misc
+     ------------------------------------------------------------------ */
+  let toastTimer = null;
+  function showToast(message) {
+    const toast = $("#toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2000);
+  }
+
+  /* ------------------------------------------------------------------
+     Events
+     ------------------------------------------------------------------ */
+  $("#algo-search").addEventListener("input", (e) => renderAlgos(e.target.value));
+  $("#data-search").addEventListener("input", (e) => renderDatasets(e.target.value));
+  $("#algo-clear").addEventListener("click", () => {
+    state.algos = [];
+    afterSelectionChange();
+  });
+  $("#data-clear").addEventListener("click", () => {
+    state.datasets = [];
+    afterSelectionChange();
+  });
+  document.querySelectorAll(".metric-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.metric = btn.dataset.metric;
+      writeStateToUrl();
+      renderResults();
+    });
+  });
+  $("#drawer-close").addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+  });
+
+  /* ------------------------------------------------------------------
+     Init
+     ------------------------------------------------------------------ */
+  renderAlgos();
+  renderDatasets();
+  renderResults();
+})();
+</script>
+</body>
+</html>

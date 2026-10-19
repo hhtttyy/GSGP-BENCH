@@ -1,0 +1,302 @@
+{
+  "schema_version": "ifam.mcp.contract.v1",
+  "server_name": "ifam",
+  "status": "draft",
+  "source": {
+    "repository": "https://github.com/xiaolei-lab/IFAM",
+    "commit": "62f8e4cd8ee53d70b3324ec5cd40d3f2ffbf7649",
+    "version": "1.0.0",
+    "license": "MIT",
+    "license_note": "Repository LICENSE and the paper state MIT, but Scripts/IFAM.R carries a GPL-3.0 header. Do not vendor or redistribute the script until this conflict is resolved; this contract only pins the upstream entrypoint.",
+    "entrypoint": "Scripts/IFAM.R",
+    "entrypoint_sha256": "1ff7efa4e0ecaf2c4998202a3e5658e5cc2987878f3304479e39d18d210e0f11",
+    "archive_sha256": "b66f1a6d9b01115d955552a1252a4ea3d22ad25b335fce1fcf8b41ba8a91bd2b",
+    "runtime": "Rscript + HIBLUP v1.1.0 + optparse 1.7.5"
+  },
+  "path_policy": {
+    "root": "Every path is relative to the server's read-only input mount; absolute paths and parent traversal are rejected.",
+    "characters": "Paths and annotation stems must use only letters, digits, dot, underscore, hyphen, and slash, with no whitespace or shell metacharacters. Upstream IFAM.R interpolates some values into shell commands.",
+    "writes": "The server writes only to a fresh per-job output directory."
+  },
+  "tools": [
+    {
+      "name": "ifam_inspect_inputs",
+      "title": "Inspect IFAM inputs",
+      "description": "Read-only validation of a PLINK binary set, phenotype file, auto-discovered annotation folder, optional special annotation, and an optional validation split. Returns counts, ID alignment, annotation coverage and overlap, genotype missingness, blocking errors, and warnings. Does not fit a model.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "input_root": {
+            "type": "string",
+            "default": ".",
+            "description": "Dataset directory relative to the read-only input mount. All other paths are relative to this directory."
+          },
+          "bfile": {
+            "type": "string",
+            "description": "PLINK binary prefix relative to input_root, without .bed/.bim/.fam."
+          },
+          "phenotype": {
+            "type": "string",
+            "description": "Fit-ready phenotype file relative to input_root. Header row required; column 1 is the individual ID; the selected phenotype column may contain NA."
+          },
+          "phenotype_index": {
+            "type": "integer",
+            "minimum": 2,
+            "default": 2,
+            "description": "1-based phenotype column index passed to IFAM as --pheno_pos. The selected header must be a safe filename component (letters, digits, dot, underscore, hyphen)."
+          },
+          "annotation_dir": {
+            "type": "string",
+            "description": "Directory relative to input_root containing one-column, headerless .txt SNP lists. IFAM.R auto-discovers every *.txt directly in this directory; do not add an annotation_names.txt manifest."
+          },
+          "special_annotations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+            },
+            "maxItems": 1,
+            "default": [],
+            "description": "Annotation stems without .txt, passed to IFAM --anno_spec. At most one is supported in upstream IFAM.R 1.0.0; the multiple-special path is broken and must not be claimed."
+          },
+          "random_max": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 5,
+            "description": "Planned IFAM --randomMax. Special annotations count against this cap; must be greater than the number of special annotations."
+          },
+          "validation_split": {
+            "type": "string",
+            "description": "Optional split JSON relative to input_root. When supplied, validation IDs must be present and masked as NA in the fit phenotype, and train/validation IDs must not overlap."
+          }
+        },
+        "required": ["bfile", "phenotype", "annotation_dir"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["schema_version", "status", "counts", "plink", "phenotype", "annotations", "random_effects", "genotypes", "checks", "blocking_errors", "warnings"],
+        "properties": {
+          "schema_version": {"const": "ifam.inspect.v1"},
+          "status": {"enum": ["ready", "blocked"]},
+          "counts": {"type": "object"},
+          "plink": {"type": "object"},
+          "phenotype": {"type": "object"},
+          "annotations": {"type": "object"},
+          "random_effects": {"type": "object"},
+          "genotypes": {"type": "object"},
+          "checks": {"type": "array"},
+          "blocking_errors": {"type": "array"},
+          "warnings": {"type": "array"},
+          "notes": {"type": "array"},
+          "input_sha256": {"type": "object"}
+        }
+      }
+    },
+    {
+      "name": "ifam_fit",
+      "title": "Fit IFAM",
+      "description": "Submit an IFAM fit through the pinned IFAM.R 1.0.0 script and HIBLUP v1.1.0 on an isolated worker. Returns immediately with a job_id. The server validates inputs, builds annotation GRMs, estimates variance components, merges random effects, and predicts genetic values. At most one special annotation is supported. It does not compute held-out metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "input_root": {"type": "string", "default": "."},
+          "bfile": {"type": "string", "description": "PLINK binary prefix relative to input_root, without .bed/.bim/.fam."},
+          "phenotype": {"type": "string", "description": "Fit-ready phenotype file; header row required, column 1 is the individual ID; the selected phenotype column may contain NA and its header must be a safe filename component."},
+          "phenotype_index": {"type": "integer", "minimum": 2, "default": 2, "description": "1-based phenotype column index passed to IFAM as --pheno_pos."},
+          "annotation_dir": {"type": "string", "description": "Directory of headerless one-column .txt annotation files; every *.txt is auto-discovered, with no manifest."},
+          "special_annotations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+            },
+            "maxItems": 1,
+            "default": []
+          },
+          "validation_split": {
+            "type": "string",
+            "description": "Optional split JSON relative to input_root. The job is blocked when any validation ID has a non-NA value in the fit phenotype. Held-out truth is never accepted by this tool or any other MCP tool; the independent runner holds it."
+          },
+          "random_max": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 5,
+            "description": "IFAM --randomMax. Special annotations count against this cap; the effective optimization cap is random_max minus the number of special annotations."
+          },
+          "vc_method": {
+            "type": "string",
+            "enum": ["AI", "EM", "EMAI", "HE", "HI"],
+            "default": "AI",
+            "description": "IFAM --VCmethod."
+          },
+          "threads": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32,
+            "default": 1,
+            "description": "IFAM --thread; the worker enforces a lower site limit when necessary."
+          },
+          "keep_intermediate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Retain HIBLUP intermediate files in the job directory after the wrapper parses outputs. The wrapper always invokes IFAM.R with --tmp_files TRUE to avoid upstream's wildcard cleanup, then applies this retention rule itself. Primary outputs are always preserved."
+          }
+        },
+        "required": ["bfile", "phenotype", "annotation_dir"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "job_id", "state", "submitted_at", "effective_random_max", "upstream"],
+        "properties": {
+          "schema_version": {"const": "ifam.job.v1"},
+          "job_id": {"type": "string"},
+          "state": {"enum": ["queued", "running", "succeeded", "failed", "cancelled"]},
+          "submitted_at": {"type": "string", "format": "date-time"},
+          "effective_random_max": {"type": "integer", "minimum": 1},
+          "upstream": {
+            "type": "object",
+            "required": ["repository", "commit", "entrypoint", "hiblup"],
+            "properties": {
+              "repository": {"type": "string"},
+              "commit": {"type": "string"},
+              "entrypoint": {"type": "string"},
+              "hiblup": {"type": "string"}
+            }
+          },
+          "command_fingerprint": {"type": "string"},
+          "warnings": {"type": "array"}
+        }
+      }
+    },
+    {
+      "name": "ifam_job_status",
+      "title": "Check IFAM job",
+      "description": "Read the state, phase, progress, error, and artifact inventory of a submitted IFAM job. Polling this tool does not alter the job.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {"type": "string", "minLength": 8, "maxLength": 80}
+        },
+        "required": ["job_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "job_id", "state", "phase"],
+        "properties": {
+          "schema_version": {"const": "ifam.status.v1"},
+          "job_id": {"type": "string"},
+          "state": {"enum": ["queued", "running", "succeeded", "failed", "cancelled"]},
+          "phase": {
+            "enum": ["queued", "validating", "building_grms", "estimating_variance", "predicting", "parsing_outputs", "complete", "failed", "cancelled"]
+          },
+          "submitted_at": {"type": "string", "format": "date-time"},
+          "started_at": {"type": ["string", "null"], "format": "date-time"},
+          "finished_at": {"type": ["string", "null"], "format": "date-time"},
+          "elapsed_seconds": {"type": ["number", "null"], "minimum": 0},
+          "progress": {
+            "type": ["object", "null"],
+            "additionalProperties": true,
+            "description": "Best-effort progress parsed from IFAM/HIBLUP logs; not a scientific result."
+          },
+          "error": {
+            "type": ["object", "null"],
+            "required": ["code", "message"],
+            "properties": {
+              "code": {"type": "string"},
+              "message": {"type": "string"},
+              "retryable": {"type": "boolean"},
+              "log_tail": {"type": "string"}
+            }
+          },
+          "artifacts": {"type": "array"}
+        }
+      }
+    },
+    {
+      "name": "ifam_export",
+      "title": "Export IFAM predictions",
+      "description": "Normalize a completed IFAM job into benchmark-ready predictions and provenance. Metrics are intentionally absent: the independent benchmark runner computes Pearson r, AUC, and prediction bias from these predictions, the held-out truth, and the recorded split. When a split was supplied at fit time, the export verifies that predictions cover every validation ID.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {"type": "string", "minLength": 8, "maxLength": 80}
+        },
+        "required": ["job_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "job_id", "split_id", "validation_ids", "n_predictions", "predictions", "variance_components", "annotation_summary", "artifacts", "provenance"],
+        "properties": {
+          "schema_version": {"const": "ifam.export.v1"},
+          "job_id": {"type": "string"},
+          "split_id": {
+            "type": ["string", "null"],
+            "description": "Split recorded at fit time; null when no validation split was supplied."
+          },
+          "validation_ids": {"type": "array", "items": {"type": "string"}},
+          "n_predictions": {"type": "integer", "minimum": 1},
+          "predictions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sample_id", "genetic_value"],
+              "properties": {
+                "sample_id": {"type": "string"},
+                "genetic_value": {"type": "number"},
+                "residual": {"type": ["number", "null"]}
+              }
+            }
+          },
+          "variance_components": {"type": ["array", "null"]},
+          "annotation_summary": {"type": ["object", "null"]},
+          "artifacts": {"type": "array"},
+          "provenance": {
+            "type": "object",
+            "required": ["paper_doi", "code_commit", "hiblup", "command_fingerprint", "input_sha256", "split_sha256"],
+            "properties": {
+              "split_sha256": {"type": ["string", "null"]}
+            },
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ]
+}

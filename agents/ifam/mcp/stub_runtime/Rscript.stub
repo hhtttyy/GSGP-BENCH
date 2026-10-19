@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+"""Stub worker for MCP plumbing tests. It is NOT IFAM and writes no science."""
+
+import hashlib
+import sys
+from pathlib import Path
+
+
+def opt(name, default=None):
+    return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
+
+
+out = Path(opt("--outPath"))
+out.mkdir(parents=True, exist_ok=True)
+pheno = Path(opt("--pheno"))
+prefix = opt("--output_prefix", "IFAM")
+lines = pheno.read_text(encoding="utf-8").splitlines()
+header = lines[0].split("\t")
+trait = header[int(opt("--pheno_pos", "2")) - 1]
+ids = [line.split("\t")[0] for line in lines[1:] if line.strip()]
+
+print("Constructing GRMs for each annotation")
+print("Estimating variance components")
+print("Predicting additive genetic values")
+
+random_effect = f"{prefix}.A1.GA"
+with (out / f"{prefix}_{trait}.rand").open("w", encoding="utf-8") as handle:
+    handle.write(f"ID\t{random_effect}\tgenetic_values\tresiduals\n")
+    for sample_id in ids:
+        digest = hashlib.sha256(sample_id.encode()).digest()
+        value = round((digest[0] / 255.0 - 0.5) * 2.0, 6)
+        handle.write(f"{sample_id}\t{value}\t{value}\t{round(-value / 2, 6)}\n")
+
+with (out / f"{prefix}_{trait}.vars").open("w", encoding="utf-8") as handle:
+    handle.write("Item\tVar\tVar_SE\th2\th2_SE\th2_Pr(Chisq)\n")
+    handle.write(f"{random_effect}\t1.0\t0.1\t0.5\t0.05\t1e-6\n")
+    handle.write("e\t1.0\t0.1\t0.5\t0.05\t1e-6\n")
+
+with (out / f"{prefix}_{trait}_vc.vars").open("w", encoding="utf-8") as handle:
+    handle.write("Item\tVar\tVar_SE\th2\th2_SE\th2_Pr(Chisq)\n")
+    handle.write("A1\t1.0\t0.1\t0.5\t0.05\t1e-6\n")
+
+with (out / f"{prefix}.annotaion.information.txt").open("w", encoding="utf-8") as handle:
+    handle.write("Annotations\tNumber_annotaions\tNumber_overlap_anno_map\tAnno_cover_percent\n")
+    handle.write("A1\t8\t8\t33.33%\n")
+
+with (out / f"{prefix}.overlaped.SNPs.between.anntations.txt").open("w", encoding="utf-8") as handle:
+    handle.write("A1\nA1\t--\n")
+
+(out / "STUB_RUNTIME.txt").write_text(
+    "Stub worker only. No IFAM/HIBLUP execution, no scientific result.\n",
+    encoding="utf-8",
+)
+print(f"IFAM is end (stub, {len(ids)} individuals)")
