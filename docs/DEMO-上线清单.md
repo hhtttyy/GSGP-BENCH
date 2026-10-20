@@ -81,6 +81,11 @@ git push -u origin main
 5. 点击 **Save and Deploy**。
 6. 记下 `https://<worker>.<subdomain>.workers.dev`。
 
+> **同一个 Cloudflare 账户下多个 Worker 容易串库**：Worker 的 Settings → Builds → “Git repository” 是各自独立的字段，改一个不会影响另一个，但配置时容易把仓库选错。
+> 先在面板上确认 GSGP-BENCH 的 “Git repository” 显示 `hhtttyy/GSGP-BENCH`，再点 Save and Deploy。
+> 如果页面顶部出现 “This project is disconnected from your Git account” 或 “Error fetching GitHub User or Organization details”，说明 GitHub App 安装已失效：断开连线后重新连接，必要时到 GitHub → Settings → Applications → Installed GitHub Apps 里重新授权 Cloudflare（私有仓库还要勾选该私有仓库）。
+> `wrangler.jsonc` 里的 `name` 决定部署到哪个 Worker（`gsgp-bench`），仓库名不决定；配错连线时，Cloudflare 会按配置里的 `name` 部署，容易出现“推了但站点没变”的错觉。
+
 `wrangler.jsonc` 已声明：
 
 ```jsonc
@@ -134,6 +139,17 @@ npx wrangler secret put OPENAI_BASE_URL   # 可选
 9. 打开“介绍 / 生成 / 提交”页面，确认桌面和移动端都可读。
 10. 随便改一个页面文案（例如页脚版本号），push 到 `main`，确认 Cloudflare 自动触发新部署。
 11. 新建一个分支并提 PR，确认生成 Preview Deployment。
+
+### 4.1 备用通道：GitHub Actions 部署
+
+`.github/workflows/deploy.yml` 提供一条不依赖 Workers Builds 连线的通道：`main` 一有推送，Actions 就跑 `npx wrangler deploy`。
+
+启用前需要两步（都在浏览器里完成）：
+
+1. Cloudflare → My Profile → API Tokens → Create Token，权限选 **Edit Cloudflare Workers**（含 Workers Scripts:Edit），得到 `CLOUDFLARE_API_TOKEN`；同页可查到 `CLOUDFLARE_ACCOUNT_ID`。
+2. GitHub → GSGP-BENCH → Settings → Secrets and variables → Actions → New repository secret，加入上面两个值。
+
+之后 push 到 `main`，在仓库的 Actions 标签里能看到部署结果。两条通道并存时，建议保留一条（推荐 Actions，因为它在 GitHub 上有可见的成功/失败记录），另一条在面板里断开。
 
 ## 5. 可选：绑定自定义域名
 
