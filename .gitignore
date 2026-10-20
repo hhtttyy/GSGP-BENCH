@@ -15,6 +15,14 @@ venv/
 .env.*
 !.env.example
 !.env.template
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Node / Wrangler
+node_modules/
+.wrangler/
+dist/
 
 # Local data and private run artifacts (never commit raw observations or predictions)
 local_data/

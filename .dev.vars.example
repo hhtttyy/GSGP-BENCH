@@ -1,0 +1,11 @@
+# Local development only. Copy to .dev.vars; never commit .dev.vars.
+# AI_MOCK=1 returns a labelled local mock without calling any external API.
+AI_MOCK=1
+
+# Real OpenAI-compatible service (used only when AI_MOCK is not "1").
+# OPENAI_API_KEY=sk-...
+# OPENAI_BASE_URL=https://api.openai.com/v1
+# OPENAI_MODEL=gpt-4o-mini
+
+# Qwen hybrid models: set to 1 to skip reasoning tokens for faster replies.
+# AI_DISABLE_THINKING=1

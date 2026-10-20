@@ -32,28 +32,34 @@ a:hover { color: var(--ink); text-decoration-color: currentColor; }
 .reader-top {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-height: 52px;
-  padding: 0 24px;
+  gap: 18px;
+  min-height: 64px;
+  padding: 0 28px;
   border-bottom: 1px solid var(--rule);
   background: var(--plate);
   font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 .reader-brand {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 15px;
+  font-size: 21px;
   font-weight: 650;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   text-decoration: none;
   white-space: nowrap;
 }
 .reader-brand span { color: var(--moss); margin: 0 2px; font-weight: 400; }
-.reader-crumbs { display: flex; align-items: center; gap: 8px; color: var(--ink-3); min-width: 0; }
+.reader-crumbs { display: flex; align-items: center; gap: 9px; color: var(--ink-3); font-size: 12.5px; min-width: 0; flex-wrap: wrap; }
 .reader-crumbs a { color: var(--ink-2); text-decoration: none; }
 .reader-crumbs a:hover { color: var(--ink); text-decoration: underline; }
+.reader-crumbs .is-current {
+  color: var(--ink);
+  font-weight: 650;
+  border-bottom: 1.5px solid var(--moss);
+  padding-bottom: 1px;
+}
 .reader-status {
   margin-left: auto;
   color: var(--rust);
@@ -79,22 +85,22 @@ a:hover { color: var(--ink); text-decoration-color: currentColor; }
   text-wrap: balance;
 }
 .reader h1 {
-  margin: 0 0 28px;
-  padding-bottom: 18px;
+  margin: 0 0 32px;
+  padding-bottom: 20px;
   border-bottom: 1px solid var(--rule);
-  font-size: clamp(28px, 4.2vw, 42px);
+  font-size: clamp(34px, 4.6vw, 50px);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 .reader h2 {
-  margin: 46px 0 14px;
-  padding-top: 18px;
+  margin: 52px 0 16px;
+  padding-top: 20px;
   border-top: 1px solid var(--rule-soft);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
-.reader h3 { margin: 32px 0 10px; font-size: 19px; font-weight: 650; }
+.reader h3 { margin: 34px 0 11px; font-size: 21px; font-weight: 650; }
 .reader h4 { margin: 24px 0 8px; font-size: 16px; font-weight: 700; }
 .reader p { margin: 0 0 15px; }
 .reader p, .reader li, .reader td, .reader th, .reader blockquote, .reader a {
@@ -194,12 +200,13 @@ a:hover { color: var(--ink); text-decoration-color: currentColor; }
 .reader-foot b { color: var(--ink-2); font-weight: 650; }
 
 @media (max-width: 640px) {
-  .reader-top { flex-wrap: wrap; gap: 4px 12px; padding: 10px 16px; }
-  .reader-status { margin-left: 0; width: 100%; }
+  .reader-top { flex-wrap: wrap; gap: 4px 12px; padding: 11px 16px; }
+  .reader-brand { font-size: 19px; }
+  .reader-crumbs { font-size: 12px; }
   .reader, .reader-foot { width: calc(100% - 32px); }
-  .reader { padding-top: 36px; }
-  .reader h1 { font-size: 29px; }
-  .reader h2 { font-size: 21px; }
+  .reader { padding-top: 38px; }
+  .reader h1 { font-size: 31px; }
+  .reader h2 { font-size: 24px; }
   .reader table { font-size: 11px; }
   .reader th, .reader td { padding: 7px 6px; }
 }

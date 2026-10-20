@@ -11,11 +11,11 @@
 
 1. **领域化改造层**：把 Paper2Agent 从通用论文转 Agent，改造成适配 GSGP 的“论文 → 可验证 MCP Server”生产线。
 2. **基准协议层**：定义统一数据、统一划分、统一指标、统一溯源格式，并有一个离线 runner 真正把算法跑出结果。
-3. **展示层**：一个静态结果站，左列算法、中列数据集、右列结果，部署在 Cloudflare Pages，推送即自动更新。
+3. **展示层**：一个静态结果站，左列算法、中列数据集、右列结果，部署在 Cloudflare Workers（Static Assets），推送即自动更新。
 
 关键判断：
 
-- **Cloudflare 只托管网站，不负责跑算法。** R/GCTB、GB 级 LD 矩阵、CPU 小时级训练无法在 Workers/Pages 里完成。网站读取的是已经跑完、已提交到仓库的结果 JSON。
+- **Cloudflare 只托管网站，不负责跑算法。** R/GCTB、GB 级 LD 矩阵、CPU 小时级训练无法在 Workers 里完成。网站读取的是已经跑完、已提交到仓库的结果 JSON；Worker 仅额外提供一个轻量 AI 文字解读接口。
 - **首批主榜必须用完全开放的数据。** UK Biobank、WTCCC 需要申请，无法公开复现；它们最多作为“论文报告值”参考，不能和开放数据的复现结果放在同一张榜上排名。
 - **最先验证的不是前端，而是“论文代码 → MCP → 在固定小数据上产出预测”这条链路。** 这是会议纪要里指出的最大风险，也是整个项目能不能成立的前提。
 - **“用户上传论文后实时参与计算”需要分阶段。** v1 用 GitHub 提交表单 + 人工审核 + 离线跑批；v2 再做上传、队列、自动转换、PR 审核。不要在 Cloudflare Worker 里执行不可信论文代码。
@@ -27,7 +27,7 @@
 
 你的目标是“先快速做一个 demo”，因此把“真实跑通 MCP”与“网站演示”拆开，Demo 不等待长链路：
 
-- **目标**：3～5 天做出可打开、可交互、可部署到 Cloudflare Pages 的演示站。
+- **目标**：3～5 天做出可打开、可交互、可部署到 Cloudflare Workers 的演示站。
 - **范围**：4 个算法 × 3 个数据集；三列布局、多选、指标切换、误差条、结果矩阵、详情抽屉、URL 状态。
 - **数据**：优先使用开放/仿真数据的真实结果；如果暂时没有，就用**明确标注的演示值**占位，绝不让占位数字看起来像实测结论。
 - **不做**：真实 MCP 运行、论文上传后端、UKB/WTCCC 申请、在线计算。
@@ -163,16 +163,16 @@ Paper2MCP 的流程是：环境配置 → 扫描仓库/教程、选择有用工�
 └──────────────────────────────────────────────────────────────────────────────────────────┘
                                            │
                                            ▼
-┌──────────────────────────── 在线展示层（Cloudflare Pages） ──────────────────────────────┐
-│  静态站点（React/Vite）读取 results + registry → 三列筛选 → 结果矩阵/图表/详情            │
-│  GitHub push 到 main → 自动构建部署；PR → 预览部署                                        │
-└──────────────────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────── 在线展示层（Cloudflare Workers） ─────────────────────┐
+│  Static Assets（三列筛选 → 结果矩阵/图表/详情） + /api/analyze 文字解读   │
+│  GitHub push 到 main → 自动构建部署；PR → 预览部署                        │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 4.1 为什么这样分层
 
 - **可复现**：结果由固定环境、固定数据、固定划分产生，不依赖浏览器或边缘计算。
-- **成本低**：网站是纯静态资源，Cloudflare 免费额度足够；计算只在需要时占用自己的机器/runner。
+- **成本低**：网站是静态资源，Worker 只处理一个受限的分析接口，Cloudflare 免费额度足够；计算只在需要时占用自己的机器/runner。
 - **可审计**：结果 JSON 和代码一起进 Git，每个数字都有 commit 可查。
 - **可渐进**：以后要加在线运行，只需在展示层后面接一个计算 API，不用推翻网站。
 
@@ -496,7 +496,7 @@ status: planned         # planned | converting | verified | failed
 - 当结果 JSON、筛选维度和论文库增长后，再评估 Vite + TypeScript（是否引入 React 取决于状态复杂度）；不要为了框架而框架。
 - 图表在数据量增大、需要箱线图/交互缩放时再考虑 ECharts；当前手绘 SVG 更契合期刊图版风格。
 - 数据：构建时把 `results/*.json` 聚合成 `site/data/index.json`；静态站不需要数据库。
-- 不需要 Next.js 的服务端能力；纯静态导出最省心，也与 Cloudflare Pages 的边界一致。
+- 不需要 Next.js 的服务端能力；静态导出最省心，也与 Cloudflare Workers Static Assets 的边界一致。
 
 ---
 
@@ -510,23 +510,23 @@ status: planned         # planned | converting | verified | failed
    git remote add upstream https://github.com/jmiao24/Paper2Agent.git
    ```
 3. 在仓库里加入 `site/`、`benchmark/`、`results/`、`.github/workflows/`。
-4. Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git → 选择仓库。
-5. 配置（v1 为静态单文件，无构建步骤）：
+4. Cloudflare Dashboard → Workers & Pages → Create → Worker → Connect to Git → 选择仓库。
+5. 配置（根目录，无构建步骤）：
    - Production branch: `main`
-   - Root directory: `site`
-   - Build command: 留空；若界面必填则填 `exit 0`
-   - Build output directory: `.`
-   - 环境变量：不需要；站点不包含任何密钥。
-6. 保存并部署，得到 `https://<project>.pages.dev`。
+   - Build command: `npm install`（或留空）
+   - Deploy command: `npx wrangler deploy`
+   - Static Assets: `directory = ./site`, `binding = ASSETS`（见 `wrangler.jsonc`）
+   - 环境变量：只有 AI 解读需要 `OPENAI_API_KEY`（Secret）与可选的 `OPENAI_BASE_URL`、`OPENAI_MODEL`
+6. 保存并部署，得到 `https://<worker>.<subdomain>.workers.dev`。
 7. 以后每次 push 到 `main` 自动部署；每个 PR 自动生成 Preview Deployment。
 
 如果之后引入结果 JSON 构建步骤，再把 Build command 改为实际构建命令，并同步更新输出目录。
 
 ### 9.2 自定义域名
 
-- 免费子域 `*.pages.dev` 足够起步。
-- 如果要绑自己的域名：在 Pages 项目里 Add custom domain，按提示在 Cloudflare DNS 添加 CNAME，TLS 自动签发。
-- **中国大陆访问需实测**：`pages.dev` 在部分网络环境不稳定；即便绑自定义域名，Cloudflare 边缘也不一定理想。如果主要用户在国内，需要提前做一次可用性测试，必要时准备镜像或国内托管方案。
+- 免费子域 `*.workers.dev` 足够起步。
+- 如果要绑自己的域名：在 Worker → Domains & Routes 里 Add custom domain，按提示在 Cloudflare DNS 添加记录，TLS 自动签发。
+- **中国大陆访问需实测**：`workers.dev` 在部分网络环境不稳定；即便绑自定义域名，Cloudflare 边缘也不一定理想。如果主要用户在国内，需要提前做一次可用性测试，必要时准备镜像或国内托管方案。
 
 ### 9.3 CI 与质量门
 
@@ -652,7 +652,7 @@ GitHub Issue Form 收集：论文 DOI/PDF、代码仓库、方法名、物种、
 - 确认本文末尾的 3 个决策。
 - fork 仓库、建 `site/`/`benchmark/`/`results/` 骨架。
 - 定稿 result schema v1、数据集/算法 YAML 模板。
-- 用 mock 数据跑通前端构建和 Cloudflare Pages 预览。
+- 用 mock 数据跑通前端构建和 Cloudflare Workers 预览。
 
 ### Phase 1：技术验证 spike（1 周，最高优先级）
 
@@ -673,7 +673,7 @@ GitHub Issue Form 收集：论文 DOI/PDF、代码仓库、方法名、物种、
 
 - 按三列布局实现前端，使用 mock 数据。
 - 结果矩阵、指标切换、误差条、详情抽屉、URL 状态、导出。
-- 部署到 Cloudflare Pages，验证 push 自动部署和 PR 预览。
+- 部署到 Cloudflare Workers，验证 push 自动部署和 PR 预览。
 - 用 3 个算法 × 2 个数据集的假数据做布局压力测试（长名称、缺失值、不可比状态）。
 
 ### Phase 3：真实结果（2～3 周）

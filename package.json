@@ -1,0 +1,16 @@
+{
+  "name": "gsgp-bench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GSGP-Bench static benchmark site with a same-origin analysis API on Cloudflare Workers.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "dev:node": "node scripts/dev-server.mjs",
+    "test": "node --test worker/test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

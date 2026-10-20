@@ -1,0 +1,20 @@
+{
+  // GSGP-Bench: static site + one same-origin API route.
+  // The Worker only handles /api/*; everything else is served from ./site.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gsgp-bench",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./site",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "OPENAI_BASE_URL": "https://maas.qianwenaiapi.com/compatible-mode/v1",
+    "OPENAI_MODEL": "qwen3.8-flash",
+    "AI_DISABLE_THINKING": "1"
+  }
+}

@@ -43,8 +43,8 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    min-height: 56px;
-    padding: 0 26px;
+    min-height: 64px;
+    padding: 0 28px;
     background: var(--plate);
     border-bottom: 1px solid var(--rule);
   }
@@ -53,13 +53,29 @@
     align-items: baseline;
     gap: 2px;
     font-family: var(--serif);
-    font-size: 18px;
+    font-size: 21px;
     font-weight: 650;
     letter-spacing: -0.01em;
     text-decoration: none;
     white-space: nowrap;
   }
   .brand span { color: var(--moss); font-weight: 400; }
+  .reader-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+    flex-wrap: wrap;
+  }
+  .reader-crumbs a { color: var(--ink-2); text-decoration: none; }
+  .reader-crumbs a:hover { color: var(--ink); text-decoration: underline; }
+  .reader-crumbs .is-current {
+    color: var(--ink);
+    font-weight: 650;
+    border-bottom: 1.5px solid var(--moss);
+    padding-bottom: 1px;
+  }
   .brand-bench {
     font-family: var(--sans);
     font-size: 8px;
@@ -130,10 +146,9 @@
     margin-top: 10px;
     color: var(--ink-3);
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 400;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
   .paper-title {
     max-width: 680px;
@@ -516,22 +531,31 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="../../index.html">GSGP<span>/</span>BENCH<span class="brand-bench">RESEARCH</span></a>
-  <div class="crumb">Resource / <b>IFAM Paper Skill</b></div>
-  <a class="back-link" href="../../index.html">← 返回方法库</a>
+  <a class="brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="站点导航">
+    <a href="../../index.html">评测</a>
+    <span aria-hidden="true">/</span>
+    <a href="../introduce/index.html">介绍</a>
+    <span aria-hidden="true">/</span>
+    <a href="../generate/index.html">生成</a>
+    <span aria-hidden="true">/</span>
+    <a href="../submit/index.html">提交</a>
+    <span aria-hidden="true">/</span>
+    <span class="is-current" aria-current="page">IFAM 论文 Skill</span>
+  </nav>
 </header>
 
 <main class="sheet">
   <section class="hero">
     <div>
-      <p class="eyebrow">Paper Skill · Research preview</p>
-      <h1>IFAM 论文阅读包<span class="sub">Read · retrieve · cite — with limitations recorded</span></h1>
+      <p class="eyebrow">论文 Skill · 研究预览</p>
+      <h1>IFAM 论文 Skill<span class="sub">阅读 · 检索 · 引用 — 限制已记录</span></h1>
       <p class="paper-title">Improving genomic prediction accuracy of complex traits by integrating massive types of functional annotation information</p>
-      <p class="citation">Tang et al. · <i>Nature Communications</i> 17:5686 (2026) · DOI
+      <p class="citation">Tang 等 · <i>Nature Communications</i> 17:5686 (2026) · DOI
         <a href="https://doi.org/10.1038/s41467-026-72470-0" target="_blank" rel="noreferrer">10.1038/s41467-026-72470-0</a></p>
       <div class="status-line">
-        <span class="status-tag">reviewed_with_limitations</span>
-        <span>来源审校完成；缺失与限制已记录，不等于 benchmark 认证。</span>
+        <span class="status-tag">已审校 · 有限制</span>
+        <span>来源审校完成；缺失与限制已记录，不等于基准认证。</span>
       </div>
       <div class="actions">
         <a class="btn" href="skill/references/index.html">打开阅读导航 <span class="arrow" aria-hidden="true">→</span></a>
@@ -542,18 +566,18 @@
 
     <aside class="passport" aria-label="审校记录">
       <div class="passport-head">
-        <p class="passport-kicker">Review record</p>
+        <p class="passport-kicker">审校记录</p>
         <p class="passport-title">来源审校与核对</p>
       </div>
       <dl>
-        <div class="passport-row"><dt>Status</dt><dd class="mono">reviewed_with_limitations</dd></div>
-        <div class="passport-row"><dt>Mechanical</dt><dd>通过 · 0 issues</dd></div>
-        <div class="passport-row"><dt>Adjudications</dt><dd>6 项已应用 · 0 stale</dd></div>
-        <div class="passport-row"><dt>Assets</dt><dd>9/9 与源裁剪一致</dd></div>
-        <div class="passport-row"><dt>Contents</dt><dd>4 个文档 · 6 张图 · 3 个公式</dd></div>
-        <div class="passport-row"><dt>Supplement</dt><dd>未提供 · 已在包内记录</dd></div>
-        <div class="passport-row"><dt>Data / code</dt><dd>不包含</dd></div>
-        <div class="passport-row"><dt>Use</dt><dd>Agent 阅读、检索与引用；不是排名证据</dd></div>
+        <div class="passport-row"><dt>状态</dt><dd class="mono">已审校 · 有限制</dd></div>
+        <div class="passport-row"><dt>机械检查</dt><dd>通过 · 0 个问题</dd></div>
+        <div class="passport-row"><dt>裁决</dt><dd>6 项已应用 · 0 项过期</dd></div>
+        <div class="passport-row"><dt>资源</dt><dd>9/9 与源裁剪一致</dd></div>
+        <div class="passport-row"><dt>内容</dt><dd>4 个文档 · 6 张图 · 3 个公式</dd></div>
+        <div class="passport-row"><dt>补充材料</dt><dd>未提供 · 已在包内记录</dd></div>
+        <div class="passport-row"><dt>数据 / 代码</dt><dd>不包含</dd></div>
+        <div class="passport-row"><dt>用途</dt><dd>Agent 阅读、检索与引用；不是排名证据</dd></div>
       </dl>
       <p class="passport-note">本包由 Paper2Skill 工作流从开放获取论文生成。审校针对来源完整性与提取质量，不评价论文结论的正确性。</p>
     </aside>
@@ -566,7 +590,7 @@
       </a>
     </div>
     <div class="figure-caption">
-      <p class="fig-label">Fig. 1 · from the paper</p>
+      <p class="fig-label">图 1 · 论文原文</p>
       <p>Examples of the importance assessment of functional annotations. The log10 per-SNP explained variance is shown for SNP ranking scores and annotation types from RegulomeDB, using the WTCCC1 dataset.</p>
       <p class="source-note">图注为原文节选；完整图注、坐标说明与数据来源见
         <a href="skill/references/paper.html">论文全文</a>。图像 © The Author(s) 2026，CC BY 4.0。</p>
@@ -576,11 +600,11 @@
   <section class="section" aria-labelledby="scope-title">
     <div class="section-head">
       <h2 id="scope-title">这个包能做什么，不声称什么</h2>
-      <span>Scope &amp; boundaries</span>
+      <span>范围与边界</span>
     </div>
     <div class="scope">
       <div class="scope-col">
-        <h3>Useful for</h3>
+        <h3>适合用来</h3>
         <ul>
           <li>让 Agent 定位方法、数据、图表、公式和限制，而不是把整篇论文塞进上下文。</li>
           <li>回答“IFAM 需要什么输入”“10× 合并规则是什么”“各数据集如何划分与评估”。</li>
@@ -589,7 +613,7 @@
         </ul>
       </div>
       <div class="scope-col">
-        <h3 class="negative">Not evidence for</h3>
+        <h3 class="negative">不能作为证据</h3>
         <ul>
           <li class="negative">不是 IFAM 的复现结果，也不能证明 IFAM 在任何新数据上更好。</li>
           <li class="negative">不包含 Duroc、UKB、WTCCC 或其他个体级数据，不包含上游代码。</li>
@@ -603,7 +627,7 @@
   <section class="section" aria-labelledby="use-title">
     <div class="section-head">
       <h2 id="use-title">在 Agent 中使用</h2>
-      <span>Install &amp; read</span>
+      <span>安装与阅读</span>
     </div>
     <div class="use">
       <div class="use-copy">
@@ -613,7 +637,7 @@
           <a href="skill-manifest.json">skill-manifest.json</a>。</p>
       </div>
       <div class="use-code">
-        <p class="code-label">Installation sketch</p>
+        <p class="code-label">安装示意</p>
         <pre>unzip ifam-paper-skill.zip
 # → ifam-paper/SKILL.md
 #   ifam-paper/references/{index,paper,supplement}.md
@@ -630,11 +654,11 @@ rg -n -i -m 8 'Duroc|randomMax|10-fold' \
   <section class="section" aria-labelledby="contents-title">
     <div class="section-head">
       <h2 id="contents-title">包内文件</h2>
-      <span>13 source files · 494 KB</span>
+      <span>13 个源文件 · 494 KB</span>
     </div>
     <div class="contents">
       <div class="contents-col">
-        <h3>Documents</h3>
+        <h3>文档</h3>
         <ul>
           <li><a href="skill/SKILL.html">SKILL.md</a><span class="meta">使用说明</span></li>
           <li><a href="skill/references/index.html">references/index.md</a><span class="meta">阅读导航</span></li>
@@ -643,7 +667,7 @@ rg -n -i -m 8 'Duroc|randomMax|10-fold' \
         </ul>
       </div>
       <div class="contents-col">
-        <h3>Figures</h3>
+        <h3>图片</h3>
         <ul>
           <li><a href="skill/assets/figure/figure-1.jpg">figure-1.jpg</a><span class="meta">Fig. 1</span></li>
           <li><a href="skill/assets/figure/figure-2.jpg">figure-2.jpg</a><span class="meta">Fig. 2</span></li>
@@ -668,17 +692,16 @@ rg -n -i -m 8 'Duroc|randomMax|10-fold' \
 
   <footer class="foot">
     <div>
-      <p><b>Source.</b> Tang et al., <i>Nature Communications</i> 17:5686 (2026), DOI
-        <a href="https://doi.org/10.1038/s41467-026-72470-0" target="_blank" rel="noreferrer">10.1038/s41467-026-72470-0</a>.
-        Open access under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>.
-        Figure and equation crops remain attributed to the same article.</p>
-      <p><b>Boundary.</b> This preview contains paper material only. It is not a benchmark result, a data/code distribution, or a callable MCP service. Benchmark values on GSGP-Bench remain explicitly labelled demo data until a real run is certified.</p>
-      <p><b>Workflow.</b> Generated with the Paper2Agent Paper2Skill workflow. Paper2Agent is MIT-licensed; see the repository LICENSE.</p>
+      <p><b>来源。</b> Tang 等, <i>Nature Communications</i> 17:5686 (2026)，DOI
+        <a href="https://doi.org/10.1038/s41467-026-72470-0" target="_blank" rel="noreferrer">10.1038/s41467-026-72470-0</a>。
+        以 <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a> 开放获取。
+        图片与公式裁剪仍归因于同一篇文章。</p>
+      <p><b>边界。</b> 本预览只包含论文材料。它不是基准结果、不是数据/代码分发，也不是可调用的 MCP 服务。GSGP-Bench 上的基准数值在真实运行通过认证前，仍明确标记为演示数据。</p>
+      <p><b>生成方式。</b> 由 Paper2Agent Paper2Skill 工作流生成。Paper2Agent 采用 MIT 许可；详见仓库许可文件。</p>
     </div>
     <div class="foot-meta">
-      GSGP·BENCH / RESEARCH RESOURCE<br />
-      IFAM-PAPER · REVIEWED_WITH_LIMITATIONS<br />
-      2026-10-18
+      GSGP·BENCH / 研究资源<br />
+      IFAM 论文 Skill · 已审校（有限制）
     </div>
   </footer>
 </main>

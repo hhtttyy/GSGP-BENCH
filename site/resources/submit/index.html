@@ -7,20 +7,80 @@
 <meta name="description" content="向 GSGP-Bench 提交 Paper2Agent 生成的 Skill/MCP 包，接受统一验证和认证。" />
 <meta name="theme-color" content="#f1f2ee" />
 <link rel="stylesheet" href="../ifam-paper/reader.css" />
+<style>
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 18px 0 8px;
+    min-width: 0;
+  }
+  .ref-card {
+    min-width: 0;
+    padding: 18px 18px 16px;
+    border: 1px solid var(--rule);
+    background: var(--plate);
+  }
+  .ref-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .ref-head h3 { margin: 0; font-size: 20px; }
+  .ref-status {
+    padding: 2px 7px;
+    border: 1px solid;
+    font-family: var(--mono);
+    font-size: 10.5px;
+  }
+  .ref-status.is-ok { color: var(--moss); border-color: var(--moss); }
+  .ref-status.is-pending { color: var(--rust); border-color: var(--rust); }
+  .ref-card dl {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 5px 10px;
+    margin: 14px 0;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .ref-card dt { color: var(--ink-3); }
+  .ref-card dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+  .ref-card h4 { margin: 16px 0 6px; font-size: 15px; }
+  .ref-steps {
+    margin: 0 0 10px;
+    padding-left: 20px;
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .ref-card pre { margin: 10px 0 12px; max-width: 100%; font-size: 11px; }
+  .ref-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 12px;
+  }
+  @media (max-width: 820px) {
+    .ref-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body class="reader-page">
 <header class="reader-top">
   <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
-  <nav class="reader-crumbs" aria-label="面包屑">
-    <a href="../../index.html">方法库</a>
+  <nav class="reader-crumbs" aria-label="站点导航">
+    <a href="../../index.html">评测</a>
     <span aria-hidden="true">/</span>
-    <span>提交 MCP</span>
+    <a href="../introduce/index.html">介绍</a>
+    <span aria-hidden="true">/</span>
+    <a href="../generate/index.html">生成</a>
+    <span aria-hidden="true">/</span>
+    <a href="../submit/index.html" class="is-current" aria-current="page">提交</a>
   </nav>
-  <span class="reader-status">已认证 / 未认证</span>
 </header>
 <main class="reader">
   <h1>提交 MCP</h1>
-  <p>我们用 <strong>已认证 / 未认证</strong> 两个状态，不托管在线 MCP。已认证表示中央团队实践验证过这个版本的 MCP 包；它不代表论文结果认证，也不代表网站在线执行。</p>
+  <p>我们用 <strong>已认证 / 未认证</strong> 两个状态，不托管在线 MCP。已认证表示 GSGP-BENCH 团队实践验证过这个版本的 MCP 包；它不代表论文结果认证，也不代表网站在线执行。</p>
 
   <p><a href="../../resources/generate/index.html">还没有生成包？先下载本地 Paper2Agent 套件 →</a></p>
 
@@ -28,7 +88,7 @@
   <ol>
     <li><a href="../../resources/generate/index.html">用本地 Paper2Agent 套件生成包</a>，准备 Skill、MCP 服务、工具契约、运行说明和公开/合成测试数据。</li>
     <li>在仓库的 <strong>Issues → New issue → MCP submission</strong> 提交表单（模板：<code>.github/ISSUE_TEMPLATE/mcp-submission.yml</code>）。</li>
-    <li>中央团队统一运行参考数据、检查输入输出、truth 隔离、安全边界和 provenance。</li>
+    <li>GSGP-BENCH 团队统一运行参考数据、检查输入输出、真实值隔离、安全边界和来源记录。</li>
     <li>通过 → 标记 <strong>已认证</strong>；未通过或尚未审核 → 保持 <strong>未认证</strong>，仍可被查看和使用，但风险自担。</li>
   </ol>
 
@@ -40,25 +100,80 @@
     <li>MCP transport、运行方式、依赖；</li>
     <li>一条可复现测试命令和参考数据；</li>
     <li>期望输出与已知限制；</li>
-    <li>明确声明：MCP 不接收 held-out truth，不计算 benchmark 指标。</li>
+    <li>明确声明：MCP 不接收留出的真实值，不计算评测指标。</li>
   </ul>
 
   <h2>认证边界</h2>
-  <p>已认证的是 <strong>这个 MCP 包和固定版本</strong>，不是任何一次运行结果，也不是在线服务。用户仍然需要自己安装、运行并核对结果。结果等级仍单独记录为 演示 / 流程测试 / 探索 / 正式复现 / 论文值。</p>
+  <p>已认证的是 <strong>这个 MCP 包和固定版本</strong>，不是任何一次运行结果，也不是在线服务。用户仍然需要自己安装、运行并核对结果。结果等级仍单独记录为 演示 / 复现 / 探索 / 流程测试 / 论文值 / 未运行。</p>
   <p>未认证条目允许公开查看和自行使用，但网站不会为它背书；使用前请检查来源、许可证和限制。</p>
 
-  <h2>当前认证状态</h2>
-  <ul>
-    <li><strong>GBLUP baseline MCP</strong>：已认证；本地 stdio 测试和 direct 对照通过。</li>
-    <li><strong>IFAM MCP</strong>：未认证；只有替代引擎的流程测试，真实引擎未验证。</li>
-  </ul>
+  <h2>参考示例：两个已跑通的 MCP</h2>
+  <p>下面两条链路都可以在仓库中复现。第一条是自建基线；第二条是 Paper2Agent 生成的论文 Skill 加本地 MCP 原型。它们展示“从论文到 MCP”的完整过程，也明确显示当前证据等级。</p>
+  <div class="ref-grid">
+    <article class="ref-card">
+      <div class="ref-head">
+        <h3>GBLUP 基线 MCP</h3>
+        <span class="ref-status is-ok">已认证</span>
+      </div>
+      <dl>
+        <dt>论文</dt><dd>VanRaden 2008 · J. Dairy Sci. 91:4414–4423</dd>
+        <dt>论文 Skill</dt><dd><code>benchmark/algorithms/gblup/SKILL.md</code>（自建基线，不是 Paper2Agent 自动生成）</dd>
+        <dt>MCP 工具</dt><dd>本地 stdio：inspect / fit / export；不接收真实值，不计算指标</dd>
+        <dt>复现结果</dt><dd>探索：Pearson r = 0.5075，R² = 0.2576，单次 80/20</dd>
+      </dl>
+      <h4>复现步骤</h4>
+      <ol class="ref-steps">
+        <li>准备上游 IFAM 归档，导出 500×5k 本地子集；原始数据不提交。</li>
+        <li>运行 direct control，得到独立评测记录。</li>
+        <li>运行本地 MCP trial，确认 MCP 结果与 direct control 指标一致。</li>
+      </ol>
+      <pre><code>python3 benchmark/prepare_demo_subset.py \
+  --ifam-root "$HOME/Downloads/IFAM-main"
 
-  <h2>相关页面</h2>
-  <p><a href="../../resources/methods/index.html">方法档案</a> · <a href="../../resources/gblup-baseline/index.html">GBLUP baseline</a> · <a href="../../resources/ifam-paper/index.html">IFAM Skill</a></p>
+python3 benchmark/run_gblup_sim.py \
+  --source-subset local_data/ifam-demo-500x5k \
+  --run-id gblup-sim500-v1
+
+python3 benchmark/run_gblup_mcp_trial.py \
+  --run-id gblup-sim500-mcp-v1</code></pre>
+      <p class="ref-links">
+        <a href="../../resources/gblup-baseline/index.html">查看基线说明 →</a>
+        <a href="../../data/results/gblup-sim500.json">查看结果记录 →</a>
+      </p>
+    </article>
+
+    <article class="ref-card">
+      <div class="ref-head">
+        <h3>IFAM 论文 Skill + MCP</h3>
+        <span class="ref-status is-pending">未认证</span>
+      </div>
+      <dl>
+        <dt>论文</dt><dd>Tang 等 2026 · Nature Communications · DOI 10.1038/s41467-026-72470-0</dd>
+        <dt>论文 Skill</dt><dd>已审校（有限制）：全文、6 张图、3 个公式；状态 <code>reviewed_with_limitations</code></dd>
+        <dt>MCP 工具</dt><dd>本地 stdio 四工具：inspect / fit / status / export</dd>
+        <dt>复现结果</dt><dd>流程测试：Pearson r = −0.032，仅证明管线，不能作为科学结果</dd>
+      </dl>
+      <h4>复现步骤</h4>
+      <ol class="ref-steps">
+        <li>运行契约测试和 tiny 验收，确认 stdio 四工具可用。</li>
+        <li>用真实 IFAM.R + 替代 HIBLUP 跑 dry-run，检查 fit / status / export。</li>
+        <li>真实 HIBLUP 验收需要 R、optparse 和 HIBLUP v1.1.0；当前 v1.1.0 不可得，因此保持未认证。</li>
+      </ol>
+      <pre><code>python3 -m unittest discover \
+  -s agents/ifam/mcp/tests -v
+
+python3 agents/ifam/mcp/acceptance.py --skip-demo
+
+export IFAM_ROOT="$HOME/Downloads/IFAM-main"
+python3 agents/ifam/mcp/dry_run.py \
+  --driver ifam-r \
+  --work-dir /tmp/ifam-mcp-dry-run</code></pre>
+      <p class="ref-links">
+        <a href="../../resources/ifam-paper/index.html">查看论文 Skill →</a>
+        <a href="../../data/results/ifam-stub-sim500.json">查看流程测试记录 →</a>
+      </p>
+    </article>
+  </div>
 </main>
-<footer class="reader-foot">
-  <p><b>GSGP·Bench</b> · MCP submission and central validation · 2026-10-19</p>
-  <p>No online MCP hosting. Certification covers the package, not scientific results.</p>
-</footer>
 </body>
 </html>

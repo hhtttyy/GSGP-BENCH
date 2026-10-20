@@ -85,4 +85,4 @@ MCP 认证与结果等级是两件事：
 - GBLUP Skill：`benchmark/algorithms/gblup/SKILL.md`
 - 结果 schema：`benchmark/schema/result.v1.json`
 - 提交模板：`.github/ISSUE_TEMPLATE/mcp-submission.yml`
-- 网站方法档案：`site/resources/methods/index.html`
+- 网站介绍页：`site/resources/introduce/index.html`

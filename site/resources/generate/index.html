@@ -10,150 +10,394 @@
 <style>
   .generate-hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
-    gap: 48px;
-    align-items: start;
-    margin-bottom: 46px;
-    padding-bottom: 38px;
-    border-bottom: 1px solid var(--rule);
+    grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 26px;
   }
+  .generate-hero > * { min-width: 0; }
   .generate-kicker {
     margin: 0 0 14px;
     font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--moss);
   }
   .generate-title {
-    margin: 0 0 16px;
+    margin: 0 0 18px;
     font-family: var(--serif);
-    font-size: clamp(38px, 5vw, 58px);
+    font-size: clamp(40px, 5.2vw, 62px);
     font-weight: 600;
-    line-height: 1.05;
-    letter-spacing: -0.035em;
+    line-height: 1.04;
+    letter-spacing: -0.038em;
   }
   .generate-lede {
-    max-width: 640px;
+    max-width: 620px;
     margin: 0;
     color: var(--ink-2);
-    font-size: 18px;
+    font-size: 19px;
     line-height: 1.65;
   }
-  .generate-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+  .generate-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
   .generate-btn {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
+    padding: 11px 16px;
     border: 1px solid var(--ink);
     background: var(--ink);
     color: var(--plate);
-    font-family: var(--sans); font-size: 11px; letter-spacing: .03em;
+    font-family: var(--sans); font-size: 12.5px; letter-spacing: .025em;
     text-decoration: none;
   }
   .generate-btn.secondary { background: transparent; color: var(--ink); }
   .generate-btn:hover { background: var(--moss); border-color: var(--moss); color: #fff; }
-  .generate-facts {
-    padding: 16px 18px;
+
+  .kit-carousel {
+    position: relative;
+    width: 100%;
+    min-width: 0;
     border: 1px solid var(--rule);
     background: var(--plate);
+    box-shadow: 0 18px 40px rgba(27, 38, 33, .08);
+  }
+  .kit-viewport { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--plate); }
+  .kit-slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s ease, visibility .35s;
+  }
+  .kit-slide.is-active { opacity: 1; visibility: visible; }
+  .kit-slide-kicker {
+    margin: 0 0 8px;
+    color: var(--moss);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+  }
+  .kit-slide h3 {
+    margin: 0 0 14px;
+    font-size: 23px;
+    line-height: 1.28;
+    letter-spacing: -.02em;
+  }
+  .kit-flow { display: flex; align-items: stretch; gap: 7px; }
+  .kit-arrow { align-self: center; flex: 0 0 auto; color: var(--ink-3); font-size: 13px; }
+  .kit-node {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 12px 8px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    text-align: center;
+  }
+  .kit-node-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    margin-bottom: 7px;
+    border: 1px solid var(--moss);
+    border-radius: 50%;
+    color: var(--moss);
     font-family: var(--mono);
     font-size: 9px;
-    line-height: 1.8;
+  }
+  .kit-node b { display: block; font-size: 14.5px; line-height: 1.3; }
+  .kit-node small { display: block; margin-top: 4px; color: var(--ink-3); font-family: var(--sans); font-size: 10.5px; line-height: 1.4; }
+  .kit-slide-note { margin: 12px 0 0; color: var(--ink-2); font-family: var(--sans); font-size: 12.5px; line-height: 1.6; }
+  .kit-split { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 11px; }
+  .kit-panel { min-width: 0; padding: 14px 14px 13px; border: 1px solid var(--rule); background: #fff; }
+  .kit-panel-kicker { display: block; margin-bottom: 6px; color: var(--ink-3); font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; }
+  .kit-panel strong { display: block; margin-bottom: 9px; font-family: var(--serif); font-size: 18px; line-height: 1.3; }
+  .kit-panel.is-local { background: var(--moss); border-color: var(--moss); color: #fff; }
+  .kit-panel.is-local .kit-panel-kicker { color: rgba(255,255,255,.65); }
+  .kit-panel.is-local .kit-chip { background: rgba(255,255,255,.16); color: #fff; }
+  .kit-panel.is-site { background: var(--rust-soft); border-color: var(--rust); }
+  .kit-panel.is-site .kit-chip { background: #fff; color: var(--rust); }
+  .kit-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .kit-chip {
+    padding: 3px 6px;
+    background: var(--moss-soft);
+    color: var(--moss);
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .kit-split-arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--ink-3); }
+  .kit-split-arrow b { color: var(--ink); font-size: 32px; font-weight: 400; line-height: 1; }
+  .kit-split-arrow span {
+    padding: 4px 7px;
+    border: 1px solid var(--moss);
+    background: var(--moss-soft);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .kit-step-list { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .kit-step {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    border-top: 1px solid var(--rule-soft);
+    font-family: var(--sans);
+    font-size: 12.5px;
+    line-height: 1.45;
     color: var(--ink-2);
   }
-  .generate-facts b { display: block; margin-bottom: 8px; color: var(--ink); letter-spacing: .1em; text-transform: uppercase; }
-  .generate-facts .fact { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--rule-soft); padding-top: 7px; margin-top: 7px; }
+  .kit-step:last-child { border-bottom: 1px solid var(--rule-soft); }
+  .kit-step b { flex: 0 0 auto; color: var(--moss); font-family: var(--mono); font-size: 9.5px; font-weight: 500; }
+  .kit-dots {
+    position: absolute;
+    bottom: 12px; right: 14px;
+    display: flex;
+    gap: 6px;
+  }
+  .kit-dot {
+    width: 7px; height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #c7cfc4;
+    cursor: pointer;
+  }
+  .kit-dot.is-active { background: var(--moss); }
+
+  .generate-meta {
+    margin: 16px 0 0;
+    color: var(--ink-3);
+    font-family: var(--sans);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .generate-meta b { color: var(--ink-2); font-weight: 600; }
+  .generate-meta a { color: var(--moss); }
+
   .generate-section { margin: 42px 0; }
   .generate-section h2 { margin-top: 0; }
-  .generate-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-  .generate-card { border-top: 2px solid var(--ink); padding-top: 13px; }
-  .generate-card h3 { margin: 0 0 8px; font-size: 15px; }
-  .generate-card p { margin: 0; color: var(--ink-2); font-size: 13px; }
+  .generate-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 36px; }
+  .generate-card { border-top: 2px solid var(--ink); padding-top: 15px; }
+  .generate-card h3 { margin: 0 0 9px; font-size: 18px; }
+  .generate-card p { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.7; }
   .steps { counter-reset: step; margin: 0; padding: 0; list-style: none; }
-  .steps li { counter-increment: step; position: relative; padding: 0 0 22px 45px; border-left: 1px solid var(--rule); margin-left: 13px; }
-  .steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: -14px; top: -2px; width: 27px; height: 27px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--ink); background: var(--paper); font-family: var(--mono); font-size: 8px; color: var(--ink); }
-  .steps strong { display: block; margin-bottom: 4px; }
-  .steps p { margin: 0; color: var(--ink-2); font-size: 13px; }
-  .prompt-wrap { position: relative; margin-top: 14px; border: 1px solid var(--rule); background: #f7f8f4; }
-  .prompt-wrap pre { margin: 0; border: 0; max-height: 340px; overflow: auto; font-size: 11.5px; line-height: 1.65; }
-  .copy-btn { position: absolute; top: 9px; right: 9px; border: 1px solid var(--rule); background: var(--plate); color: var(--ink-2); font-family: var(--mono); font-size: 8px; padding: 5px 7px; cursor: pointer; }
+  .steps li { counter-increment: step; position: relative; padding: 0 0 26px 50px; border-left: 1px solid var(--rule); margin-left: 14px; }
+  .steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: -15px; top: -2px; width: 29px; height: 29px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--ink); background: var(--paper); font-family: var(--mono); font-size: 9px; color: var(--ink); }
+  .steps strong { display: block; margin-bottom: 5px; font-size: 16px; }
+  .steps p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.7; }
+  .prompt-wrap { position: relative; margin-top: 15px; border: 1px solid var(--rule); background: #f7f8f4; }
+  .prompt-wrap pre { margin: 0; border: 0; max-height: 340px; overflow: auto; font-size: 12px; line-height: 1.65; }
+  .copy-btn { position: absolute; top: 9px; right: 9px; border: 1px solid var(--rule); background: var(--plate); color: var(--ink-2); font-family: var(--mono); font-size: 9px; padding: 5px 8px; cursor: pointer; }
   .copy-btn:hover { border-color: var(--ink-2); color: var(--ink); }
-  .kit-list { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 32px; font-size: 13px; color: var(--ink-2); }
-  .kit-list li { break-inside: avoid; padding: 5px 0; border-bottom: 1px solid var(--rule-soft); }
-  .generate-callout { margin: 32px 0; padding: 17px 19px; border-left: 3px solid var(--rust); background: var(--rust-soft); color: var(--ink-2); font-size: 13px; line-height: 1.7; }
+  .kit-items { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
+  .kit-item { display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--rule-soft); }
+  .kit-num {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--moss);
+    color: var(--moss);
+    font-family: var(--mono);
+    font-size: 9px;
+  }
+  .kit-item-body { min-width: 0; }
+  .kit-item-body b { display: block; color: var(--ink); font-family: var(--sans); font-size: 15px; }
+  .kit-item-body p { margin: 3px 0 5px; color: var(--ink-2); font-family: var(--sans); font-size: 13px; line-height: 1.6; }
+  .kit-item-body a { font-family: var(--sans); font-size: 12px; }
+  .generate-callout { margin: 32px 0; padding: 18px 20px; border-left: 3px solid var(--rust); background: var(--rust-soft); color: var(--ink-2); font-size: 15px; line-height: 1.7; }
   .generate-callout b { color: var(--ink); }
+  .level-callout {
+    margin: 14px 0 24px;
+    padding: 14px 17px;
+    border-left: 3px solid var(--moss);
+    background: var(--moss-soft);
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.75;
+  }
+  .level-callout b { color: var(--ink); }
+  .level-callout a { color: var(--moss); }
+  .generate-links { margin-top: 18px; font-size: 13px; }
   .generate-links a { color: var(--moss); }
+  @media (max-width: 900px) {
+    .generate-hero { grid-template-columns: 1fr; gap: 30px; }
+    .kit-carousel { max-width: 620px; }
+  }
   @media (max-width: 760px) {
-    .generate-hero { grid-template-columns: 1fr; gap: 26px; }
     .generate-grid { grid-template-columns: 1fr; }
-    .kit-list { columns: 1; }
     .generate-actions { flex-direction: column; align-items: flex-start; }
+    .generate-lede { font-size: 17px; }
+    .kit-viewport { aspect-ratio: 4 / 3; }
+    .kit-slide { padding: 18px 16px; }
+    .kit-slide h3 { margin-bottom: 12px; font-size: 18px; }
+    .kit-slide-kicker { margin-bottom: 5px; font-size: 9px; }    .kit-flow { gap: 4px; }
+    .kit-node { padding: 8px 4px; }
+    .kit-node b { font-size: 11px; }
+    .kit-node small { font-size: 8.5px; }
+    .kit-slide-note { margin-top: 10px; font-size: 10.5px; }
+    .kit-split { grid-template-columns: 1fr auto 1fr; gap: 4px; }
+    .kit-split-arrow { transform: none; }
+    .kit-split-arrow span { display: none; }
+    .kit-panel { padding: 8px; }
+    .kit-panel-kicker { font-size: 8px; margin-bottom: 4px; }
+    .kit-panel strong { font-size: 13px; margin-bottom: 6px; }
+    .kit-chip { padding: 2px 4px; font-size: 9px; }
+    .kit-step-list { gap: 0; }
+    .kit-step { padding: 4px 0; font-size: 10px; }
+  }
+  @media (max-width: 520px) {
+    .generate-title { font-size: 37px; }
   }
 </style>
 </head>
 <body class="reader-page">
 <header class="reader-top">
   <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
-  <nav class="reader-crumbs" aria-label="面包屑">
-    <a href="../../index.html">方法库</a>
+  <nav class="reader-crumbs" aria-label="站点导航">
+    <a href="../../index.html">评测</a>
     <span aria-hidden="true">/</span>
-    <span>本地生成</span>
+    <a href="../introduce/index.html">介绍</a>
+    <span aria-hidden="true">/</span>
+    <a href="../generate/index.html" class="is-current" aria-current="page">生成</a>
+    <span aria-hidden="true">/</span>
+    <a href="../submit/index.html">提交</a>
   </nav>
-  <span class="reader-status">LOCAL ONLY · NO RUNTIME</span>
 </header>
 
 <main class="reader" style="width:min(1040px, calc(100% - 48px));">
   <section class="generate-hero">
     <div>
-      <p class="generate-kicker">Paper2Agent · Local Generation Kit</p>
+      <p class="generate-kicker">Paper2Agent · 本地生成套件</p>
       <h1 class="generate-title">把论文变成<br />你自己的 Skill / MCP</h1>
       <p class="generate-lede">
-        下载本地套件，在你自己的编码 Agent 里运行 Paper2Agent。
-        GSGP-Bench 不在网页执行论文代码，也不接收论文、数据或凭据；
-        你生成、你运行、你提交，我们负责统一认证。
+        下载一个本地套件，交给你的编码 Agent。它会帮你读懂论文、
+        生成可运行的论文 Skill 与 MCP 工具，并留下验证记录。
+        论文、数据和代码都留在本机，网站不接收，也不执行。
       </p>
       <div class="generate-actions">
         <a class="generate-btn" href="paper2agent-local-kit.zip" download>下载本地套件 <span aria-hidden="true">↓</span></a>
         <a class="generate-btn secondary" href="../submit/index.html">提交 MCP 认证 <span aria-hidden="true">→</span></a>
         <a class="generate-btn secondary" href="kit-manifest.json">查看套件清单</a>
       </div>
+      <p class="generate-meta"><b>73 个文件</b> · 5.0 MB · MIT 许可 · <a href="kit-manifest.json">清单与哈希</a></p>
     </div>
-    <aside class="generate-facts" aria-label="套件信息">
-      <b>Kit facts</b>
-      <div class="fact"><span>文件</span><span id="kit-files">73</span></div>
-      <div class="fact"><span>大小</span><span id="kit-size">5.0 MB</span></div>
-      <div class="fact"><span>顶层目录</span><span>paper2agent/</span></div>
-      <div class="fact"><span>许可证</span><span>MIT</span></div>
-      <div class="fact"><span>网站执行</span><span>不执行</span></div>
-      <div class="fact"><span>认证</span><span>提交后检测</span></div>
-      <div class="fact"><span>SHA-256</span><span id="kit-sha" title="kit-manifest.json">4b52…0043</span></div>
-    </aside>
+    <div class="kit-carousel" id="kit-carousel" aria-label="本地套件说明">
+      <div class="kit-viewport">
+        <article class="kit-slide is-active">
+          <p class="kit-slide-kicker">本地套件 · 01</p>
+          <h3>论文 → 论文 Skill → MCP 工具</h3>
+          <div class="kit-flow">
+            <div class="kit-node">
+              <span class="kit-node-icon">01</span>
+              <b>论文</b>
+              <small>PDF 或链接</small>
+            </div>
+            <span class="kit-arrow" aria-hidden="true">→</span>
+            <div class="kit-node">
+              <span class="kit-node-icon">02</span>
+              <b>论文 Skill</b>
+              <small>可检索、可引用</small>
+            </div>
+            <span class="kit-arrow" aria-hidden="true">→</span>
+            <div class="kit-node">
+              <span class="kit-node-icon">03</span>
+              <b>MCP 工具</b>
+              <small>可运行、可提交</small>
+            </div>
+          </div>
+          <p class="kit-slide-note">从论文到可运行的工具，全程在你的电脑上完成。</p>
+        </article>
+
+        <article class="kit-slide">
+          <p class="kit-slide-kicker">本地套件 · 02</p>
+          <h3>你的电脑负责生成，网站只负责展示与认证</h3>
+          <div class="kit-split">
+            <div class="kit-panel is-local">
+              <span class="kit-panel-kicker">你的电脑</span>
+              <strong>生成与验证</strong>
+              <div class="kit-chips">
+                <span class="kit-chip">论文</span>
+                <span class="kit-chip">代码</span>
+                <span class="kit-chip">数据</span>
+              </div>
+            </div>
+            <div class="kit-split-arrow" aria-hidden="true">
+              <b>→</b>
+              <span>只提交包与聚合结果</span>
+            </div>
+            <div class="kit-panel is-site">
+              <span class="kit-panel-kicker">GSGP·Bench</span>
+              <strong>展示与认证</strong>
+              <div class="kit-chips">
+                <span class="kit-chip">公开记录</span>
+                <span class="kit-chip">认证状态</span>
+              </div>
+            </div>
+          </div>
+          <p class="kit-slide-note">原始论文、数据和凭据不需要上传；网站不运行论文代码。</p>
+        </article>
+
+        <article class="kit-slide">
+          <p class="kit-slide-kicker">本地套件 · 03</p>
+          <h3>五步开始使用</h3>
+          <div class="kit-step-list">
+            <div class="kit-step"><b>01</b><span>下载并解压套件</span></div>
+            <div class="kit-step"><b>02</b><span>准备论文与代码路径</span></div>
+            <div class="kit-step"><b>03</b><span>在 Agent 中运行提示词</span></div>
+            <div class="kit-step"><b>04</b><span>本地检查并运行</span></div>
+            <div class="kit-step"><b>05</b><span>提交 GSGP-BENCH 认证</span></div>
+          </div>
+          <p class="kit-slide-note">每一份产物都保留输入、命令、版本和已知限制。</p>
+        </article>
+      </div>
+      <div class="kit-dots" role="group" aria-label="切换本地套件说明">
+        <button class="kit-dot is-active" type="button" aria-label="查看套件流程" aria-pressed="true"></button>
+        <button class="kit-dot" type="button" aria-label="查看本地与网站的边界" aria-pressed="false"></button>
+        <button class="kit-dot" type="button" aria-label="查看开始步骤" aria-pressed="false"></button>
+      </div>
+    </div>
   </section>
 
   <section class="generate-section">
-    <h2>为什么是本地套件</h2>
+    <h2>本地套件是什么</h2>
     <div class="generate-grid">
       <div class="generate-card">
-        <h3>网站只做静态展示</h3>
-        <p>Cloudflare 免费静态站不执行 Python/R、不运行论文代码，也不托管 MCP。所有生成都发生在你的电脑上。</p>
+        <h3>论文不出本机</h3>
+        <p>论文、代码、数据和凭据都留在你的电脑。网站不接收、不运行，也不保存这些内容。</p>
       </div>
       <div class="generate-card">
-        <h3>认证只看包，不看来源</h3>
-        <p>手动、Paper2Agent 或其他方式生成的 MCP 都可以提交；我们统一检测后给出 <b>已认证 / 未认证</b>。</p>
+        <h3>交给 Agent 就能开工</h3>
+        <p>套件里有主 Skill、三个子流程、可复制提示词和验证脚本。按五步操作，就能得到一份可检查的产物。</p>
       </div>
       <div class="generate-card">
-        <h3>认证不是结果认证</h3>
-        <p>MCP 通过检测，不代表某个数据集上的结果是 正式复现；结果等级仍单独记录。</p>
+        <h3>产出可提交的包</h3>
+        <p>论文 Skill、MCP 包、MCP 工具契约和验证记录会一起生成，可以直接进入认证流程。</p>
       </div>
       <div class="generate-card">
-        <h3>未认证也能被看到</h3>
-        <p>未认证条目可展示、可自行使用，但风险自担；通过检测后升级为已认证。</p>
+        <h3>认证让别人敢用</h3>
+        <p>通过 GSGP-BENCH 团队检测后显示 <b>已认证</b>；未认证也能公开展示和自行使用，但风险自担。</p>
       </div>
+    </div>
+    <div class="generate-callout">
+      <b>适合谁：</b>想把论文方法变成可调用工具的博士生、方法开发者和育种团队。你不需要自己搭服务器，也不需要把数据交给网站。
     </div>
   </section>
 
   <section class="generate-section" id="steps">
-    <h2>五步生成</h2>
+    <h2>五步开始使用</h2>
+    <div class="level-callout">
+      <b>先分清两件事：</b>五步流程产出的是论文 Skill 与 MCP 工具。MCP 认证是包级别，不等于结果等级；结果仍需单独运行，并按 演示 / 复现 / 探索 / 流程测试 / 论文值 / 未运行 标记。
+      <a href="../introduce/index.html#levels">查看结果等级 →</a>
+    </div>
     <ol class="steps">
       <li>
         <strong>下载并解压套件</strong>
@@ -199,23 +443,79 @@ Requirements:
       </li>
       <li>
         <strong>提交认证</strong>
-        <p>通过 GitHub Issue 提交 MCP。中央团队检测契约、运行、truth 隔离和安全边界；通过后显示已认证。</p>
+        <p>通过 GitHub Issue 提交 MCP。GSGP-BENCH 团队检测契约、运行、真实值隔离和安全边界；通过后显示已认证。</p>
       </li>
     </ol>
   </section>
 
   <section class="generate-section">
     <h2>套件里有什么</h2>
-    <ul class="kit-list">
-      <li>Paper2Agent 主 Skill</li>
-      <li>paper2agent-paper / paper2skill / paper2mcp</li>
-      <li>论文理解、代码审计与 MCP 生成参考</li>
-      <li>运行时验证脚本</li>
-      <li>本地套件 README</li>
-      <li>可复制提示词 PROMPT.md</li>
-      <li>MCP submission Issue 模板</li>
-      <li>MIT 许可证</li>
-    </ul>
+    <ol class="kit-items">
+      <li class="kit-item">
+        <span class="kit-num">01</span>
+        <div class="kit-item-body">
+          <b>Paper2Agent 主 Skill</b>
+          <p>流程入口，负责编排论文理解、Skill 与 MCP 生成。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/blob/main/skills/paper2agent/SKILL.md" target="_blank" rel="noreferrer">打开文件 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">02</span>
+        <div class="kit-item-body">
+          <b>三个子流程</b>
+          <p>paper2agent-paper、paper2skill、paper2mcp，分别负责读论文、整理 Skill、生成 MCP。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/tree/main/skills/paper2agent" target="_blank" rel="noreferrer">打开目录 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">03</span>
+        <div class="kit-item-body">
+          <b>论文理解与代码审计参考</b>
+          <p>工具提取、运行时验证、语言路由和安全边界的参考文档。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/tree/main/skills/paper2agent/paper2mcp/references" target="_blank" rel="noreferrer">打开目录 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">04</span>
+        <div class="kit-item-body">
+          <b>运行时验证脚本</b>
+          <p>验证 MCP server 与生成工作流，保存运行记录。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/tree/main/skills/paper2agent/paper2mcp/scripts" target="_blank" rel="noreferrer">打开脚本目录 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">05</span>
+        <div class="kit-item-body">
+          <b>本地套件 README</b>
+          <p>安装、目录结构、运行方式和限制说明。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/blob/main/docs/Paper2Agent-Local-Kit.md" target="_blank" rel="noreferrer">打开文档 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">06</span>
+        <div class="kit-item-body">
+          <b>可复制提示词</b>
+          <p>替换论文、代码和输出路径后，直接交给编码 Agent。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/blob/main/docs/Paper2Agent-Prompt.md" target="_blank" rel="noreferrer">打开提示词 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">07</span>
+        <div class="kit-item-body">
+          <b>MCP 提交模板</b>
+          <p>通过 GitHub Issue 提交包、测试命令和限制说明。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/blob/main/.github/ISSUE_TEMPLATE/mcp-submission.yml" target="_blank" rel="noreferrer">打开模板 ↗</a>
+        </div>
+      </li>
+      <li class="kit-item">
+        <span class="kit-num">08</span>
+        <div class="kit-item-body">
+          <b>MIT 许可证</b>
+          <p>套件随仓库许可证分发；论文和第三方代码遵循其原始许可。</p>
+          <a href="https://github.com/hhtttyy/GSGP-BENCH/blob/main/LICENSE" target="_blank" rel="noreferrer">查看许可证 ↗</a>
+        </div>
+      </li>
+    </ol>
     <p class="generate-links">不包含：论文原文、代码 checkout、数据集、生成好的 MCP、API 凭据。清单和哈希见 <a href="kit-manifest.json">kit-manifest.json</a>。</p>
   </section>
 
@@ -224,40 +524,26 @@ Requirements:
     <div class="generate-grid">
       <div class="generate-card">
         <h3>未认证</h3>
-        <p>包已提交但未通过/未完成中央检测。网站可展示，用户可自行使用，风险自担。</p>
+        <p>包已提交但未通过/未完成 GSGP-BENCH 团队检测。网站可展示，用户可自行使用，风险自担。</p>
       </div>
       <div class="generate-card">
         <h3>已认证</h3>
-        <p>中央团队实践验证过固定版本：契约、启动、参考数据、输出、direct 对照、truth 隔离和安全边界。</p>
+        <p>GSGP-BENCH 团队实践验证过固定版本：契约、启动、参考数据、输出、直接对照、真实值隔离和安全边界。</p>
       </div>
     </div>
     <div class="generate-callout">
       <b>注意：</b>认证的是 MCP 包，不是论文结果，也不是在线服务。结果等级仍单独使用
       演示 / 流程测试 / 探索 / 正式复现 / 论文值；GBLUP 当前是探索，IFAM 当前是流程测试。
     </div>
-    <p class="generate-links">规则：<a href="../../resources/methods/index.html">方法档案</a> · <a href="../../resources/submit/index.html">提交 MCP</a> · <a href="../../resources/gblup-baseline/index.html">GBLUP baseline</a></p>
   </section>
 </main>
 
 <footer class="reader-foot">
-  <p><b>GSGP·Bench</b> · Local Paper2Agent kit · 2026-10-19</p>
-  <p>No paper/code execution, data upload, or MCP hosting on this site. Generated packages are certified separately.</p>
+  <p><b>GSGP·Bench</b> · 本地 Paper2Agent 套件</p>
+  <p>本站不执行论文或代码、不上传数据、不托管 MCP。生成包需单独提交认证。</p>
 </footer>
 
 <script>
-  const files = document.getElementById("kit-files");
-  const size = document.getElementById("kit-size");
-  const sha = document.getElementById("kit-sha");
-  fetch("kit-manifest.json", { cache: "no-store" })
-    .then((response) => response.ok ? response.json() : null)
-    .then((manifest) => {
-      if (!manifest) return;
-      files.textContent = manifest.file_count;
-      size.textContent = (manifest.zip_bytes / (1024 * 1024)).toFixed(1) + " MB";
-      sha.textContent = manifest.zip_sha256.slice(0, 8) + "…" + manifest.zip_sha256.slice(-4);
-      sha.title = manifest.zip_sha256;
-    })
-    .catch(() => {});
   document.getElementById("copy-prompt").addEventListener("click", async () => {
     const text = document.getElementById("prompt-text").innerText;
     const button = document.getElementById("copy-prompt");
@@ -270,6 +556,39 @@ Requirements:
       setTimeout(() => { button.textContent = "复制"; }, 2200);
     }
   });
+
+  (() => {
+    const carousel = document.getElementById("kit-carousel");
+    if (!carousel) return;
+    const slides = Array.from(carousel.querySelectorAll(".kit-slide"));
+    const dots = Array.from(carousel.querySelectorAll(".kit-dot"));
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let index = 0;
+    let timer = null;
+    let paused = false;
+    function show(next) {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => slide.classList.toggle("is-active", i === index));
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === index);
+        dot.setAttribute("aria-pressed", String(i === index));
+      });
+    }
+    function schedule() {
+      clearInterval(timer);
+      if (reduceMotion || paused || document.hidden) return;
+      timer = setInterval(() => show(index + 1), 5200);
+    }
+    dots.forEach((dot, i) => dot.addEventListener("click", () => { show(i); schedule(); }));
+    carousel.addEventListener("mouseenter", () => { paused = true; clearInterval(timer); });
+    carousel.addEventListener("mouseleave", () => { paused = false; schedule(); });
+    carousel.addEventListener("focusin", () => { paused = true; clearInterval(timer); });
+    carousel.addEventListener("focusout", (e) => {
+      if (!carousel.contains(e.relatedTarget)) { paused = false; schedule(); }
+    });
+    document.addEventListener("visibilitychange", schedule);
+    schedule();
+  })();
 </script>
 </body>
 </html>

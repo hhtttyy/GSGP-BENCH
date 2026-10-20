@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>介绍 · GSGP·Bench</title>
+<meta name="description" content="GSGP-Bench 介绍：面向基因组预测研究者、育种团队与学习者，提供本地 MCP 生成、公平对比和 AI 解读，并说明认证与证据等级。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%233d5a47' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%233d5a47'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%233d5a47' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%233d5a47' opacity='.8'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../ifam-paper/reader.css" />
+<style>
+  .intro { width: min(960px, calc(100% - 48px)); }
+  .intro-kicker {
+    margin: 0 0 10px;
+    color: var(--moss);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .intro h1 { margin-bottom: 18px; max-width: 760px; }
+  .intro-lede {
+    max-width: 720px;
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 20px;
+    line-height: 1.65;
+  }
+  .intro-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .intro-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border: 1px solid var(--moss);
+    color: var(--moss);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: .03em;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+  }
+  .intro-btn:hover { background: var(--moss); color: #fff; text-decoration: none; }
+  .intro-btn.is-primary { background: var(--moss); color: #fff; }
+  .intro-btn.is-primary:hover { background: var(--ink); border-color: var(--ink); }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 18px 0 8px;
+  }
+  .intro-card {
+    padding: 17px 16px 16px;
+    border: 1px solid var(--rule);
+    background: var(--plate);
+  }
+  .intro-card.is-key { border-top: 2px solid var(--moss); }
+  .intro-card h3 { margin: 0 0 7px; font-size: 17px; }  .intro-card p { margin: 0; color: var(--ink-2); font-family: var(--sans); font-size: 12px; line-height: 1.7; }
+  .intro-card a {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: var(--sans);
+    font-size: 11px;
+  }
+
+  .rule-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 28px;
+    margin: 12px 0 4px;
+  }
+  .rule-item {
+    padding: 15px 0 14px;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .rule-item h3 { margin: 0 0 5px; font-size: 16px; }
+  .rule-item p { margin: 0; color: var(--ink-2); font-family: var(--sans); font-size: 12px; line-height: 1.7; }
+
+  .level-table td:first-child { white-space: nowrap; font-weight: 700; }
+  .level-table .num { color: var(--ink-3); font-family: var(--mono); font-size: 10px; }
+  .level-cannot { color: var(--rust); }
+  .level-careful { color: var(--ink-2); }
+  .level-ok { color: var(--moss); }
+
+  .examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 18px 0 6px; }
+  .example {
+    padding: 17px 16px 16px;
+    border: 1px solid var(--rule);
+    background: var(--plate);
+  }
+  .example-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .example-head h3 { margin: 0; font-size: 18px; }
+  .example-tag, .example-status {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--rule);
+    color: var(--ink-3);
+  }
+  .example-status.is-exp { color: var(--ink-2); border-color: var(--ink-2); }
+  .example-status.is-stub { color: var(--rust); border-color: var(--rust); }
+  .example p { margin: 10px 0 0; font-size: 14px; line-height: 1.7; }
+  .example dl {
+    margin: 12px 0 0;
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 4px 10px;
+    font-family: var(--sans);
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+  .example dt { color: var(--ink-3); }
+  .example dd { margin: 0; color: var(--ink-2); }
+  .example-links { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--sans); font-size: 11px; }
+
+  .section-lede {
+    max-width: 800px;
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 18px 0 20px;
+  }
+  .flow-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px 14px;
+    border: 1px solid var(--rule);
+    background: var(--plate);
+  }
+  .flow-panel-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+  .flow-tag {
+    padding: 2px 7px;
+    background: var(--moss);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+  .flow-tag.is-use { background: var(--rust); }
+  .flow-panel h3 { margin: 0; font-size: 20px; }
+  .flow-steps { list-style: none; margin: 0; padding: 0; counter-reset: flow; }
+  .flow-steps li {
+    counter-increment: flow;
+    position: relative;
+    margin-left: 11px;
+    padding: 0 0 12px 36px;
+    border-left: 1px solid var(--rule-soft);
+  }
+  .flow-steps li::before {
+    content: counter(flow, decimal-leading-zero);
+    position: absolute;
+    left: -12px;
+    top: 0;
+    width: 23px;
+    height: 23px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--moss);
+    background: var(--paper);
+    color: var(--moss);
+    font-family: var(--mono);
+    font-size: 8.5px;
+  }
+  .flow-steps.is-use li::before { border-color: var(--rust); color: var(--rust); }
+  .flow-steps b { display: block; color: var(--ink); font-family: var(--sans); font-size: 14px; }
+  .flow-steps span { display: block; margin-top: 2px; color: var(--ink-2); font-family: var(--sans); font-size: 13px; line-height: 1.6; }
+  .flow-steps li:last-child { border-left-color: transparent; padding-bottom: 2px; }
+  .flow-foot { margin: auto 0 0; padding-top: 12px; font-family: var(--sans); font-size: 12.5px; }
+
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 14px 0 8px;
+  }
+  .concept-card { padding: 15px 16px; border: 1px solid var(--rule); background: var(--plate); }
+  .concept-card h3 { margin: 0 0 6px; font-size: 17px; }
+  .concept-card p { margin: 0; color: var(--ink-2); font-family: var(--sans); font-size: 13.5px; line-height: 1.7; }
+  .concept-card.is-wide { grid-column: 1 / -1; border-top: 2px solid var(--moss); }
+
+  .level-explainer { padding: 20px 20px 18px; }
+  .level-explainer-head h3 { margin: 0 0 7px; font-size: 20px; }
+  .level-explainer-head p { max-width: 880px; margin: 0; color: var(--ink-2); font-family: var(--sans); font-size: 13.5px; line-height: 1.75; }
+  .level-progress {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0 5px;
+  }
+  .level-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border: 1px solid var(--rule);
+    border-top: 2px solid var(--rule);
+    background: #fff;
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .level-step span { color: var(--ink-3); font-family: var(--mono); font-size: 10px; font-weight: 400; }
+  .level-step.is-demo { border-top-color: var(--ink-3); }
+  .level-step.is-stub { border-top-color: #6f6a5f; }
+  .level-step.is-exp { border-top-color: var(--indigo); }
+  .level-step.is-paper { border-top-color: var(--rust); }
+  .level-step.is-repro { border-top-color: var(--moss); }
+  .level-step.is-demo.is-active { background: var(--ink-2); border-color: var(--ink-2); color: #fff; }
+  .level-step.is-stub.is-active { background: #6f6a5f; border-color: #6f6a5f; color: #fff; }
+  .level-step.is-exp.is-active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+  .level-step.is-paper.is-active { background: var(--rust); border-color: var(--rust); color: #fff; }
+  .level-step.is-repro.is-active { background: var(--moss); border-color: var(--moss); color: #fff; }
+  .level-step.is-active span { color: rgba(255,255,255,.7); }
+  .level-arrow { align-self: center; padding: 0 6px; color: var(--ink-3); font-size: 13px; }
+  .level-progress-note { margin: 5px 0 15px; color: var(--ink-3); font-family: var(--mono); font-size: 10.5px; text-align: center; }
+
+  .level-detail {
+    padding: 15px 17px;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--ink-3);
+    background: #fff;
+  }
+  .level-detail.is-demo { border-left-color: var(--ink-3); }
+  .level-detail.is-stub { border-left-color: #6f6a5f; }
+  .level-detail.is-exp { border-left-color: var(--indigo); }
+  .level-detail.is-paper { border-left-color: var(--rust); }
+  .level-detail.is-repro { border-left-color: var(--moss); }
+  .level-detail.is-none { border-left-color: var(--rule); }
+  .level-detail-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 7px; }
+  .level-detail-head strong { font-family: var(--serif); font-size: 17px; }
+  .level-detail-badge {
+    padding: 3px 8px;
+    border: 1px solid;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .level-detail-badge.is-demo { background: #f0f1ed; border-color: var(--rule); color: var(--ink-2); }
+  .level-detail-badge.is-stub { background: #f1f0eb; border-color: #8d887b; color: #5f5b51; }
+  .level-detail-badge.is-exp { background: var(--blue-soft); border-color: var(--indigo); color: #394d66; }
+  .level-detail-badge.is-paper { background: var(--rust-soft); border-color: var(--rust); color: var(--rust); }
+  .level-detail-badge.is-repro { background: var(--moss-soft); border-color: var(--moss); color: var(--moss); }
+  .level-detail-badge.is-none { background: #f7f8f4; border-color: var(--rule); color: var(--ink-3); }
+  .level-detail-def { margin: 0 0 12px; color: var(--ink-2); font-family: var(--sans); font-size: 13.5px; line-height: 1.7; }
+  .level-detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .level-detail-grid span { display: block; margin-bottom: 3px; color: var(--ink-3); font-family: var(--mono); font-size: 10px; }
+  .level-detail-grid p { margin: 0; color: var(--ink-2); font-family: var(--sans); font-size: 12.5px; line-height: 1.65; }
+  .level-extra { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 13px; }
+  .level-none {
+    padding: 6px 10px;
+    border: 1px dashed var(--rule);
+    background: transparent;
+    color: var(--ink-3);
+    font-family: var(--sans);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .level-none.is-active { border-style: solid; background: #f7f8f4; color: var(--ink); }
+  .level-none.level-paper { border-color: var(--rust); color: var(--rust); }
+  .level-none.level-paper.is-active { background: var(--rust-soft); color: var(--rust); }
+  .level-extra a { font-family: var(--sans); font-size: 12.5px; }
+
+  .faq { border-top: 1px solid var(--rule); }
+  .faq-item { border-bottom: 1px solid var(--rule-soft); }
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 0;
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--moss);
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .faq-item[open] summary::after { content: "−"; }
+  .faq-item p {
+    max-width: 760px;
+    margin: 0 0 15px;
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  @media (max-width: 820px) {
+    .intro-grid, .examples { grid-template-columns: 1fr; }
+    .flow-grid, .concept-grid { grid-template-columns: 1fr; }
+    .rule-list { grid-template-columns: 1fr; }
+    .intro { width: calc(100% - 32px); }
+    .intro-lede { font-size: 18px; }
+    .level-progress { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .level-arrow { display: none; }
+    .level-step { justify-content: center; }
+    .level-detail-grid { grid-template-columns: 1fr; gap: 10px; }
+  }
+  @media (max-width: 640px) {
+    .level-table, .level-table tbody, .level-table tr, .level-table td { display: block; width: 100%; }
+    .level-table thead { display: none; }
+    .level-table tr { padding: 11px 0; border-top: 1px solid var(--rule-soft); }
+    .level-table td { padding: 2px 0; border: 0; }
+    .level-table td:first-child { font-family: var(--serif); font-size: 15px; }
+    .level-table td:last-child { margin-top: 2px; font-size: 11px; }
+  }
+</style>
+</head>
+<body class="reader-page">
+<header class="reader-top">
+  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="站点导航">
+    <a href="../../index.html">评测</a>
+    <span aria-hidden="true">/</span>
+    <a href="../introduce/index.html" class="is-current" aria-current="page">介绍</a>
+    <span aria-hidden="true">/</span>
+    <a href="../generate/index.html">生成</a>
+    <span aria-hidden="true">/</span>
+    <a href="../submit/index.html">提交</a>
+  </nav>
+</header>
+
+<main class="reader intro">
+  <p class="intro-kicker">介绍</p>
+  <h1>把论文变成可比较的<br />基因组预测结果</h1>
+  <p class="intro-lede">GSGP·Bench 面向动植物育种、数量遗传与农业生物信息团队：用本地工具把论文整理成论文 Skill 与 MCP 工具，在同一数据、同一划分上比较方法，再用 AI 解释当前结果。每一步都标明证据等级，避免把演示值或流程测试当成结论。</p>
+  <div class="intro-actions">
+    <a class="intro-btn is-primary" href="../../index.html">开始比较 →</a>
+    <a class="intro-btn" href="../generate/index.html">本地生成 MCP</a>
+    <a class="intro-btn" href="../submit/index.html">提交认证</a>
+  </div>
+
+  <h2>我们为谁服务</h2>
+  <div class="intro-grid">
+    <section class="intro-card">
+      <h3>动植物育种研究者</h3>
+      <p>想把 GBLUP、贝叶斯或注释增强方法用到真实育种群体，先看公开数据上的证据与限制。</p>
+    </section>
+    <section class="intro-card">
+      <h3>统计与数量遗传研究者</h3>
+      <p>想在同一数据、同一划分上比较不同 GSGP 方法，而不是只对照各自论文里的数字。</p>
+    </section>
+    <section class="intro-card">
+      <h3>农业生物信息与研究生</h3>
+      <p>想读懂论文、跑通一次 MCP 流程，并知道结果可以引用到什么程度。</p>
+    </section>
+  </div>
+
+  <h2>我们提供什么</h2>
+  <div class="intro-grid">
+    <section class="intro-card is-key">
+      <h3>一站式产出 MCP</h3>
+      <p>用本地 Paper2Agent 套件，把论文整理成论文 Skill 和 MCP 工具。网站不执行论文代码，只提供套件、提交入口和统一认证。</p>
+      <a href="../generate/index.html">查看本地生成套件 →</a>
+    </section>
+    <section class="intro-card is-key">
+      <h3>公平的 GSGP 对比</h3>
+      <p>同一数据、同一划分、同一指标。每个数字都带着证据等级和运行记录，演示值不会混进正式结论。</p>
+      <a href="../../index.html">打开评测页 →</a>
+    </section>
+    <section class="intro-card is-key" id="ai">
+      <h3>AI 辅助解读</h3>
+      <p>只读取当前页面的聚合数值，用中文解释能看出什么、还不能下什么结论。不补数据、不排名，也不替代人工审核。</p>
+      <a href="../../index.html">在结果页试用 →</a>
+    </section>
+  </div>
+
+  <h2 id="empower">为您赋能：从论文到可用的 MCP</h2>
+  <p class="section-lede">你不需要自己搭服务。按“生产链”把论文变成论文 Skill 和 MCP 工具，再按“使用链”把认证过的工具放到自己的电脑上运行。下面把概念、生产、发布和使用放在一条线上讲清楚。</p>
+  <div class="flow-grid">
+    <section class="flow-panel">
+      <div class="flow-panel-head">
+        <span class="flow-tag">生产</span>
+        <h3>我该如何生产</h3>
+      </div>
+      <ol class="flow-steps">
+        <li><b>下载本地套件</b><span>把 paper2agent/ 放进编码 Agent 的 skills 目录。</span></li>
+        <li><b>准备论文与代码</b><span>论文 PDF/链接、代码仓库、输出目录。</span></li>
+        <li><b>运行提示词</b><span>生成论文 Skill 与 MCP 工具。</span></li>
+        <li><b>本地验证</b><span>用公开或合成数据跑一次，保存日志和产物。</span></li>
+        <li><b>提交认证</b><span>GitHub Issue → GSGP-BENCH 团队检测。</span></li>
+        <li><b>发布</b><span>通过后标记已认证，进入方法库。</span></li>
+      </ol>
+      <p class="flow-foot"><a href="../generate/index.html">打开本地生成 →</a></p>
+    </section>
+
+    <section class="flow-panel">
+      <div class="flow-panel-head">
+        <span class="flow-tag is-use">使用</span>
+        <h3>我该如何使用</h3>
+      </div>
+      <ol class="flow-steps is-use">
+        <li><b>选择方法与数据</b><span>在评测页勾选要比较的方法和数据集。</span></li>
+        <li><b>先看结果等级</b><span>演示、复现、探索、流程测试、论文值，含义不同。</span></li>
+        <li><b>打开运行记录</b><span>查看 run ID、划分、指标和限制。</span></li>
+        <li><b>下载 MCP</b><span>从方法页或 GitHub 仓库获取包和运行说明。</span></li>
+        <li><b>按 README 运行</b><span>安装依赖，数据留在本机，网站不执行。</span></li>
+      </ol>
+      <p class="flow-foot"><a href="../../index.html">打开评测页 →</a></p>
+    </section>
+  </div>
+
+  <div class="concept-grid">
+    <section class="concept-card">
+      <h3>论文 Skill</h3>
+      <p>让 Agent 读懂论文：定位方法、数据、图表、公式和限制，而不是把全文塞进上下文。</p>
+    </section>
+    <section class="concept-card">
+      <h3>MCP 工具</h3>
+      <p>让 Agent 在你的电脑上调用方法。网站不托管、不执行；下载后按 README 运行。</p>
+    </section>
+    <section class="concept-card">
+      <h3>已认证 / 未认证</h3>
+      <p>认证的是 MCP 包，不是结果。已认证表示 GSGP-BENCH 团队实际跑过并核对；未认证可用但风险自担。</p>
+    </section>
+    <section class="concept-card is-wide level-explainer" id="level-explainer">
+      <div class="level-explainer-head">
+        <h3>MCP 认证与结果等级是什么关系？</h3>
+        <p>MCP 认证回答的是“这个工具包是否被可信地运行”；结果等级回答的是“这次运行结果能引用到什么程度”。两者独立：已认证的 MCP 仍可能只产出演示或探索结果；未认证的 MCP 也可能有真实结果。</p>
+      </div>
+
+      <div class="level-progress" role="tablist" aria-label="结果等级（按证据强度与复现难度排序）">
+        <button class="level-step is-active is-demo" type="button" role="tab" aria-selected="true" data-level="demo"><span>01</span>演示</button>
+        <span class="level-arrow" aria-hidden="true">→</span>
+        <button class="level-step is-stub" type="button" role="tab" aria-selected="false" data-level="stub"><span>02</span>流程测试</button>
+        <span class="level-arrow" aria-hidden="true">→</span>
+        <button class="level-step is-exp" type="button" role="tab" aria-selected="false" data-level="exp"><span>03</span>探索</button>
+        <span class="level-arrow" aria-hidden="true">→</span>
+        <button class="level-step is-repro" type="button" role="tab" aria-selected="false" data-level="repro"><span>04</span>复现</button>
+      </div>
+      <p class="level-progress-note">证据强度与复现难度递增 →</p>
+
+      <div class="level-detail is-demo" id="level-detail" role="tabpanel" aria-live="polite">
+        <div class="level-detail-head">
+          <span class="level-detail-badge is-demo" id="level-detail-badge">演示</span>
+          <strong id="level-detail-title">版式占位值，不能引用</strong>
+        </div>
+        <p class="level-detail-def" id="level-detail-def"></p>
+        <div class="level-detail-grid">
+          <div><span>例子</span><p id="level-detail-example"></p></div>
+          <div><span>怎么用</span><p id="level-detail-use"></p></div>
+          <div><span>如何升级</span><p id="level-detail-upgrade"></p></div>
+        </div>
+      </div>
+
+      <div class="level-extra">
+        <button class="level-none level-paper" type="button" data-level="paper">论文值 · 论文报告，本站未复现</button>
+        <button class="level-none" type="button" data-level="none">未运行 · 当前没有结果，不作判断</button>
+        <a href="#levels">查看详细等级表 →</a>
+        <a href="../../index.html">在评测页查看 →</a>
+      </div>
+    </section>
+  </div>
+
+  <h2>需要记住的规则</h2>
+  <div class="rule-list">
+    <section class="rule-item">
+      <h3>认证看 MCP 工具，不看结果</h3>
+      <p><b>已认证</b>：我们实际运行过并核对过输入输出。<b>未认证</b>：可以查看和自行使用，但风险自担。认证不会把探索结果升级成复现。</p>
+    </section>
+    <section class="rule-item">
+      <h3>网站不运行算法</h3>
+      <p>没有在线 MCP，也没有在线 R、HIBLUP 或 GCTB。原始基因型、表型和个人预测留在本地，只公开聚合结果。</p>
+    </section>
+    <section class="rule-item">
+      <h3>AI 只做解释</h3>
+      <p>AI 文本是辅助说明，不是证据、不是排名，也不能替代运行记录。它无法看到原始数据。</p>
+    </section>
+  </div>
+
+  <h2 id="levels">成果怎样标记</h2>
+  <table class="level-table">
+    <thead>
+      <tr><th>标签</th><th>含义</th><th>怎么使用</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>演示</td><td>版式占位值，用来检查页面。</td><td class="level-cannot">不能引用</td></tr>
+      <tr><td>复现</td><td>同数据、同划分、同指标重复得到。</td><td class="level-ok">可以引用，注明条件</td></tr>
+      <tr><td>探索</td><td>真实单次运行，尚未重复或审核。</td><td class="level-careful">仅参考，不参与主榜</td></tr>
+      <tr><td>流程测试</td><td>管线跑通，但使用替代计算引擎。</td><td class="level-cannot">不能作为科学结果</td></tr>
+      <tr><td>论文值</td><td>论文报告的数字，本站没有复现。</td><td class="level-careful">仅参考，注意协议差异</td></tr>
+      <tr><td>未运行</td><td>当前没有可展示的结果。</td><td class="num">不作判断</td></tr>
+    </tbody>
+  </table>
+
+  <h2>两个已经跑过的例子</h2>
+  <div class="examples">
+    <article class="example">
+      <div class="example-head">
+        <span class="example-tag">基线</span>
+        <h3>GBLUP / rrBLUP</h3>
+        <span class="example-status is-exp">探索</span>
+      </div>
+      <p>第一条真实探索记录。它证明从本地 MCP 到结果 JSON 的链路能跑通，但只有一次划分，所以还不是正式复现。</p>
+      <dl>
+        <dt>数据</dt><dd>500 个体 × 5,000 SNP；模拟性状 h² = 0.5</dd>
+        <dt>划分</dt><dd>单次 80 / 20，400 训练、100 验证</dd>
+        <dt>MCP 工具</dt><dd>本地 GBLUP 基线 MCP；已认证，不在线托管</dd>
+        <dt>结果</dt><dd>Pearson r = 0.5075；R² = 0.2576</dd>
+        <dt>能说明</dt><dd>管线与数值可追溯；不能说明方法已复现或优于其他方法</dd>
+      </dl>
+      <p class="example-links">
+        <a href="../gblup-baseline/index.html">查看基线说明 →</a>
+        <a href="../../data/results/gblup-sim500.json">查看结果记录 →</a>
+      </p>
+    </article>
+
+    <article class="example">
+      <div class="example-head">
+        <span class="example-tag">试点</span>
+        <h3>IFAM</h3>
+        <span class="example-status is-stub">流程测试</span>
+      </div>
+      <p>这是一次流程测试，不是 IFAM 的科学结果。真实论文编排已经跑通，但计算引擎仍是替代品，数值没有科学意义。</p>
+      <dl>
+        <dt>论文 Skill</dt><dd>已审校；含全文、6 张图和 3 个公式</dd>
+        <dt>MCP 工具</dt><dd>本地四工具原型；未认证</dd>
+        <dt>当前结果</dt><dd>Pearson r = −0.032；只证明 fit / export 管线</dd>
+        <dt>限制</dt><dd>HIBLUP v1.1.0 不可得；真实引擎验证前保持未认证</dd>
+        <dt>下一步</dt><dd>在真实引擎上完成最小执行验收，再谈复现</dd>
+      </dl>
+      <p class="example-links">
+        <a href="../ifam-paper/index.html">查看 IFAM 论文 Skill →</a>
+        <a href="../../data/results/ifam-stub-sim500.json">查看流程测试记录 →</a>
+      </p>
+    </article>
+  </div>
+
+  <h2>常见问题</h2>
+  <div class="faq">
+    <details class="faq-item">
+      <summary>网站会运行论文代码或 MCP 吗？</summary>
+      <p>不会。所有生成和运行都在你的电脑上完成；网站只展示结果、认证状态和聚合数值。</p>
+    </details>
+    <details class="faq-item">
+      <summary>会接收我的原始数据吗？</summary>
+      <p>不会。原始基因型、表型、样本 ID 和个人预测都不上传；AI 解读也只发送当前页面的聚合数值。</p>
+    </details>
+    <details class="faq-item">
+      <summary>AI 解读可以直接引用吗？</summary>
+      <p>不可以。它只是辅助说明，不是证据、不是排名，也不能替代运行记录或人工审核。</p>
+    </details>
+    <details class="faq-item">
+      <summary>没有统一数据、划分和指标时能排名吗？</summary>
+      <p>不能。跨论文、跨协议的数字不做排名；论文值只作参考，不能和同条件复现混在一起。</p>
+    </details>
+  </div>
+</main>
+
+<footer class="reader-foot">
+  <p><b>GSGP·Bench</b> · 介绍</p>
+  <p>代码与证据记录保存在仓库；原始数据和个人预测不公开。</p>
+</footer>
+<script>
+  (() => {
+    const levels = {
+      demo: {
+        badge: "演示", cls: "is-demo", title: "版式占位值，不能引用",
+        definition: "为了检查页面显示而填的占位数字，不是任何一次真实运行。",
+        example: "GBLUP 在 1000G 仿真上显示 0.512，只用于版式确认。",
+        use: "不能引用，不能参与排名；看到它只需检查页面是否正常。",
+        upgrade: "用公开数据真实跑一次，并保存结果记录 → 探索。"
+      },
+      stub: {
+        badge: "流程测试", cls: "is-stub", title: "管线跑通，但不是科学结果",
+        definition: "真实论文编排加替代计算引擎，只证明生成与运行管线能跑通。",
+        example: "IFAM 在 500×5k 上使用替代 HIBLUP 得到 −0.032。",
+        use: "只能说明流程可运行；数值没有科学意义，不能作结论。",
+        upgrade: "换成真实 HIBLUP 完成最小验收 → 探索。"
+      },
+      exp: {
+        badge: "探索", cls: "is-exp", title: "真实单次运行，仅作参考",
+        definition: "真实计算，但只有一次数据划分，尚未重复或审核。",
+        example: "GBLUP 在 500×5k 上单次 80/20，Pearson r = 0.5075。",
+        use: "可查看、可讨论；不参与正式比较，也不是论文复现。",
+        upgrade: "固定协议，多折或多 seed 重复，并完成审核 → 复现。"
+      },
+      paper: {
+        badge: "论文值", cls: "is-paper", title: "论文报告，本站未复现",
+        definition: "论文中报告的数字，本站没有在相同数据和划分上复现。",
+        example: "IFAM 在 Duroc 猪上的论文报告值。",
+        use: "仅作参考；协议可能不同，不能和复现值混排或排名。",
+        upgrade: "用公开数据按同一协议复现 → 复现。"
+      },
+      repro: {
+        badge: "复现", cls: "is-repro", title: "同数据、同划分、重复得到",
+        definition: "在相同数据、划分和指标下重复得到，并保留完整运行记录和版本。",
+        example: "同一协议多折重复，指标稳定，run manifest 完整。",
+        use: "可以引用，但必须注明数据、划分、指标和代码版本。",
+        upgrade: "已是最高等级；继续保留 provenance、限制和版本记录。"
+      },
+      none: {
+        badge: "未运行", cls: "is-none", title: "当前没有结果",
+        definition: "当前指标没有可展示的结果，可能是尚未运行或该指标不适用。",
+        example: "某个方法还没有在所选数据集上运行。",
+        use: "不作判断，不当作 0 分或失败。",
+        upgrade: "等待运行完成，或确认该指标是否适用于此性状。"
+      }
+    };
+
+    const buttons = [...document.querySelectorAll("[data-level]")];
+    const detail = document.getElementById("level-detail");
+    const badge = document.getElementById("level-detail-badge");
+    const title = document.getElementById("level-detail-title");
+    const def = document.getElementById("level-detail-def");
+    const example = document.getElementById("level-detail-example");
+    const use = document.getElementById("level-detail-use");
+    const upgrade = document.getElementById("level-detail-upgrade");
+
+    function setLevel(key) {
+      const item = levels[key];
+      if (!item) return;
+      buttons.forEach((button) => {
+        const active = button.dataset.level === key;
+        button.classList.toggle("is-active", active);
+        if (button.getAttribute("role") === "tab") button.setAttribute("aria-selected", String(active));
+      });
+      detail.className = `level-detail ${item.cls}`;
+      badge.className = `level-detail-badge ${item.cls}`;
+      badge.textContent = item.badge;
+      title.textContent = item.title;
+      def.textContent = item.definition;
+      example.textContent = item.example;
+      use.textContent = item.use;
+      upgrade.textContent = item.upgrade;
+    }
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => setLevel(button.dataset.level));
+      button.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+        event.preventDefault();
+        const step = event.key === "ArrowRight" ? 1 : -1;
+        const next = buttons[(index + step + buttons.length) % buttons.length];
+        next.focus();
+        setLevel(next.dataset.level);
+      });
+    });
+    setLevel("demo");
+  })();
+</script>
+</body>
+</html>

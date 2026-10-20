@@ -1,7 +1,7 @@
 # GSGP-Bench Demo 上线清单
 
-> 目标：把 `site/index.html` 变成一个可访问的 Cloudflare Pages 演示站，并验证“push 后自动部署”。
-> 当前阶段不接真实算法运行，页面数值均为演示值。
+> 目标：把 `site/index.html` 通过 Cloudflare Workers（Static Assets + `/api/analyze`）发布为可访问的演示站，并验证 Git 推送后的自动部署。
+> 当前阶段不接真实算法运行；页面数值大多为演示值，Worker 只负责静态托管和 AI 文字解读。
 
 ## 0. 当前已完成
 
@@ -15,24 +15,26 @@
 - GBLUP 手动 baseline Skill/MCP：`benchmark/algorithms/gblup/`；站点 Skill 页面与本地 stdio MCP（已认证 MCP 包、不在线托管）
 - 第一条真实 GBLUP exploratory 记录：`site/data/results/gblup-sim500.json` + `benchmark/runs/gblup-sim500-mcp-v1/result.json`；经 MCP inspect/fit/export，500×5k 模拟性状，单次 80/20，EXP 非 L1
 - IFAM STUB 记录：`site/data/results/ifam-stub-sim500.json` + `benchmark/runs/ifam-stub-sim500-v1/result.json`；fake HIBLUP，仅管线展示
-- 方法档案页：`site/resources/methods/index.html`；MCP 认证规则：`docs/MCP认证与展示.md`
+- 介绍页：`site/resources/introduce/index.html`；MCP 认证规则：`docs/MCP认证与展示.md`
 - 本地 Paper2Agent 生成套件：`site/resources/generate/`（页面 + 73 文件 ZIP + SHA-256 清单）；网站不执行任何生成
 - 提交/认证入口：`site/resources/submit/index.html` + `.github/ISSUE_TEMPLATE/mcp-submission.yml`
 - 结果 schema 与证据账本：`benchmark/schema/result.v1.json`、`benchmark/README.md`
 - 站点 MIT 归属：`site/LICENSE`
-- 本地预览方式：`python3 -m http.server 8000 --directory site`（当前开发服务器常用 8765）
+- Worker AI 解读接口：`worker/index.js` + `worker/test.mjs`（16 项测试）；只发送聚合数值，密钥只存 Worker Secret
+- Worker 配置：`wrangler.jsonc`（`site/` 静态资源 + `/api/*`）、`package.json`、`.dev.vars.example`
+- 本地预览：`node scripts/dev-server.mjs`（默认 `AI_MOCK=1`，无需安装依赖）；或 `npx wrangler dev`
 - 规划文档：`docs/GSGP-Bench-规划.md`
 - 证据等级规范：`docs/证据等级与记录.md`
 - MCP 认证与展示规则：`docs/MCP认证与展示.md`
 - GBLUP 端到端示例：`docs/端到端示例-GBLUP.md`
 - 研究赋能评估：`docs/MCP与Skill-研究赋能.md`
-- 静态站部署说明：`site/README.md`
+- Worker 部署说明：`site/README.md`
 
-> 当前大部分评测仍为演示值；GBLUP 是真实探索记录，IFAM 是流程测试。MCP 认证只有已认证/未认证，网站不运行、不托管 MCP。
+> 当前大部分评测仍为演示值；GBLUP 是真实探索记录，IFAM 是流程测试。MCP 认证只有已认证/未认证，网站不运行、不托管 MCP；唯一的在线动态能力是把页面聚合数值交给 OpenAI 兼容服务生成解读。
 
 ## 1. 在 GitHub 创建你的项目
 
-当前本地仓库的 `origin` 仍指向上游 `jmiao24/Paper2Agent`。请先在 GitHub 网页上 fork 到你的账号（建议命名为 `GSGP-Bench`），然后在本地把远端改成自己的：
+当前仓库已完成 fork：`origin` 指向 `hhtttyy/GSGP-BENCH`，`upstream` 指向上游 `jmiao24/Paper2Agent`。如果从零开始，先在 GitHub 网页 fork 到你的账号（建议命名为 `GSGP-Bench`），再在本地配置远端：
 
 ```bash
 # 把原来的 origin 改名为 upstream，保留同步上游的能力
@@ -59,51 +61,86 @@ grep -n "jmiao24/Paper2Agent" site/index.html
 再提交：
 
 ```bash
-git add .gitignore .github agents benchmark docs scripts site
-git commit -m "Build GSGP-Bench static site, local generation kit and evidence layer"
+git add .gitignore .github agents benchmark docs scripts site worker wrangler.jsonc package.json .dev.vars.example
+git commit -m "Add Worker analysis API and comparison note"
 git push -u origin main
 ```
 
 > `docs/*.pdf` 已加入 `.gitignore`，避免把许可不明的论文 PDF 推到公开仓库。
+> `.dev.vars`、`node_modules/`、`.wrangler/` 也不应提交；密钥只放本地或 Worker Secret。
 > 如果 GitHub 上 fork 的默认分支不是 `main`，先确认分支名再推送。
 
-## 3. 连接 Cloudflare Pages
+## 3. 连接 Cloudflare Workers
 
 1. 登录 Cloudflare Dashboard。
-2. 进入 **Workers & Pages** → **Create** → **Pages** → **Connect to Git**。
-3. 授权 GitHub，选择你的 `GSGP-Bench` 仓库。
-4. 构建配置：
-   - Production branch: `main`
-   - Root directory: `site`
-   - Build command: 留空（若必填，用 `exit 0`）
-   - Build output directory: `.`
+2. 进入 **Workers & Pages** → **Create** → **Worker** → **Connect to Git**。
+3. 授权 GitHub，选择你的 `GSGP-Bench` 仓库，Production branch 选 `main`。
+4. 构建配置（仓库根目录）：
+   - Build command: `npm install`（或留空）
+   - Deploy command: `npx wrangler deploy`
 5. 点击 **Save and Deploy**。
-6. 记下 `https://<project>.pages.dev`。
+6. 记下 `https://<worker>.<subdomain>.workers.dev`。
 
-如果控制台的校验不通过，改用：
+`wrangler.jsonc` 已声明：
 
-- Root directory: 留空
-- Build command: `exit 0`
-- Build output directory: `site`
+```jsonc
+{
+  "main": "worker/index.js",
+  "assets": { "directory": "./site", "binding": "ASSETS" }
+}
+```
+
+因此 `/api/*` 由 Worker 处理，其余路径直接返回 `site/` 中的静态文件。不需要 Pages 的 build output 配置。
+
+### 也可以用命令行部署
+
+```bash
+npm install
+npx wrangler login
+npx wrangler deploy
+```
+
+首次部署后在 Dashboard → Worker → **Settings** → **Variables and Secrets**：
+
+- `OPENAI_API_KEY`：Secret，必须；
+- `OPENAI_BASE_URL`：已在 `wrangler.jsonc` 设为 `https://maas.qianwenaiapi.com/compatible-mode/v1`；
+- `OPENAI_MODEL`：已设为 `qwen3.8-flash`；
+- `AI_DISABLE_THINKING`：已设为 `1`，用于关闭 Qwen 的推理 token，缩短等待时间；换普通模型时删除。
+
+或：
+
+```bash
+npx wrangler secret put OPENAI_API_KEY
+npx wrangler secret put OPENAI_BASE_URL   # 可选
+```
+
+> 生产环境不要设置 `AI_MOCK=1`；它只用于本地预览。
+> 若暂时不配置密钥，页面仍可正常浏览，点击“生成 AI 解读”会显示“AI 服务未配置”，不会伪造结果。
 
 ## 4. 验证自动部署
 
 1. 打开生产地址，确认三列布局、筛选、指标切换、详情抽屉都正常。
-2. 确认算法卡的论文链接能打开 DOI；IFAM 阅读包显示“预览”，其他阅读包显示“暂无”，运行工具显示“已认证/未认证”；悬浮、键盘聚焦和触屏点按都能看到说明。
+2. 确认算法卡只展示已提供论文 Skill 的方法（GBLUP、IFAM）；论文链接能打开 DOI，IFAM 论文 Skill 显示“预览”，MCP 工具显示“已认证/未认证”；悬浮、键盘聚焦和触屏点按都能看到说明。
 3. 确认 GBLUP × GSGP-Sim 500×5k 显示 **探索**（真实单次划分），IFAM × 同一数据集显示 **流程测试**；打开详情能看到 run ID、划分、实现和证据账本路径。
-4. 打开 Generate，确认本地套件可下载、清单 SHA-256 一致；打开 Methods / 方法档案，确认 GBLUP/IFAM 的论文、阅读包、工具、验证和证据都列出。
-5. 确认页脚显示 Paper2Agent / MIT 归属，`/LICENSE` 可访问。
-6. 在 390px 左右宽度检查：三列已纵向重排、页面无横向滚动、结果表可横向滑动、图表可左右滑动。
-7. 打开 Generate / Methods / Submit 页面，确认桌面和移动端都可读。
-8. 随便改一个页面文案（例如页脚版本号），push 到 `main`。
-9. 确认 Cloudflare 自动触发新部署。
-10. 新建一个分支并提 PR，确认生成 Preview Deployment。
+4. 打开“生成”，确认本地套件可下载、清单 SHA-256 一致；打开“介绍”，确认面向用户、能力、认证规则、证据等级和 GBLUP/IFAM 例子都清楚。
+5. 滚动到结果表下方，点击 **生成 AI 解读**：
+   - 配置密钥后返回真实模型文本，并显示模型名；
+   - 未配置密钥时返回明确错误，不产生假结果；
+   - 切换指标或选择后，旧解读清空并要求重新生成；
+   - 输出始终带“AI 辅助 · 非证据”和“AI 生成 · 仅供参考”。
+6. 在浏览器开发者工具确认 `/api/analyze` 请求体只含方法名、数据集名、指标、状态和聚合数值，不含样本 ID、基因型、表型或划分文件。
+7. 确认页脚显示 Paper2Agent / MIT 归属，`/LICENSE` 可访问。
+8. 在 390px 左右宽度检查：三列已纵向重排、页面无横向滚动、结果表可横向滑动、图表可左右滑动、AI 解读面板不溢出。
+9. 打开“介绍 / 生成 / 提交”页面，确认桌面和移动端都可读。
+10. 随便改一个页面文案（例如页脚版本号），push 到 `main`，确认 Cloudflare 自动触发新部署。
+11. 新建一个分支并提 PR，确认生成 Preview Deployment。
 
 ## 5. 可选：绑定自定义域名
 
-- Pages 项目 → **Custom domains** → **Set up a custom domain**。
-- 按提示在 Cloudflare DNS 添加 CNAME，TLS 会自动签发。
-- 上线前实测中国大陆网络访问；`pages.dev` 在部分网络环境可能不稳定。
+- Worker → **Settings** → **Domains & Routes** → **Add custom domain**。
+- 按提示在 Cloudflare DNS 添加记录，TLS 会自动签发。
+- 上线前实测中国大陆网络访问；`workers.dev` 在部分网络环境可能不稳定。
+- 公开上线前设置 AI 服务商侧的预算和速率上限；若流量不可控，可先隐藏该按钮或按套餐启用 Cloudflare Rate Limiting。
 
 ## 6. 下一步：把演示值换成真实结果
 
@@ -122,7 +159,9 @@ git push -u origin main
 ## 不要做的事
 
 - 不要在 Cloudflare Worker 里执行 R/GCTB 或不可信论文代码。
-- 不要把 UKB/WTCCC 等受限数据提交到公开仓库。
+- 不要把 UKB/WTCCC 等受限数据提交到公开仓库，也不要发给 AI 服务。
+- 不要把 API key 写进前端、`wrangler.jsonc` 或 Git；只放 Worker Secret。
 - 不要把演示值包装成实测结论；页面上必须保留“演示数据”提示。
+- 不要把 AI 解读当作证据、排名或论文结论；它只能解释页面已有数值。
 - 不要把未认证工具宣传为已认证或在线服务。
 - 不要在没有统一划分和指标的情况下做跨论文排名。
