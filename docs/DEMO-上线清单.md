@@ -140,16 +140,18 @@ npx wrangler secret put OPENAI_BASE_URL   # 可选
 10. 随便改一个页面文案（例如页脚版本号），push 到 `main`，确认 Cloudflare 自动触发新部署。
 11. 新建一个分支并提 PR，确认生成 Preview Deployment。
 
-### 4.1 备用通道：GitHub Actions 部署
+### 4.1 备用通道：GitHub Actions 部署（可选，当前未启用）
 
-`.github/workflows/deploy.yml` 提供一条不依赖 Workers Builds 连线的通道：`main` 一有推送，Actions 就跑 `npx wrangler deploy`。
+Workers Builds 的连线曾出现过"Git repository 指错仓库"和"构建环境初始化超时"两类故障。若再次发生且短时间内修不好，可以用一条 Actions 通道兜底：`main` 一有推送就自己跑 `npx wrangler deploy`，不依赖面板连线。
+
+> 截至 2026-10-21，这条通道的工作流文件**没有入库**（两个 Worker 的原生连线都已验证可用，不再保留冗余配置）。需要时按下述步骤临时加回 `.github/workflows/deploy.yml` 即可，内容是：checkout → setup-node 22 → `npm install` → `npx wrangler deploy`（GSGP-BENCH 在仓库根，reading-coach 需把工作目录设为 `coach-deploy`）。
 
 启用前需要两步（都在浏览器里完成）：
 
 1. Cloudflare → My Profile → API Tokens → Create Token，权限选 **Edit Cloudflare Workers**（含 Workers Scripts:Edit），得到 `CLOUDFLARE_API_TOKEN`；同页可查到 `CLOUDFLARE_ACCOUNT_ID`。
 2. GitHub → GSGP-BENCH → Settings → Secrets and variables → Actions → New repository secret，加入上面两个值。
 
-之后 push 到 `main`，在仓库的 Actions 标签里能看到部署结果。两条通道并存时，建议保留一条（推荐 Actions，因为它在 GitHub 上有可见的成功/失败记录），另一条在面板里断开。
+之后 push 到 `main`，在仓库的 Actions 标签里能看到部署结果。两条通道并存时建议只留一条，避免同一次推送被部署两遍。
 
 ## 5. 可选：绑定自定义域名
 
