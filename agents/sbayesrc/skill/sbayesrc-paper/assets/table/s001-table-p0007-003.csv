@@ -1,0 +1,11 @@
+**Method (no. SNPs)**,**Runtime (h)**,**Memory (GB)**,"**Required storage**
+**(GB)**"
+SBayesRC (7 M),8.5,73.3,72
+LDpred-funct (7 M),6.0,120.6,40–50 per trait
+PolyPred-S (7 M),19.8<sup>b</sup>,71.7,"2,800"
+MegaPRS (7 M),7.2,247.7,277
+LDpred2 (1 M),5.5,53.4,43
+SBayesRC (1 M),0.8,4.8,5.6
+SBayesR (1 M),0.5,27.0,22
+PRS-CSx (1 M),14.2<sup>c</sup>,4.7,5.6
+MegaPRS (1 M),0.2,11.6,7.4

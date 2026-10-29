@@ -1,0 +1,40 @@
+Supplementary Table 7. Out-of-sample prediction accuracy in European ancestry using external summary statistics,,,
+We used data from FinnGen for training and UKB for validation or data from published meta-GWAS for training and Lifelines for validation.,,,
+,,,
+Trait,Method,Prediction accuracy(r2),Category
+Asthma,LDpred2,8.6554009824856299E-3,FinnGen -> UKB
+Asthma,LDpred-funct,5.7445115351363301E-3,FinnGen -> UKB
+Asthma,MegaPRS,7.9389475798680199E-3,FinnGen -> UKB
+Asthma,SBayesRC,1.0869763094286399E-2,FinnGen -> UKB
+BC,LDpred2,2.1977178999442001E-2,FinnGen -> UKB
+BC,LDpred-funct,7.9602111626680995E-3,FinnGen -> UKB
+BC,MegaPRS,1.6812615769146801E-2,FinnGen -> UKB
+BC,SBayesRC,2.33307045392399E-2,FinnGen -> UKB
+HBP,LDpred2,3.6770491765593799E-2,FinnGen -> UKB
+HBP,LDpred-funct,3.3872829614308202E-2,FinnGen -> UKB
+HBP,MegaPRS,3.4298444211490198E-2,FinnGen -> UKB
+HBP,SBayesRC,4.0361725977480903E-2,FinnGen -> UKB
+T2D,LDpred2,4.04208014138175E-2,FinnGen -> UKB
+T2D,LDpred-funct,3.4744989993348699E-2,FinnGen -> UKB
+T2D,MegaPRS,3.5790106349433699E-2,FinnGen -> UKB
+T2D,SBayesRC,4.5958211699648199E-2,FinnGen -> UKB
+GLAUC,LDpred2,2.02960239446319E-2,FinnGen -> UKB
+GLAUC,LDpred-funct,9.6906128355571698E-3,FinnGen -> UKB
+GLAUC,MegaPRS,1.9042772068056501E-2,FinnGen -> UKB
+GLAUC,SBayesRC,2.3655125817214101E-2,FinnGen -> UKB
+T2D,LDpred2,2.9325161667107899E-2,Meta -> LifeLines
+T2D,LDpred-funct,3.1596080189325498E-2,Meta -> LifeLines
+T2D,MegaPRS,3.4946939782624399E-2,Meta -> LifeLines
+T2D,SBayesRC,4.0617071444546703E-2,Meta -> LifeLines
+DBP,LDpred2,9.1724637362401204E-2,Meta -> LifeLines
+DBP,LDpred-funct,9.3823849855162303E-2,Meta -> LifeLines
+DBP,MegaPRS,0.106522501044096,Meta -> LifeLines
+DBP,SBayesRC,0.111594122719554,Meta -> LifeLines
+BMI,LDpred2,0.15149667860319899,Meta -> LifeLines
+BMI,LDpred-funct,0.15128927646881801,Meta -> LifeLines
+BMI,MegaPRS,0.15964472008395,Meta -> LifeLines
+BMI,SBayesRC,0.16201332478796501,Meta -> LifeLines
+HT,LDpred2,0.381953112187363,Meta -> LifeLines
+HT,LDpred-funct,0.36309628059732302,Meta -> LifeLines
+HT,MegaPRS,0.39608150764551697,Meta -> LifeLines
+HT,SBayesRC,0.39728918785943601,Meta -> LifeLines
