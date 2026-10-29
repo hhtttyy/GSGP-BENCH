@@ -1,0 +1,55 @@
+**6**,**for**j := 1**to**number of SNPs**do**
+**7**,"Calculate𝑟𝑗= 𝐐𝑗
+′𝐰𝑐𝑜𝑟𝑟+ 𝛽𝑗"
+**8**,"Calculate𝐶𝑗= 1 +
+𝜎𝑒<sup>2</sup>
+𝛾𝑘𝜎𝑔<sup>2</sup>
+ for each𝛾𝑘"
+**9**,Calculate the posterior probabilities of SNP effect distribution memberships and sample𝛿𝑗
+**10**,"
+Sample SNP effect𝛽𝑗from its full conditional distribution𝑁(
+𝑟𝑗
+𝐶𝑗
+,
+𝜎𝜖<sup>2</sup>
+𝐶𝑗
+~~)~~"
+**11**,"
+Given the sampled value of𝛽𝑗
+𝑛𝑒𝑤,adjust𝐰𝑐𝑜𝑟𝑟
+𝑛𝑒𝑤= 𝐰𝑐𝑜𝑟𝑟
+𝑜𝑙𝑑+ 𝐐𝑗(𝛽𝑗
+𝑜𝑙𝑑−𝛽𝑗
+𝑛𝑒𝑤)"
+**12**,"
+Calculate indicator variables𝐳𝑗given𝛿𝑗"
+**13**,"
+**end**"
+**14**,"
+**for**k := 2**to**number of mixture distribution components**do**"
+**15**,"
+**for**j := 1**to**number of SNPs that passed the bar for current component**do**"
+**16**,"
+Sample latent variable𝑙𝑗𝑘from a truncated normal distribution given𝑧𝑗𝑘"
+**17**,"
+**end**"
+**18**,"
+**for**c := 1**to**number of annotations**do**"
+**19**,"
+Sample annotation effect𝛼𝑘𝑐from its full conditional distribution given𝒍𝑘"
+**20**,"
+**end**"
+**21**,"
+Sample annotation effect variance𝜎𝛼𝑘
+2from its full conditional distribution given𝜶𝑘"
+**22**,"
+**end**"
+**23**,"
+Calculate𝐰̂ = 𝐐𝜷and total genetic variance𝜎𝑔
+2 = 𝐰̂′𝐰̂"
+**24**,"
+Estimate the per-SNP heritability enrichment for each annotation"
+"**25**
+**26**","
+Sample residual variance𝜎𝜖<sup>2</sup>from its full conditional distribution for each block
+**end**"

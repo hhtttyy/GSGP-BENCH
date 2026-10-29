@@ -1,0 +1,38 @@
+Received: 1 October 2022,"**Zhili Zheng**
+ <sup>**1,2,3**</sup>
+**, Shouye Liu**<sup>**1**</sup>**, Julia Sidorenko**
+ <sup>**1**</sup>**, Ying Wang**
+ <sup>**1**</sup>**, Tian Lin**
+ <sup>**1**</sup>**,**"
+Accepted: 5 March 2024,"**Loic Yengo**
+ <sup>**1**</sup>**, Patrick Turley**
+ <sup>**4,5**</sup>**, Alireza Ani**
+ <sup>**6,7**</sup>**, Rujia Wang**
+ <sup>**6**</sup>**,**
+**Ilja M. Nolte**
+ <sup>**6**</sup>**, Harold Snieder**
+ <sup>**6**</sup>**, LifeLines Cohort Study*, Jian Yang**
+ <sup>**8,9**</sup>**,**"
+"Published online: 30 April 2024
+Check for updates","**Naomi R. Wray**
+ <sup>**1,10**</sup>**, Michael E. Goddard**<sup>**11,12**</sup>**, Peter M. Visscher**
+ <sup>**1,13**</sup>
+**& Jian Zeng**
+ <sup>**1**</sup>"
+,"We develop a method, SBayesRC, that integrates genome-wide association
+study (GWAS) summary statistics with functional genomic annotations to
+improve polygenic prediction of complex traits. Our method is scalable
+to whole-genome variant analysis and refines signals from functional
+annotations by allowing them to affect both causal variant probability
+and causal effect distribution. We analyze 50 complex traits and diseases
+using∼7 million common single-nucleotide polymorphisms (SNPs) and 96
+annotations. SBayesRC improves prediction accuracy by 14% in European
+ancestry and up to 34% in cross-ancestry prediction compared to the
+baseline method SBayesR, which does not use annotations, and outperforms
+other methods, including LDpred2, LDpred-funct, MegaPRS, PolyPred-S and
+PRS-CSx. Investigation of factors affecting prediction accuracy identifies a
+significant interaction between SNP density and annotation information,
+suggesting whole-genome sequence variants with annotations may further
+improve prediction. Functional partitioning analysis highlights a major
+contribution of evolutionary constrained regions to prediction accuracy
+and the largest per-SNP contribution from nonsynonymous SNPs."

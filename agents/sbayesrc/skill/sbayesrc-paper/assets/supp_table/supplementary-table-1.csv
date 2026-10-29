@@ -1,0 +1,53 @@
+Supplementary Table 1. Description of 50 UKB complex traits analysed in this study,,,,,,,,,,
+,,,,,,,,,,
+Trait Acronym,Trait Description,UKB ID,N.EUR,N.CVmean,N.SAS,N.EAS,N.AFR,N.total,Category,Independent
+AMena,Age when periods started,2714,179144,161229.6,4109,1437,3676,188695,Reproductive,Yes
+AMeno,Age at menopause,3581,105631,95067.9,2207,690,1601,110334,Reproductive,Yes
+Allergic,"Hayfever, allergic rhinitis or eczema",6152_9,340512,306460.79999999999,9129,2188,6847,359299,Disease,Yes
+Asthma,Asthma,6152_8,340512,306460.79999999999,9129,2188,6847,359299,Disease,Yes
+BMI,Body mass index,21001,340022,306019.8,9232,2239,6887,358998,Physical measure,Yes
+BW,Birth weight,20022,194023,174620.7,2638,819,1711,199553,Reproductive,Yes
+CHL,Cholesterol,30690,325302,292771.8,8954,2139,6564,343552,Blood biomarker,Yes
+Dyslp,Dyslipidemia,E78 + 1473,341186,307067.40000000002,9436,2252,7006,360503,Disease,Yes
+EA,Education attainment,845 + 6138 - 6138,337408,303667.20000000001,8815,2079,6508,355429,Cognitive,Yes
+GLAUC,Glaucoma,"ICD10: H40,H42 + 1277 + 6148_2",341186,307067.40000000002,9436,2252,7006,360503,Disease,Yes
+HBP,High blood pressure,6150_4,340404,306363.59999999998,9138,2198,6876,359237,Disease,Yes
+HT,Standing height,50,340413,306371.7,9245,2242,6902,359422,Physical measure,Yes
+LMC,Lymphocyte count,30120,330174,297156.59999999998,9039,2187,6594,348597,Blood cell count,Yes
+MTCIM,Mean time to correctly identify matches,20023,338592,304732.79999999999,8684,2106,6472,356470,Behavior,Yes
+NTS,Neuroticism score,20127,276413,248771.7,5933,1368,4627,288851,Cognitive,Yes
+NeuC,Neutrophill count,30140,330316,297284.40000000002,9037,2187,6595,348738,Blood cell count,Yes
+PEF,Peak expiratory flow,3064,311334,280200.59999999998,8575,2093,6300,328864,Physical measure,Yes
+PLC,Platelet count,30080,330896,297806.40000000002,9065,2189,6612,349365,Blood cell count,Yes
+PR,Pulse rate,4194,113639,102275.1,5745,1013,3934,124535,Physical measure,Yes
+RBC,Red blood cell (erythrocyte) count,30010,330974,297876.59999999998,9068,2188,6616,349449,Blood cell count,Yes
+Risk_taking,Risk taking,2040,328919,296027.09999999998,8261,1924,6407,346107,Behavior,Yes
+T2D,Type 2 diabetes ,E11 + 1223,341186,307067.40000000002,9436,2252,7006,360503,Disease,Yes
+Tprotein,Total Protein,30860,297515,267763.5,8167,1948,6080,314255,Blood biomarker,Yes
+Urea,Urea,30670,324822,292339.8,8935,2135,6554,343038,Blood biomarker,Yes
+VV,Varicose veins,"ICD10: I83,I86",341186,307067.40000000002,9436,2252,7006,360503,Disease,Yes
+VitD,VitD adjust by month,30890,311047,279942.3,7973,2067,6369,328031,Blood biomarker,Yes
+WHRadjBMI,wasit/hip circumefernce ratio adjusted by BMI,48/49 adj by 21001,173785,156406.5,6125,1118,3006,184337,Physical measure,Yes
+hBMD,Heel bone mineral density (BMD),78,193933,174539.7,3007,1026,2482,200802,Physical measure,Yes
+DBP,Diastolic blood pressure,4079,318819,286937.09999999998,9116,2138,6861,337513,Physical measure,No
+BC,Malignant neoplasm of female breast,ICD10: C50.0 C50.1 C50.2 C50.3 C50.4 C50.5 C50.6 C50.8 C50.9; ICD9: 1740 - 1749 ,295607,266046.3,8964,2125,6546,313774,Disease,No
+SBP,Systolic blood pressure,4080,318815,286933.5,9115,2138,6861,337508,Physical measure,No
+WBC,White blood cell (leukocyte) count,30000,330830,297747,9069,2189,6616,349307,Blood cell count,No
+HDL,HDL cholesterol,30760,297718,267946.2,8160,1949,6081,314453,Blood biomarker,No
+FIS,Fluid intelligence score,20016,111899,100709.1,4413,877,3292,120679,Cognitive,No
+Albumin,Albumin,30600,297860,268074,8166,1947,6080,314598,Blood biomarker,No
+RetC,Reticulocyte count,30250,325135,292621.5,8827,2141,6444,343139,Blood cell count,No
+BFP,Body fat percentage,23099,335026,301523.40000000002,9203,2213,6797,353852,Physical measure,No
+Irritability,Irritability,1940,326058,293452.2,8300,1959,6451,343360,Behavior,No
+HGSR,Hand grip strength (right),47,339795,305815.5,9328,2240,6900,358883,Physical measure,No
+FVC,Forced vital capacity (FVC),3062,311274,280146.59999999998,8574,2093,6300,328802,Physical measure,No
+AFLB,Age at first live birth,2754,124203,111782.7,3065,760,2600,130846,Reproductive,No
+BMR,Basal metabolic rate,23105,335206,301685.40000000002,9205,2217,6800,354041,Physical measure,No
+WC,Waist circumference,48,340579,306521.09999999998,9350,2243,6917,359708,Physical measure,No
+FEV,Forced expiratory volume in 1-second (FEV1),3063,311313,280181.7,8575,2093,6301,328844,Physical measure,No
+FFR,FEV1/FVC ratio,3063/3062,311265,280138.5,8570,2090,6293,328779,Physical measure,No
+HGSL,Hand grip strength (left),46,339773,305795.7,9320,2241,6907,358859,Physical measure,No
+ImpLegR,Impedance of leg (right),23107,335166,301649.40000000002,9203,2217,6799,353998,Physical measure,No
+MNC,Monocyte count,30130,330068,297061.2,9029,2187,6589,348476,Blood cell count,No
+RBCDW,Red blood cell (erythrocyte) distribution width,30070,330550,297495,9021,2183,6571,348928,Blood cell count,No
+HC,Hip circumference,49,340498,306448.2,9347,2243,6913,359621,Physical measure,No

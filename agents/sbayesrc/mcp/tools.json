@@ -1,0 +1,274 @@
+{
+  "schema_version": "sbayesrc.mcp.contract.v1",
+  "server_name": "sbayesrc",
+  "status": "draft",
+  "source": {
+    "repository": "https://github.com/zhilizheng/SBayesRC",
+    "commit": "2881f9a6f57374b80b4d19a09dbf9387939a2f46",
+    "version": "0.2.6",
+    "license": "GPL-3.0",
+    "license_note": "SBayesRC is GPL-3.0. This package does NOT vendor or redistribute the R package source: it pins the upstream commit and calls the exported R functions at runtime through Rscript. A renamed copy of the upstream source is NOT shipped here. The companion native engine for LD generation, GCTB (github.com/jianzeng/GCTB), is also GPL-3.0 and is not bundled.",
+    "entrypoint_r": "R/sbayesrc.R (exported functions tidy, impute, sbayesrc, prs, sbrcMulti, cutLD)",
+    "runtime": "Rscript (R 4.4.3) + SBayesRC drawn from the pinned commit; plink2 for the prs tool",
+    "paper_doi": "10.1038/s41588-024-01704-y",
+    "combined_source_doi": "10.5281/zenodo.10416921"
+  },
+  "path_policy": {
+    "root": "Tool paths are passed through to the upstream R functions, which read/write the given filesystem paths directly. This server does not sandbox paths.",
+    "characters": "The upstream R functions construct some shell commands (prs shells to plink2); callers should keep paths free of shell metacharacters.",
+    "writes": "Each tool writes only to the output path(s) the caller supplies; output directories are created when needed."
+  },
+  "transport": "stdio",
+  "tools": [
+    {
+      "name": "sbayesrc_tidy_summary",
+      "title": "Tidy/QC a GWAS summary",
+      "description": "Tidy and QC a COJO-format GWAS summary file against a SBayesRC LD reference. Checks alleles, allele-frequency differences (freq_thresh), sample-size outliers (N_sd_range) and the var-2pq ratio (rate2pq). Read-only with respect to inputs; writes a tidied summary plus a QC log. Does not fit a model or compute benchmark metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mafile": {"type": "string", "description": "COJO-format GWAS summary file (columns: SNP A1 A2 freq b se p N)."},
+          "ld_dir": {"type": "string", "description": "SBayesRC LD reference folder containing snp.info."},
+          "output": {"type": "string", "description": "Output path for the tidied summary."},
+          "freq_thresh": {"type": "number", "default": 0.2, "description": "Max allele-frequency difference vs the LD reference."},
+          "N_sd_range": {"type": "number", "default": 3.0, "description": "Keep SNPs within mean +/- this many SD of sample size."},
+          "rate2pq": {"type": "number", "default": 0.5, "description": "Relative tolerance for the var-2pq ratio check."}
+        },
+        "required": ["mafile", "ld_dir", "output"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["tool", "outputs", "summary", "artifacts", "message", "reference"],
+        "properties": {
+          "tool": {"const": "tidy"},
+          "outputs": {"type": "array", "items": {"type": "string"}},
+          "summary": {
+            "type": "object",
+            "properties": {"n_variants_out": {"type": "integer", "minimum": 0}}
+          },
+          "artifacts": {"type": "array"},
+          "message": {"type": "string"},
+          "reference": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sbayesrc_impute_summary",
+      "title": "Impute missing summary effects",
+      "description": "Impute missing GWAS summary effects (b, se, p) from the LD reference so the summary covers every SNP in the LD panel. Writes an imputed summary with an r2 column (0 = imputed, 1 = typed). Does not fit a model or compute benchmark metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mafile": {"type": "string", "description": "COJO-format GWAS summary file to impute."},
+          "ld_dir": {"type": "string", "description": "SBayesRC LD reference folder containing snp.info."},
+          "output": {"type": "string", "description": "Output path for the imputed summary (.ma)."},
+          "thresh": {"type": "number", "default": 0.995, "description": "Eigen variance cutoff used for imputation."}
+        },
+        "required": ["mafile", "ld_dir", "output"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["tool", "outputs", "summary", "artifacts", "message", "reference"],
+        "properties": {
+          "tool": {"const": "impute"},
+          "outputs": {"type": "array", "items": {"type": "string"}},
+          "summary": {
+            "type": "object",
+            "properties": {
+              "n_variants": {"type": "integer", "minimum": 0},
+              "n_imputed": {"type": "integer", "minimum": 0}
+            }
+          },
+          "artifacts": {"type": "array"},
+          "message": {"type": "string"},
+          "reference": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sbayesrc_sbayesrc_run",
+      "title": "Run the SBayesRC model",
+      "description": "Run the SBayesRC Bayesian mixture model for polygenic prediction from a summary file and LD reference, optionally with a functional-annotation file. Writes joint SNP weights, heritability/architecture parameters, and per-annotation enrichment artifacts. NOT bit-reproducible: the pinned upstream C++ draws from an unseeded thread_local RNG, so the seed parameter does not make runs identical. Does not compute held-out metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mafile": {"type": "string", "description": "COJO-format GWAS summary file (imputed/tidied)."},
+          "ld_dir": {"type": "string", "description": "SBayesRC LD reference folder containing snp.info."},
+          "out_prefix": {"type": "string", "description": "Output prefix for weights, parameters and annotation outputs."},
+          "annot": {"type": "string", "default": "", "description": "Functional annotation file (SNP + annotation columns); empty string to run without annotations."},
+          "niter": {"type": "integer", "minimum": 1, "default": 3000, "description": "Total number of MCMC iterations."},
+          "burn": {"type": "integer", "minimum": 0, "default": 1000, "description": "Number of MCMC burn-in iterations."},
+          "tune_iter": {"type": "integer", "minimum": 1, "default": 150, "description": "Total number of tuning iterations."},
+          "tune_burn": {"type": "integer", "minimum": 0, "default": 100, "description": "Number of tuning burn-in iterations."},
+          "seed": {"type": "integer", "default": 22, "description": "Random seed passed to the R backend. Does not seed the upstream C++ RNG; does not guarantee reproducibility."},
+          "out_freq": {"type": "integer", "minimum": 1, "default": 10, "description": "Iteration frequency for writing parameter estimates."}
+        },
+        "required": ["mafile", "ld_dir", "out_prefix"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["tool", "outputs", "summary", "artifacts", "message", "reference"],
+        "properties": {
+          "tool": {"const": "sbayesrc"},
+          "outputs": {"type": "array", "items": {"type": "string"}},
+          "summary": {
+            "type": "object",
+            "properties": {
+              "n_snps": {"type": "integer", "minimum": 0},
+              "hsq_mean": {"type": ["number", "null"]},
+              "nnz_mean": {"type": ["number", "null"]}
+            }
+          },
+          "artifacts": {"type": "array"},
+          "message": {"type": "string"},
+          "reference": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sbayesrc_prs",
+      "title": "Compute polygenic risk scores",
+      "description": "Compute polygenic risk scores with plink2 from SBayesRC weight estimates and a genotype dataset. Writes <out_prefix>.score.txt with columns FID IID ALLELE_CT SCORE. Does not compute benchmark metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "weight": {"type": "string", "description": "SBayesRC SNP weight file (<outPrefix>.txt)."},
+          "geno_prefix": {"type": "string", "description": "Genotype path prefix (.bed/.bim/.fam or .pgen/.pvar/.psam); {CHR} for per-chromosome files."},
+          "out_prefix": {"type": "string", "description": "Output prefix for <outPrefix>.score.txt."},
+          "geno_chr": {"type": "string", "default": "", "description": "Chromosome range for multi-file genotypes, e.g. 1-22,X."},
+          "snplist": {"type": "string", "default": "", "description": "Optional file of variant IDs to extract."},
+          "keepid": {"type": "string", "default": "", "description": "Optional file of FID IID samples to keep."},
+          "plink2": {"type": "string", "default": "", "description": "plink2 binary path (empty -> $P2A_PLINK2 or 'plink2')."}
+        },
+        "required": ["weight", "geno_prefix", "out_prefix"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["tool", "outputs", "summary", "artifacts", "message", "reference"],
+        "properties": {
+          "tool": {"const": "prs"},
+          "outputs": {"type": "array", "items": {"type": "string"}},
+          "summary": {
+            "type": "object",
+            "properties": {
+              "n_samples": {"type": "integer", "minimum": 0},
+              "n_alleles": {"type": "integer", "minimum": 0}
+            }
+          },
+          "artifacts": {"type": "array"},
+          "message": {"type": "string"},
+          "reference": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sbayesrc_sbrc_multi",
+      "title": "Combine ancestry-specific PRSs",
+      "description": "Combine two ancestry-specific PRS score files into a phenotype-weighted score (SBayesRC-multi) using a tuning sample and phenotypes. Writes a weighted score file and combination weights. Does not compute benchmark metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "prs1": {"type": "string", "description": "First PRS score file from sbayesrc_prs (ancestry 1)."},
+          "prs2": {"type": "string", "description": "Second PRS score file from sbayesrc_prs (ancestry 2)."},
+          "out_prefix": {"type": "string", "description": "Output prefix for the weighted score and weights."},
+          "tuneid": {"type": "string", "description": "Tuning sample file (FID IID, no header)."},
+          "pheno": {"type": "string", "description": "Phenotype file (FID IID pheno, no header)."},
+          "keepid": {"type": "string", "default": "", "description": "Optional file of FID IID samples to keep."}
+        },
+        "required": ["prs1", "prs2", "out_prefix", "tuneid", "pheno"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["tool", "outputs", "summary", "artifacts", "message", "reference"],
+        "properties": {
+          "tool": {"const": "sbrcMulti"},
+          "outputs": {"type": "array", "items": {"type": "string"}},
+          "summary": {
+            "type": "object",
+            "properties": {"n_samples": {"type": "integer", "minimum": 0}}
+          },
+          "artifacts": {"type": "array"},
+          "message": {"type": "string"},
+          "reference": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sbayesrc_cut_ld",
+      "title": "Reduce an LD reference",
+      "description": "Reduce a SBayesRC LD reference to a lower eigen variance threshold, writing a smaller LD reference to a new directory. Used for LD sensitivity analyses. Does not fit a model or compute benchmark metrics.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "input_ld": {"type": "string", "description": "Source SBayesRC LD reference folder."},
+          "output_ld": {"type": "string", "description": "Destination folder for the reduced LD reference (must not exist)."},
+          "thresh": {"type": "number", "default": 1.0, "description": "New eigen variance threshold (1.0 keeps the source threshold)."}
+        },
+        "required": ["input_ld", "output_ld"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["tool", "outputs", "summary", "artifacts", "message", "reference"],
+        "properties": {
+          "tool": {"const": "cutLD"},
+          "outputs": {"type": "array", "items": {"type": "string"}},
+          "summary": {
+            "type": "object",
+            "properties": {"out_dir": {"type": "string"}}
+          },
+          "artifacts": {"type": "array"},
+          "message": {"type": "string"},
+          "reference": {"type": "string"}
+        }
+      }
+    }
+  ]
+}
