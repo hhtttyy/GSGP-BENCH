@@ -470,6 +470,7 @@
     background: currentColor;
   }
   .entry-status.is-pending { color: var(--rust); }
+  .entry-status.is-spec { color: #8a6a20; }
   .entry-status.is-planned { color: var(--ink-3); }
   .entry-meta {
     display: block;
@@ -710,6 +711,14 @@
     text-underline-offset: 3px;
     text-decoration-color: rgba(57, 77, 102, 0.4);
   }
+  button.notice-link {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+  }
   .notice-link:hover { text-decoration-color: currentColor; }
 
   .empty-state {
@@ -878,6 +887,11 @@
     box-shadow: inset 0 0 0 1px var(--c);
     opacity: .65;
   }
+  .bar.is-spec {
+    background: repeating-linear-gradient(0deg, var(--c) 0 1px, transparent 1px 4px);
+    box-shadow: inset 0 0 0 1px var(--c);
+    opacity: .72;
+  }
   .bar-err {
     position: absolute;
     left: 50%;
@@ -968,6 +982,11 @@
     background: repeating-linear-gradient(45deg, var(--c) 0 1.5px, transparent 1.5px 4px);
     box-shadow: inset 0 0 0 1px var(--c);
     opacity: .7;
+  }
+  .key-bar.is-spec {
+    background: repeating-linear-gradient(0deg, var(--c) 0 1px, transparent 1px 4px);
+    box-shadow: inset 0 0 0 1px var(--c);
+    opacity: .72;
   }
   .key-sep { color: var(--rule); }
   .fig-caption {
@@ -1135,7 +1154,20 @@
   .status-l1 { color: var(--moss); }
   .status-exp { color: var(--ink-2); }
   .status-stub { color: #6f6a5f; }
+  .status-spec { color: #8a6a20; }
   .status-l3 { color: var(--rust); }
+  .cell-tool {
+    display: inline-block;
+    margin-top: 3px;
+    padding: 0 4px;
+    border: 1px solid #b99a4a;
+    color: #70551a;
+    font-family: var(--mono);
+    font-size: 8px;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+  }
+  .cell-tool.is-ok { border-color: var(--moss); color: var(--moss); }
   .cell-na {
     display: block;
     padding-top: 1px;
@@ -1156,6 +1188,7 @@
   .foot-mark { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
   .foot-l1 { color: var(--moss); }
   .foot-l3 { color: var(--rust); }
+  .foot-spec { color: #8a6a20; }
   .foot-na { color: var(--ink-3); }
 
   /* ---------------- Analysis note ---------------- */
@@ -1360,6 +1393,7 @@
   .drawer-status-pill.is-demo { background: #f0f1ed; border-color: var(--rule); color: var(--ink-2); }
   .drawer-status-pill.is-exp { background: var(--blue-soft); border-color: var(--indigo); color: #394d66; }
   .drawer-status-pill.is-stub { background: #f1f0eb; border-color: #8d887b; color: #5f5b51; }
+  .drawer-status-pill.is-spec { background: #f6f1df; border-color: #9a7b2f; color: #70551a; }
   .drawer-status-pill.is-paper { background: var(--rust-soft); border-color: var(--rust); color: var(--rust); }
   .drawer-status-pill.is-none { background: #f7f8f4; border-color: var(--rule); color: var(--ink-3); }
 
@@ -1376,6 +1410,7 @@
   .run-status-banner.is-demo { background: #f0f1ed; border-color: var(--ink-3); }
   .run-status-banner.is-exp { background: var(--blue-soft); border-color: var(--indigo); }
   .run-status-banner.is-stub { background: #f1f0eb; border-color: #8d887b; }
+  .run-status-banner.is-spec { background: #f6f1df; border-color: #9a7b2f; }
   .run-status-banner.is-paper { background: var(--rust-soft); border-color: var(--rust); }
   .run-status-banner.is-none { background: #f7f8f4; border-color: var(--rule); }
   .run-status-main {
@@ -1398,6 +1433,7 @@
   .run-level.is-l1 { color: var(--moss); }
   .run-level.is-exp { color: var(--ink-2); }
   .run-level.is-stub { color: #6f6a5f; }
+  .run-level.is-spec { color: #8a6a20; }
   .run-level.is-l3 { color: var(--rust); }
   .run-sep { color: var(--rule); }
   .run-metric {
@@ -1793,6 +1829,8 @@
   @media (max-width: 400px) {
     .metric-tabs { gap: 11px; }
     .metric-tab { font-size: 9.5px; }
+    .entry-status { font-size: 8px; letter-spacing: 0; }
+    .entry-status::before { display: none; }
     .nav-research .preview-mark { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -1950,7 +1988,7 @@
         <a href="resources/submit/index.html">提交新的论文 Skill →</a>
       </div>
       <div class="col-foot">
-        <span><b id="algo-count">2</b> 个已选</span>
+        <span><b id="algo-count">3</b> 个已选</span>
         <button class="clear-btn" type="button" id="algo-clear">清空</button>
       </div>
     </section>
@@ -1970,7 +2008,7 @@
       </div>
       <div class="entry-list" id="data-list"></div>
       <div class="col-foot">
-        <span><b id="data-count">3</b> 个已选</span>
+        <span><b id="data-count">4</b> 个已选</span>
         <button class="clear-btn" type="button" id="data-clear">清空</button>
       </div>
     </section>
@@ -1989,10 +2027,11 @@
         </div>
         <div class="toolbar">
           <div class="metric-tabs" role="group" aria-label="指标切换">
-            <button class="metric-tab active" type="button" data-metric="pearson" aria-pressed="true">Pearson r</button>
+            <button class="metric-tab" type="button" data-metric="pearson" aria-pressed="false">Pearson r</button>
             <button class="metric-tab" type="button" data-metric="r2" aria-pressed="false">R²</button>
             <button class="metric-tab" type="button" data-metric="auc" aria-pressed="false">AUC</button>
             <button class="metric-tab" type="button" data-metric="runtime" aria-pressed="false">运行时间</button>
+            <button class="metric-tab active" type="button" data-metric="expected" aria-pressed="true">主观适配度</button>
           </div>
           <div class="toolbar-note" id="metric-note">越高越好 · 误差条为折间标准差</div>
         </div>
@@ -2102,6 +2141,27 @@
           mcp: "未认证：有本地原型和流程测试结果；可查看、可自行使用，风险自担。完成真实引擎验证前保持未认证。"
         }
       )
+    },
+    {
+      id: "sbayesrc", name: "SBayesRC", family: "汇总统计 + 注释", input: "GWAS 汇总 + LD + 注释",
+      year: 2024, status: "speculative", statusLabel: "主观估计",
+      color: "#9a7b2f", note: "论文先验下的适配度猜测；不是运行结果",
+      resources: buildResources(
+        "https://doi.org/10.1038/s41588-024-01704-y",
+        "Zheng et al. 2024 · Nature Genetics · DOI 10.1038/s41588-024-01704-y",
+        {
+          skill: {
+            href: "resources/sbayesrc-estimate/index.html",
+            badge: "主观估计",
+            tip: "基于 SBayesRC 论文、数据类型和种群遗传学先验的主观适配度估计；不是 benchmark 运行结果。"
+          },
+          mcp: {
+            href: "https://github.com/Mikk002/GSGP-BENCH/tree/add-sbayesrc-agent/agents/sbayesrc/mcp",
+            badge: "草案",
+            tip: "MCP 草案：已有 6 个工具和玩具数据工程验收，但未在 UKB、WTCCC1 或水稻数据上完成真实引擎验证。"
+          }
+        }
+      )
     }
   ];
 
@@ -2161,6 +2221,31 @@
     "ifam|wtccc":      { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.678, runtime: null, status: "paper_reported" }
   };
 
+  /* 主观适配度独立于真实结果，避免把先验猜测混入证据等级。 */
+  const FIT_ESTIMATES = {
+    "gblup|sim1000g": { expected: 74, estimate: "稳健", confidence: "中高", expectedPearson: "0.48–0.56", expectedR2: "0.23–0.31", expectedAuc: "—", methodFit: "加性线性模型契合 h²=0.5 的常见模拟，REML 稳定。", dataFit: "n≈503 偏小，但 GBLUP 对 p≫n 仍常用；1.2M SNP 计算较重。", risk: "若遗传结构偏非线性或注释富集，单随机效应会丢失信息。" },
+    "gblup|sim500": { expected: 83, estimate: "很适配", confidence: "高", expectedPearson: "0.45–0.58", expectedR2: "0.20–0.34", expectedAuc: "—", methodFit: "小 SNP 面板和加性性状很适合 rrBLUP。", dataFit: "500×5k 是经典入门规模，计算和解释都直接。", risk: "示例数据太小，外推到真实育种群体有限。" },
+    "gblup|duroc": { expected: 80, estimate: "适配良好", confidence: "中高", expectedPearson: "0.56–0.64", expectedR2: "0.31–0.41", expectedAuc: "—", methodFit: "经典育种性状通常适合加性 GRM 基线。", dataFit: "n≈2.8k 可估 GRM，但 11.3M SNP 需要内存和矩阵优化。", risk: "多性状遗传结构不同，强 QTL 或非线性效应会被低估。" },
+    "gblup|rice": { expected: 78, estimate: "通常稳健", confidence: "中高", expectedPearson: "0.64–0.74", expectedR2: "0.41–0.55", expectedAuc: "—", methodFit: "Gblup 在水稻基因组预测中常见且稳健。", dataFit: "n=3,024 和 333k SNP 适中，群体结构需要校正好。", risk: "群体分层和材料关系复杂时，不加结构协变量会偏乐观。" },
+    "gblup|ukb": { expected: 72, estimate: "可做但偏重", confidence: "中", expectedPearson: "0.28–0.38", expectedR2: "0.08–0.14", expectedAuc: "—", methodFit: "大样本个体数据可以估 GRM，但方法本身不利用功能注释。", dataFit: "n≈348.5k 和 1.09M SNP 计算成本高，需分块或降维。", risk: "与注释增强方法相比上限较低；训练/验证划分影响很大。" },
+    "gblup|wtccc": { expected: 64, estimate: "中等", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.60–0.67", methodFit: "二分类亦可做线性/阈值预测，AUC 常接近传统 PRS。", dataFit: "病例数偏少、老芯片 SNP 较疏，病种间差异明显。", risk: "小样本会让 AUC 波动很大，罕见病尤其不稳定。" },
+
+    "ifam|sim1000g": { expected: 76, estimate: "有潜力", confidence: "中", expectedPearson: "0.52–0.60", expectedR2: "0.27–0.36", expectedAuc: "—", methodFit: "注释增强模型在注释真实参与遗传结构时占优。", dataFit: "人类 1000G 背景接近论文训练场景，但 n≈503 限制注释学习。", risk: "若注释随机或与生成模型不一致，注释分支可能无增益。" },
+    "ifam|sim500": { expected: 70, estimate: "流程倾向良好", confidence: "低中", expectedPearson: "0.35–0.55", expectedR2: "0.12–0.30", expectedAuc: "—", methodFit: "真实引擎下可整合模拟注释，但当前记录仍是流程测试。", dataFit: "5k SNP 和 500 个体不足以充分训练注释模型。", risk: "现有 STUB 记录不能代表真实 IFAM 表现。" },
+    "ifam|duroc": { expected: 84, estimate: "论文最有利", confidence: "中高", expectedPearson: "0.60–0.68", expectedR2: "0.36–0.46", expectedAuc: "—", methodFit: "IFAM 的注释加多随机效应正适合育种性状。", dataFit: "Duroc 是该论文使用场景，数据规模也匹配。", risk: "不同性状和注释可用性会让实际结果分化。" },
+    "ifam|rice": { expected: 84, estimate: "论文有利", confidence: "中高", expectedPearson: "0.68–0.78", expectedR2: "0.46–0.61", expectedAuc: "—", methodFit: "IFAM 论文直接覆盖水稻，注释路线适配植物育种。", dataFit: "3000 水稻样本量适中，但需可靠注释和群体结构处理。", risk: "IRRI 数据申请和注释版本会直接影响复现难度。" },
+    "ifam|ukb": { expected: 76, estimate: "有潜力但计算重", confidence: "中", expectedPearson: "0.32–0.40", expectedR2: "0.10–0.16", expectedAuc: "—", methodFit: "注释模型适合复杂多基因性状，但 UKB 规模计算昂贵。", dataFit: "大样本提高上限，也放大了内存、I/O 和注释对齐要求。", risk: "不使用 UKB 限制数据时只能做方法性估计，不能算正式复现。" },
+    "ifam|wtccc": { expected: 68, estimate: "中等偏乐观", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.62–0.70", methodFit: "多注释随机效应可缓解小样本过拟合，若注释有信息会受益。", dataFit: "WTCCC1 小样本和老芯片会限制注释优势的稳定性。", risk: "疾病异质性大，部分病种可能低于 GBLUP。" },
+
+    "sbayesrc|sim1000g": { expected: 78, estimate: "中等偏乐观", confidence: "中", expectedPearson: "0.50–0.58", expectedR2: "0.25–0.34", expectedAuc: "—", methodFit: "低秩模型适合百万级 SNP，并对 GWAS 与 LD 参考之间的抽样差异较稳。", dataFit: "1000G EUR 与论文使用的 1kg0.5k LD 参考相近；若仿真含注释富集，优势应更明显。", risk: "n≈503 的 summary 估计噪声大；若注释随机或与 BaselineLD 不匹配，注释分支可能没有增益。" },
+    "sbayesrc|sim500": { expected: 20, estimate: "不适配", confidence: "中高", expectedPearson: "—", expectedR2: "—", expectedAuc: "—", methodFit: "SBayesRC 需要 GWAS summary、LD 参考和注释；5k SNP 面板过窄。", dataFit: "500×5k 示例没有 summary/LD/注释三件套，不足以代表该方法。", risk: "即使强行接入，也不能和论文设置类比。" },
+    "sbayesrc|duroc": { expected: 32, estimate: "需猪专用资源", confidence: "低", expectedPearson: "0.25–0.45（需猪 LD/注释）", expectedR2: "0.06–0.20", expectedAuc: "—", methodFit: "贝叶斯 summary 框架可迁移，但需要物种专用 LD 和注释。", dataFit: "论文的人类 BaselineLD、LD blocks 和频率处理不能直接用于猪。", risk: "没有猪专用资源时，表现可能明显低于个体水平 GBLUP/IFAM。" },
+    "sbayesrc|rice": { expected: 38, estimate: "不确定/偏低到中等", confidence: "低", expectedPearson: "0.45–0.62（仅有水稻 LD/注释时）", expectedR2: "0.20–0.38", expectedAuc: "—", methodFit: "贝叶斯 summary 框架可迁移，但论文的 LD 分块、BaselineLD 注释和参数先验都来自人类。", dataFit: "水稻自交、群体结构、LD 衰减和功能注释体系与人类差异很大；现有人类资源不能直接套用。", risk: "若没有水稻专用 LD 和注释，预测可能明显低于个体水平 IFAM；即便迁移，也应视为另一套方法假设。" },
+    "sbayesrc|ukb": { expected: 92, estimate: "最有利", confidence: "中高", expectedPearson: "0.45–0.65（身高/BMI 合并口径）", expectedR2: "0.18–0.42", expectedAuc: "—", methodFit: "论文正是在 UKB 规模、约 7M SNP 和 96 个注释的设定下建立优势。", dataFit: "大样本、欧洲祖先、身高/BMI 等高度多基因性状与 SBayesRC 的建模假设最匹配。", risk: "绝对 R² 强依赖性状、SNP 密度、LD 参考和训练样本大小；不能把论文数值当成本站复现。" },
+    "sbayesrc|wtccc": { expected: 62, estimate: "中等且不稳定", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.58–0.66", methodFit: "二元疾病可由 summary 方法建模，贝叶斯收缩和注释有助于控制过拟合。", dataFit: "WTCCC1 样本较小、老芯片 SNP 较疏，疾病间遗传结构差异大，功能注释覆盖不一定完整。", risk: "案例数不足会让 AUC 区间很宽；低 prevalence 疾病尤其可能只得到接近传统 PRS 的表现。" }
+  };
+  const PROSPECTIVE_META = Object.create(null);
+
   const METRICS = {
     pearson: {
       label: "Pearson r", max: 0.8, decimals: 3, axisDecimals: 1, better: "higher", type: "quant",
@@ -2177,14 +2262,18 @@
     runtime: {
       label: "运行时间", max: null, decimals: 1, axisDecimals: 0, better: "lower", type: "any",
       note: "墙钟分钟 · 越低越好 · 不同硬件不可直接比较"
+    },
+    expected: {
+      label: "主观适配度", max: 100, decimals: 0, axisDecimals: 0, better: "higher", type: "any",
+      note: "0–100 专家先验 · 不是实验结果 · 不参与主榜或认证"
     }
   };
 
   const SPECIES_ORDER = { "人类": 0, "动物": 1, "植物": 2 };
   const DEFAULT_STATE = {
-    algos: ["gblup", "ifam"],
-    datasets: ["sim1000g", "duroc", "sim500"],
-    metric: "pearson"
+    algos: ["gblup", "ifam", "sbayesrc"],
+    datasets: ["sim1000g", "ukb", "wtccc", "rice"],
+    metric: "expected"
   };
 
   /* Populated by data/results/gblup-sim500.json; the inline fallback keeps the
@@ -2214,6 +2303,21 @@
   const algoById = (id) => ALGOS.find((a) => a.id === id);
   const dataById = (id) => DATASETS.find((d) => d.id === id);
   const cellKey = (a, d) => `${a}|${d}`;
+  const fitEstimateFor = (algoId, dsId) => FIT_ESTIMATES[cellKey(algoId, dsId)] || null;
+  /* MCP tool status is tracked per method×dataset: prospective records start unverified
+     and only a human-validated run may flip them to certified. */
+  const mcpToolStatusFor = (algoId, dsId) => {
+    const prospective = PROSPECTIVE_META[cellKey(algoId, dsId)];
+    if (prospective && prospective.tool_status) return prospective.tool_status;
+    const algo = algoById(algoId);
+    const badge = algo && algo.resources && algo.resources.mcp ? algo.resources.mcp.badge : null;
+    return badge === "已认证" ? "certified" : "unverified";
+  };
+  const toolBadgeFor = (algoId, dsId) => mcpToolStatusFor(algoId, dsId) === "certified"
+    ? '<span class="cell-tool is-ok">MCP 已认证</span>'
+    : '<span class="cell-tool">MCP 未认证</span>';
+  const hasSpeculativeRecord = (algoId, dsId) => Boolean(fitEstimateFor(algoId, dsId));
+  const hasSpeculativeOnlyCell = (algoId, dsId) => hasSpeculativeRecord(algoId, dsId) && !RESULTS[cellKey(algoId, dsId)];
   const fmt = (v, digits = 3) => (v == null || Number.isNaN(Number(v))) ? "—" : Number(v).toFixed(digits);
   const fmtMetric = (v, metricId) => {
     if (metricId === "runtime" && v != null && Number(v) > 0 && Number(v) < 0.05) return "<0.1";
@@ -2254,7 +2358,7 @@
      ------------------------------------------------------------------ */
   function algoStatusHtml(a) {
     if (a.status === "verified") return "";
-    const cls = a.status === "converting" ? " is-pending" : " is-planned";
+    const cls = a.status === "speculative" ? " is-spec" : a.status === "converting" ? " is-pending" : " is-planned";
     return `<span class="entry-status${cls}">${escapeHtml(a.statusLabel)}</span>`;
   }
   function accessStatusHtml(d) {
@@ -2403,6 +2507,11 @@
   function getValue(algoId, dsId, metricId) {
     const ds = dataById(dsId);
     const res = RESULTS[cellKey(algoId, dsId)];
+    if (metricId === "expected") {
+      const fit = fitEstimateFor(algoId, dsId);
+      if (!fit) return { status: "not_run", reason: "尚未记录主观适配度" };
+      return { status: "speculative", value: fit.expected, sd: null, fit };
+    }
     if (!ds || !res) return { status: "not_run", reason: "尚未运行" };
     if (metricId === "auc" && ds.type !== "binary") return { status: "not_applicable", reason: "该指标不适用于此性状类型" };
     if ((metricId === "pearson" || metricId === "r2") && ds.type !== "quant") return { status: "not_applicable", reason: "该指标不适用于此性状类型" };
@@ -2441,6 +2550,13 @@
       cls: "is-stub",
       note: "流程测试：真实 IFAM 编排，但计算引擎是替代品；数值没有科学意义，只用于展示生成与运行管线。"
     },
+    speculative: {
+      label: "主观估计",
+      short: "专家先验，不是运行结果。",
+      detail: "主观估计来自论文结论、数据类型和生物学先验，并非本站运行得到的实验结果。",
+      cls: "is-spec",
+      note: "主观估计：仅用于安排后续验证优先级；不计入主榜、认证、复现结论或论文级比较。"
+    },
     paper_reported: {
       label: "论文值",
       short: "论文报告值，本站未复现。",
@@ -2461,6 +2577,7 @@
     if (value.status === "reproduced") return "演示";
     if (value.status === "exploratory") return "探索";
     if (value.status === "stub") return "流程测试";
+    if (value.status === "speculative") return "主观估计";
     if (value.status === "paper_reported") return "论文值";
     if (value.status === "not_applicable") return "不适用";
     return "未运行";
@@ -2483,6 +2600,10 @@
     if (statuses.has("演示")) notes.push("演示值是版式占位，不可引用。");
     if (statuses.has("探索")) notes.push("探索是真实单次划分计算，来自公开示例基因型上的模拟性状；它不是正式复现，不参与主榜。");
     if (statuses.has("流程测试")) notes.push("流程测试使用替代计算引擎，只证明流程，不能作为科学结果。");
+    if (statuses.has("主观估计")) notes.push("主观估计是论文与生物学先验下的适配度猜测，不是实验结果，不参与主榜、认证或论文复现结论。");
+    if (algos.some((a) => datasets.some((d) => hasSpeculativeOnlyCell(a.id, d.id)))) {
+      notes.push("SBayesRC 当前只有主观适配度估计，没有本站实测的 Pearson、R² 或 AUC；请切换指标查看估计依据。");
+    }
     if (statuses.has("不适用")) notes.push("存在不适用于该性状类型的指标，请勿把它们当作缺失值或零值。");
     if (datasets.some((d) => d.access !== "open")) notes.push("当前视图包含需申请或受限数据；论文值未在本站复现，划分与指标可能不同。");
     if (algos.some((a) => a.input.includes("汇总"))) notes.push("当前视图混合了输入模态：个体水平方法与汇总数据方法需要不同输入，不能直接比较。");
@@ -2637,6 +2758,8 @@
     const statusAt = (a, d) => getValue(a.id, d.id, state.metric).status;
     const hasExploratory = algos.some((a) => datasets.some((d) => statusAt(a, d) === "exploratory"));
     const hasStub = algos.some((a) => datasets.some((d) => statusAt(a, d) === "stub"));
+    const hasSpeculative = algos.some((a) => datasets.some((d) => statusAt(a, d) === "speculative"));
+    const hasAnySpeculativeOnly = algos.some((a) => datasets.some((d) => hasSpeculativeOnlyCell(a.id, d.id)));
 
     const algoNames = algos.map((a) => a.name).join("、");
     const datasetNames = datasets.map((d) => d.name).join("、");
@@ -2644,7 +2767,7 @@
       `<b>算法：</b><span>${escapeHtml(algoNames)}</span>` +
       `<b>数据：</b><span>${escapeHtml(datasetNames)}</span>`;
     $("#results-sub").setAttribute("data-resource-tip",
-      `算法：${algoNames}。数据集：${datasetNames}。指标：${metric.label}。只有同数据、同划分的结果才可直接比较；演示值不可引用，探索仅作参考，流程测试不能作为科学结论。`);
+      `算法：${algoNames}。数据集：${datasetNames}。指标：${metric.label}。只有同数据、同划分的结果才可直接比较；演示值不可引用，探索仅作参考，流程测试不能作为科学结论，主观估计不是实验结果。`);
 
     const hasRestricted = datasets.some((d) => d.access !== "open");
     const hasSummary = algos.some((a) => a.input.includes("汇总"));
@@ -2652,6 +2775,7 @@
     const evidenceNotes = [];
     if (hasExploratory) evidenceNotes.push("含<b>探索</b>结果：真实单次计算，仅作参考，不参与正式比较");
     if (hasStub) evidenceNotes.push("含<b>流程测试</b>：使用替代引擎，不能作为科学结论");
+    if (hasSpeculative) evidenceNotes.push("含<b>主观估计</b>：来自论文与生物学先验，不是实验结果，不参与主榜");
     if (evidenceNotes.length) {
       notices += `<div class="notice is-info"><span class="notice-label">说明</span><span>${evidenceNotes.join("；")}。<a class="notice-link" href="resources/introduce/index.html#levels">了解证据等级</a></span></div>`;
     }
@@ -2661,16 +2785,27 @@
     if (hasSummary) {
       notices += `<div class="notice is-info"><span class="notice-label">说明</span><span>当前视图混合了输入模态：个体水平与汇总统计方法需要不同的训练输入。请先阅读详情中的可比性说明，再下结论。</span></div>`;
     }
+    if (hasAnySpeculativeOnly && state.metric !== "expected") {
+      notices += `<div class="notice is-info"><span class="notice-label">主观估计</span><span>SBayesRC 当前只提供主观适配度，不提供实测 Pearson、R² 或 AUC；结果表中显示为“仅主观估计”。<button class="notice-link" type="button" data-switch-metric="expected">切到主观适配度 →</button></span></div>`;
+    }
 
     const hasValues = algos.some((a) => datasets.some((d) => getValue(a.id, d.id, state.metric).value != null));
+    const hasAnalyzableCells = hasValues || hasAnySpeculativeOnly;
     body.innerHTML = notices + `
       <figure class="figure" id="figure-block"></figure>
       <section class="table-block" id="table-block" aria-label="结果矩阵"></section>
-      ${hasValues ? '<section class="analysis" id="analysis-block" aria-labelledby="analysis-title"></section>' : ""}`;
+      ${hasAnalyzableCells ? '<section class="analysis" id="analysis-block" aria-labelledby="analysis-title"></section>' : ""}`;
 
     renderFigure(algos, datasets, metric);
     renderMatrix(algos, datasets, metric);
-    if (hasValues) paintAnalysis(algos, datasets, metric);
+    body.querySelectorAll("[data-switch-metric]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.metric = button.dataset.switchMetric;
+        writeStateToUrl();
+        renderResults();
+      });
+    });
+    if (hasAnalyzableCells) paintAnalysis(algos, datasets, metric);
   }
 
   function axisScale(metricId, groups) {
@@ -2688,6 +2823,7 @@
 
   function renderFigure(algos, datasets, metric) {
     const block = $("#figure-block");
+    const hasSpecOnly = algos.some((a) => datasets.some((d) => hasSpeculativeOnlyCell(a.id, d.id)));
     const groups = datasets.map((ds) => {
       const bars = algos.map((a) => ({ algo: a, ...getValue(a.id, ds.id, state.metric) }))
         .filter((b) => b.value != null);
@@ -2695,12 +2831,15 @@
     }).filter((g) => g.bars.length);
 
     if (!groups.length) {
+      const emptyText = hasSpecOnly && state.metric !== "expected"
+        ? "当前指标下没有可比较的实测数据。SBayesRC 只有主观适配度，请切换到“主观适配度”查看估计。"
+        : `当前指标下没有可比较数据。${state.metric === "auc" ? "AUC 仅适用于 WTCCC1 等二分类数据集。" : "请确认所选数据集包含该性状类型。"}`
       block.innerHTML = `
         <div class="fig-head">
           <span class="fig-no">图 1</span>
           <h3 class="fig-title">${escapeHtml(metric.label)} · 暂无可比较结果</h3>
         </div>
-        <div class="figure-empty">当前指标下没有可比较数据。${state.metric === "auc" ? "AUC 仅适用于 WTCCC1 等二分类数据集。" : "请确认所选数据集包含该性状类型。"}</div>`;
+        <div class="figure-empty">${emptyText}</div>`;
       return;
     }
 
@@ -2720,7 +2859,8 @@
         const paper = b.status === "paper_reported";
         const exp = b.status === "exploratory";
         const stub = b.status === "stub";
-        const barClass = paper ? " is-paper" : exp ? " is-exp" : stub ? " is-stub" : "";
+        const spec = b.status === "speculative";
+        const barClass = paper ? " is-paper" : exp ? " is-exp" : stub ? " is-stub" : spec ? " is-spec" : "";
         const valueText = fmtMetric(b.value, state.metric) + (b.sd != null ? " ± " + fmt(b.sd, METRICS[state.metric].decimals) : "");
         let err = "";
         if (b.sd != null && b.value > 0) {
@@ -2780,10 +2920,11 @@
         <span class="key-status"><span class="key-bar is-exp" style="--c:var(--ink-2)"></span>探索</span>
         <span class="key-status"><span class="key-bar is-stub" style="--c:#6f6a5f"></span>流程测试</span>
         <span class="key-status"><span class="key-bar is-paper" style="--c:var(--rust)"></span>论文值</span>
+        <span class="key-status"><span class="key-bar is-spec" style="--c:#9a7b2f"></span>主观估计</span>
       </div>
       <figcaption class="fig-caption">
-        <b>图 1.</b> 所选方法在各数据集上的平均 ${escapeHtml(metric.label)}；误差条为重复/折间标准差。实线为演示值，点线为真实单次探索，交叉线为流程测试，斜线为论文报告值。
-        <span class="demo">部分数值仅用于版式确认；探索结果未认证；流程测试使用替代引擎，不能作为科学结果。</span>
+        <b>图 1.</b> 所选方法在各数据集上的平均 ${escapeHtml(metric.label)}；误差条为重复/折间标准差。实线为演示值，点线为真实单次探索，交叉线为流程测试，斜线为论文报告值，竖条纹为专家主观估计。
+        <span class="demo">部分数值仅用于版式确认；探索结果未认证；流程测试使用替代引擎，不能作为科学结果；主观估计不是实验结果。</span>
       </figcaption>`;
   }
 
@@ -2802,14 +2943,25 @@
         if (v.status === "not_applicable") {
           return `<td><span class="cell-na" title="${escapeHtml(v.reason)}">不适用</span></td>`;
         }
+        if (v.status === "not_run" && hasSpeculativeOnlyCell(a.id, d.id)) {
+          return `<td>
+            <button class="cell-btn" type="button" data-algo="${a.id}" data-ds="${d.id}" title="该指标没有实测结果；打开可查看主观适配度和估计依据" aria-label="查看 ${escapeHtml(a.name)} 在 ${escapeHtml(d.name)} 的主观估计依据">
+              <span class="cell-value" style="color:#8a6a20">—</span>
+              <span class="cell-status status-spec">仅主观估计</span>
+              ${toolBadgeFor(a.id, d.id)}
+            </button>
+          </td>`;
+        }
         const valueText = v.value == null ? "未运行" : fmtMetric(v.value, state.metric);
         const sdText = v.sd != null ? `<span class="cell-sd">± ${fmt(v.sd, METRICS[state.metric].decimals)}</span>` : "";
-        const statusText = v.value == null ? "未运行" : v.status === "reproduced" ? "演示" : v.status === "exploratory" ? "探索" : v.status === "stub" ? "流程测试" : "论文值";
-        const statusClass = v.value == null ? "" : v.status === "reproduced" ? " status-l1" : v.status === "exploratory" ? " status-exp" : v.status === "stub" ? " status-stub" : " status-l3";
+        const statusText = v.value == null ? "未运行" : v.status === "reproduced" ? "演示" : v.status === "exploratory" ? "探索" : v.status === "stub" ? "流程测试" : v.status === "speculative" ? "主观估计" : "论文值";
+        const statusClass = v.value == null ? "" : v.status === "reproduced" ? " status-l1" : v.status === "exploratory" ? " status-exp" : v.status === "stub" ? " status-stub" : v.status === "speculative" ? " status-spec" : " status-l3";
+        const toolBadge = v.status === "speculative" ? toolBadgeFor(a.id, d.id) : "";
         return `<td>
           <button class="cell-btn" type="button" data-algo="${a.id}" data-ds="${d.id}" ${v.value == null ? `title="${escapeHtml(v.reason || "尚未运行")}"` : ""} aria-label="查看 ${escapeHtml(a.name)} 在 ${escapeHtml(d.name)} 的运行记录">
             <span class="cell-value"${v.value == null ? ' style="color:#adb5ab"' : ""}>${valueText}${sdText}</span>
             <span class="cell-status${statusClass}">${statusText}</span>
+            ${toolBadge}
           </button>
         </td>`;
       }).join("");
@@ -2839,6 +2991,8 @@
       <div class="table-foot">
         <span class="foot-l1"><span class="foot-mark"></span>演示 = 版式占位，不可引用</span>
         <span class="foot-l3"><span class="foot-mark"></span>论文值 = 论文报告，仅参考</span>
+        <span class="foot-spec"><span class="foot-mark"></span>主观估计 = 专家先验，不是实验结果</span>
+        <span class="foot-spec"><span class="foot-mark"></span>MCP 未认证 = 等待人工校验后才可能更新</span>
         <span class="foot-na"><span class="foot-mark" style="background:#adb5ab"></span>不适用 = 指标不适用于此性状</span>
       </div>`;
 
@@ -2886,9 +3040,14 @@
     const d = dataById(dsId);
     if (!a || !d) return;
     lastFocused = document.activeElement;
-    const v = getValue(algoId, dsId, state.metric);
     const metric = METRICS[state.metric];
     const result = RESULTS[cellKey(algoId, dsId)];
+    const fit = fitEstimateFor(algoId, dsId);
+    const currentValue = getValue(algoId, dsId, state.metric);
+    const showSpeculative = currentValue.status === "speculative" || (currentValue.status === "not_run" && Boolean(fit));
+    const v = currentValue.status === "not_run" && fit
+      ? { status: "speculative", value: null, reason: "当前指标没有实测结果；下方显示 SBayesRC 主观适配度估计。" }
+      : currentValue;
     const realRecord = REAL_RECORDS[cellKey(algoId, dsId)] || null;
     const meta = LEVEL_META[v.status] || LEVEL_META.not_run;
     const statusBadge = v.status === "reproduced"
@@ -2897,12 +3056,14 @@
         ? '<span class="run-level is-exp">探索</span>'
         : v.status === "stub"
           ? '<span class="run-level is-stub">流程测试</span>'
+          : v.status === "speculative"
+            ? '<span class="run-level is-spec">主观估计</span>'
           : v.status === "paper_reported"
             ? '<span class="run-level is-l3">论文值</span>'
             : '<span class="run-level">未运行</span>';
 
     $("#drawer-title").textContent = `${a.name} × ${d.name}`;
-    $("#drawer-subtitle").textContent = `${metric.label} · ${d.trait} · ${d.species}`;
+    $("#drawer-subtitle").textContent = `${showSpeculative ? "主观适配度" : metric.label} · ${d.trait} · ${d.species}`;
     const statusTop = $("#drawer-status-top");
     statusTop.textContent = meta.label;
     statusTop.className = `eyebrow-side drawer-status-pill ${meta.cls}`;
@@ -2923,7 +3084,7 @@
              <div class="run-metric-label">${escapeHtml(metric.label)}${state.metric === "runtime" ? " / minutes" : ""}</div>
              <div class="run-metric-value">${fmtMetric(v.value, state.metric)}${v.sd != null ? ` <small>± ${fmt(v.sd, metric.decimals)}</small>` : ""}</div>
            </div>
-           <div class="run-metric-note">${v.status === "exploratory" ? "真实单次运行<br>未认证 · 不参与主榜" : v.status === "stub" ? "流程测试<br>仅证明管线 · 不可引用" : v.sd != null ? "重复 / 折间标准差<br>多次重复" : "论文报告值<br>未在本地复现"}<br>${metric.better === "lower" ? "越低越好" : "越高越好"}</div>
+           <div class="run-metric-note">${v.status === "exploratory" ? "真实单次运行<br>未认证 · 不参与主榜" : v.status === "stub" ? "流程测试<br>仅证明管线 · 不可引用" : v.status === "speculative" ? "专家先验<br>非证据 · 不参与主榜" : v.sd != null ? "重复 / 折间标准差<br>多次重复" : "论文报告值<br>未在本地复现"}<br>${metric.better === "lower" ? "越低越好" : "越高越好"}</div>
          </div>`
       : `<div class="run-metric">
            <div>
@@ -2933,7 +3094,20 @@
            <div class="run-metric-note">${escapeHtml(v.reason || "尚未运行")}</div>
          </div>`;
 
-    const metricsRows = result ? `
+    const metricsRows = fit && v.status === "speculative" ? `
+      <div class="detail-section">
+        <h3 class="detail-title">主观估计</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>适配度</dt><dd><strong>${fmt(fit.expected, 0)} / 100</strong> · ${escapeHtml(fit.estimate || "未标注")}</dd></div>
+          <div class="data-row"><dt>置信度</dt><dd>${escapeHtml(fit.confidence || "未标注")}</dd></div>
+          <div class="data-row"><dt>工具状态</dt><dd>${mcpToolStatusFor(algoId, dsId) === "certified"
+            ? "<strong>已认证</strong> · 该 MCP 包已人工验证"
+            : `<strong>未认证</strong> · ${fit.validationStatus === "validated" ? "已提交校验记录" : "等待人工校验"}`}</dd></div>
+          <div class="data-row"><dt>预期 Pearson</dt><dd>${escapeHtml(fit.expectedPearson || "—")}</dd></div>
+          <div class="data-row"><dt>预期 R²</dt><dd>${escapeHtml(fit.expectedR2 || "—")}</dd></div>
+          <div class="data-row"><dt>预期 AUC</dt><dd>${escapeHtml(fit.expectedAuc || "—")}</dd></div>
+        </dl>
+      </div>` : result ? `
       <div class="detail-section">
         <h3 class="detail-title">所有指标</h3>
         <dl class="data-list">
@@ -2955,7 +3129,7 @@
       <div class="detail-section">
         <h3 class="detail-title">运行与溯源</h3>
         <dl class="data-list">
-          <div class="data-row"><dt>Run ID</dt><dd><code>${escapeHtml(rec ? rec.run_id : (result.runId || "—"))}</code></dd></div>
+          <div class="data-row"><dt>Run ID</dt><dd><code>${escapeHtml(rec ? rec.run_id : ((result && result.runId) || "—"))}</code></dd></div>
           ${v.status === "stub" ? '<div class="data-row"><dt>运行模式</dt><dd><strong>流程测试</strong> · 替代计算引擎 · 不是 IFAM 科学结果</dd></div>' : ""}
           <div class="data-row"><dt>论文来源</dt><dd>${rec && rec.algorithm.paper_doi ? `<a href="https://doi.org/${escapeHtml(rec.algorithm.paper_doi)}" target="_blank" rel="noreferrer">${escapeHtml(rec.algorithm.paper_title || rec.algorithm.paper_doi)}</a>` : "VanRaden 2008 · J. Dairy Sci. 91:4414–4423"}</dd></div>
           <div class="data-row"><dt>数据来源</dt><dd>${escapeHtml(rec ? rec.dataset.source : "上游示例数据 + 模拟性状")}</dd></div>
@@ -2975,7 +3149,27 @@
       </div>`;
     })();
 
-    const provenance = v.status === "reproduced" ? `
+    const provenance = v.status === "speculative" ? `
+      <div class="detail-section">
+        <h3 class="detail-title">估计依据</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>方法匹配</dt><dd>${escapeHtml(fit.methodFit || "—")}</dd></div>
+          <div class="data-row"><dt>数据匹配</dt><dd>${escapeHtml(fit.dataFit || "—")}</dd></div>
+          <div class="data-row"><dt>主要风险</dt><dd>${escapeHtml(fit.risk || "—")}</dd></div>
+          ${fit.reasoning ? `<div class="data-row"><dt>证据</dt><dd>${fit.reasoning.evidence.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
+          <div class="data-row"><dt>验证计划</dt><dd>${fit.reasoning.verification_plan.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
+          <div class="data-row"><dt>来源 PR</dt><dd>${fit.sourcePr ? `<a href="${escapeHtml(fit.sourcePr.url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourcePr.title || fit.sourcePr.url)}</a>` : "—"}</dd></div>` : ""}
+          <div class="data-row"><dt>参考</dt><dd><a href="https://doi.org/10.1038/s41588-024-01704-y" target="_blank" rel="noreferrer">Zheng et al. 2024 · Nature Genetics</a></dd></div>
+        </dl>
+      </div>
+      <div class="detail-section">
+        <h3 class="detail-title">证据边界</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>状态</dt><dd><strong>主观估计</strong> · 不是本站运行结果</dd></div>
+          <div class="data-row"><dt>来源</dt><dd>论文结论、数据类型与种群遗传学先验；不代表 SBayesRC 已在本站复现。</dd></div>
+          <div class="data-row"><dt>不参与</dt><dd>主榜、认证、复现结论和论文级比较</dd></div>
+        </dl>
+      </div>` : v.status === "reproduced" ? `
       <div class="detail-section">
         <h3 class="detail-title">运行与溯源</h3>
         <dl class="data-list">
@@ -3134,11 +3328,57 @@
   /* ------------------------------------------------------------------
      Real evidence record
      ------------------------------------------------------------------ */
+  const CONFIDENCE_LABELS = {
+    low: "低",
+    low_medium: "低中",
+    medium: "中",
+    medium_high: "中高",
+    high: "高"
+  };
+
+  function applyProspectivePayload(payload) {
+    if (!payload || payload.schema_version !== "gsgp.prospective.v1" || !Array.isArray(payload.records)) return;
+    payload.records.forEach((record) => {
+      if (!record || !record.algorithm_id || !record.dataset_id) return;
+      const key = cellKey(record.algorithm_id, record.dataset_id);
+      const previous = FIT_ESTIMATES[key] || {};
+      const metrics = record.expected_metrics || {};
+      FIT_ESTIMATES[key] = {
+        ...previous,
+        expected: Number(record.expected),
+        estimate: record.estimate_label || previous.estimate,
+        confidence: CONFIDENCE_LABELS[record.confidence] || previous.confidence || "未标注",
+        expectedPearson: metrics.pearson || previous.expectedPearson || "—",
+        expectedR2: metrics.r2 || previous.expectedR2 || "—",
+        expectedAuc: metrics.auc || previous.expectedAuc || "—",
+        methodFit: record.reasoning?.summary || previous.methodFit,
+        dataFit: record.reasoning?.evidence?.join("；") || previous.dataFit,
+        risk: record.reasoning?.risks?.join("；") || previous.risk,
+        reasoning: record.reasoning || null,
+        sourcePr: payload.source_pr || null,
+        toolStatus: record.tool_status || "unverified",
+        validationStatus: record.validation_status || "pending_validation"
+      };
+      PROSPECTIVE_META[key] = record;
+    });
+  }
+
+  async function loadProspectiveRecords() {
+    try {
+      const response = await fetch("data/prospective/submissions.json", { cache: "no-store" });
+      if (!response.ok) return;
+      applyProspectivePayload(await response.json());
+    } catch (error) {
+      console.warn("Prospective records unavailable; keeping inline fallback.", error);
+    }
+  }
+
   async function loadRealResults() {
     const files = [
       "data/results/gblup-sim500.json",
       "data/results/ifam-stub-sim500.json"
     ];
+    await loadProspectiveRecords();
     try {
       const responses = await Promise.all(files.map((file) => fetch(file, { cache: "no-store" })));
       for (const response of responses) {
@@ -3158,9 +3398,10 @@
           runId: record.run_id
         };
       }
-      renderResults();
     } catch (error) {
       console.warn("Real result JSON unavailable; keeping the checked-in fallback.", error);
+    } finally {
+      renderResults();
     }
   }
 

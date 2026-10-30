@@ -107,6 +107,20 @@
   <p>已认证的是 <strong>这个 MCP 包和固定版本</strong>，不是任何一次运行结果，也不是在线服务。用户仍然需要自己安装、运行并核对结果。结果等级仍单独记录为 演示 / 复现 / 探索 / 流程测试 / 论文值 / 未运行。</p>
   <p>未认证条目允许公开查看和自行使用，但网站不会为它背书；使用前请检查来源、许可证和限制。</p>
 
+  <h2>两阶段生命周期：先预期，后校验</h2>
+  <p>为了让评测页在结果跑出来之前就能看到“方法 × 数据集”的相对位置，我们把它拆成两个阶段。第一阶段的数值是 <strong>运行前预期</strong>，永远带 <code>tool_status=unverified</code> 和 <code>validation_status=pending_validation</code> 标签，不能作为科学结果引用。</p>
+  <ol>
+    <li><strong>阶段 1 · 运行前预期（未认证）。</strong>评审代理只读取提交的 PR（标题、正文、diff）和论文/文档依据，生成 <code>site/data/prospective/submissions.json</code>：每条记录含 <code>expected</code>（0–100 适配度）、<code>confidence</code>、预期指标区间，以及可核验的 <code>reasoning</code>（证据 / 风险 / 验证计划）。生成器 <code>scripts/prospective-from-pr.mjs</code> 会拒绝任何试图写入真实指标或 <code>certified</code> 的输出，CI 也会二次拦截。此时页面上“MCP 工具状态”显示为 <strong>未认证</strong>。</li>
+    <li><strong>阶段 2 · 人工校验后的真实指标（认证）。</strong>GSGP-BENCH 团队用独立 runner 在固定数据、划分和环境下真实运行，把 <code>metrics</code> 写入 <code>benchmark/runs/&lt;run-id&gt;/result.json</code> 与 <code>site/data/results/*.json</code>。只有通过校验后，对应记录才从“主观估计”切换为真实指标，并把 MCP 工具状态更新为 <strong>已认证</strong>。</li>
+  </ol>
+  <p>预期记录只用于安排验证优先级，<strong>不参与主榜、认证、复现结论或论文级比较</strong>。任何把预期数值当复现结果的做法都视为违反证据边界。</p>
+  <pre><code># 阶段 1：从 PR 生成运行前预期（需 OPENAI_API_KEY，可选 GITHUB_TOKEN / OPENAI_BASE_URL / OPENAI_MODEL）
+npm run prospective:from-pr -- --pr https://github.com/OWNER/REPO/pull/123 \
+  --out site/data/prospective/submissions.json
+
+# 本地离线自检：用内置示例，不联网
+node scripts/prospective-from-pr.mjs --mock --input pr.json --out /tmp/prospective.json</code></pre>
+
   <h2>参考示例：两个已跑通的 MCP</h2>
   <p>下面两条链路都可以在仓库中复现。第一条是自建基线；第二条是 Paper2Agent 生成的论文 Skill 加本地 MCP 原型。它们展示“从论文到 MCP”的完整过程，也明确显示当前证据等级。</p>
   <div class="ref-grid">

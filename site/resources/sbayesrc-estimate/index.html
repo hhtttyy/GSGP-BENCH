@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SBayesRC 主观估计 · GSGP·Bench</title>
+<meta name="description" content="GSGP-Bench 对 SBayesRC 在 1000G 仿真、UK Biobank、WTCCC1 和 3000 水稻上的主观适配度估计；不是实验结果。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%239a7b2f' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%239a7b2f'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%239a7b2f' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%239a7b2f' opacity='.8'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../ifam-paper/reader.css" />
+</head>
+<body class="reader-page">
+<header class="reader-top">
+  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <nav class="reader-crumbs" aria-label="站点导航">
+    <a href="../../index.html">评测</a>
+    <span aria-hidden="true">/</span>
+    <a href="../introduce/index.html">介绍</a>
+    <span aria-hidden="true">/</span>
+    <span class="is-current" aria-current="page">SBayesRC 主观估计</span>
+  </nav>
+</header>
+<main class="reader">
+  <h1>SBayesRC 主观估计</h1>
+  <p><strong>这不是实验结果。</strong>本页是 GSGP-Bench 在尚未完成 SBayesRC 实测复现前，根据论文、数据访问级别、种群遗传学和性状架构作出的主观适配度猜测。它不进入主榜、认证或论文级比较。</p>
+
+  <h2>论文依据</h2>
+  <p>SBayesRC 把 GWAS summary statistics、LD 参考和功能注释联合建模，在论文中分析 50 个性状、约 7M 常见 SNP 和 96 个注释。论文报告欧洲祖先相对无注释 SBayesR 平均约 14% 提升，跨祖先最高约 34% 提升。优势来自高密度 SNP、功能注释和低秩 LD 建模，但也强依赖数据规模、LD 匹配和注释质量。</p>
+  <p>参考：Zheng et al. <em>Nature Genetics</em> 56:1211-1222 (2024). DOI <a href="https://doi.org/10.1038/s41588-024-01704-y">10.1038/s41588-024-01704-y</a>。</p>
+
+  <h2>四种数据的猜测</h2>
+  <table>
+    <thead>
+      <tr><th>数据</th><th>适配度</th><th>预期表现</th><th>理由</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1000G 仿真</td>
+        <td><strong>78 / 100</strong></td>
+        <td>Pearson 约 0.50-0.58；R² 约 0.25-0.34</td>
+        <td>人类 EUR LD 背景接近论文假设，若仿真含注释富集，方法方向应有利；但 n≈503，summary 噪声和 LD 抽样误差会压低确定性。</td>
+      </tr>
+      <tr>
+        <td>UK Biobank</td>
+        <td><strong>92 / 100</strong></td>
+        <td>身高/BMI 合并口径 Pearson 约 0.45-0.65；R² 约 0.18-0.42</td>
+        <td>大样本、欧洲祖先、高密度 SNP 与多基因性状正是 SBayesRC 最有利的场景。绝对数值仍会因性状、SNP 密度和训练集大小大幅变化。</td>
+      </tr>
+      <tr>
+        <td>WTCCC1</td>
+        <td><strong>62 / 100</strong></td>
+        <td>AUC 约 0.58-0.66</td>
+        <td>二元疾病可被 summary PRS 建模，贝叶斯收缩有益；但样本量小、芯片 SNP 较疏，疾病间差异大，注释覆盖也不一定稳定。</td>
+      </tr>
+      <tr>
+        <td>3000 水稻</td>
+        <td><strong>38 / 100</strong></td>
+        <td>仅有水稻专用 LD/注释时 Pearson 约 0.45-0.62；否则可能明显更低</td>
+        <td>贝叶斯框架可以迁移，但论文的 LD 分块、BaselineLD 注释和先验都来自人类。水稻自交、群体结构、LD 衰减和注释体系差异很大。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>结论</h2>
+  <ul>
+    <li>最值得优先实测的是 <strong>UK Biobank</strong>，其次是 <strong>1000G 仿真</strong>。</li>
+    <li><strong>WTCCC1</strong> 适合作为小样本二元性状压力测试，不宜期待论文级增益。</li>
+    <li><strong>3000 水稻</strong> 需要单独构建水稻 LD 和功能注释；现成人类资源不能直接代表方法能力。</li>
+    <li>上述数值只是排序和规划用途，不能引用为 SBayesRC 在 GSGP-Bench 上的结果。</li>
+  </ul>
+
+  <h2>当前工程状态</h2>
+  <p>仓库中的 SBayesRC MCP 草案已暴露 6 个工具，并通过玩具数据工程验收；尚未在 UKB、WTCCC1、3000 水稻或论文主表规模上完成真实引擎验证。前端把它标记为 <strong>主观估计</strong>，与演示、探索、流程测试和论文值分开显示。</p>
+</main>
+<footer class="reader-foot">
+  <p><b>来源。</b> SBayesRC 论文与 GSGP-Bench SBayesRC 垂直切片。</p>
+  <p><b>边界。</b> 本页是主观先验，不是运行记录，不是复现结果。</p>
+</footer>
+</body>
+</html>

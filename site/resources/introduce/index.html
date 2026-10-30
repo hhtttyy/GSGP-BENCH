@@ -236,6 +236,7 @@
   .level-detail.is-demo { border-left-color: var(--ink-3); }
   .level-detail.is-stub { border-left-color: #6f6a5f; }
   .level-detail.is-exp { border-left-color: var(--indigo); }
+  .level-detail.is-spec { border-left-color: #9a7b2f; }
   .level-detail.is-paper { border-left-color: var(--rust); }
   .level-detail.is-repro { border-left-color: var(--moss); }
   .level-detail.is-none { border-left-color: var(--rule); }
@@ -251,6 +252,7 @@
   .level-detail-badge.is-demo { background: #f0f1ed; border-color: var(--rule); color: var(--ink-2); }
   .level-detail-badge.is-stub { background: #f1f0eb; border-color: #8d887b; color: #5f5b51; }
   .level-detail-badge.is-exp { background: var(--blue-soft); border-color: var(--indigo); color: #394d66; }
+  .level-detail-badge.is-spec { background: #f6f1df; border-color: #9a7b2f; color: #70551a; }
   .level-detail-badge.is-paper { background: var(--rust-soft); border-color: var(--rust); color: var(--rust); }
   .level-detail-badge.is-repro { background: var(--moss-soft); border-color: var(--moss); color: var(--moss); }
   .level-detail-badge.is-none { background: #f7f8f4; border-color: var(--rule); color: var(--ink-3); }
@@ -271,6 +273,8 @@
   .level-none.is-active { border-style: solid; background: #f7f8f4; color: var(--ink); }
   .level-none.level-paper { border-color: var(--rust); color: var(--rust); }
   .level-none.level-paper.is-active { background: var(--rust-soft); color: var(--rust); }
+  .level-none.level-spec { border-color: #9a7b2f; color: #70551a; }
+  .level-none.level-spec.is-active { background: #f6f1df; color: #70551a; }
   .level-extra a { font-family: var(--sans); font-size: 12.5px; }
 
   .faq { border-top: 1px solid var(--rule); }
@@ -466,6 +470,7 @@
 
       <div class="level-extra">
         <button class="level-none level-paper" type="button" data-level="paper">论文值 · 论文报告，本站未复现</button>
+        <button class="level-none level-spec" type="button" data-level="spec">主观估计 · 专家先验，不是实验结果</button>
         <button class="level-none" type="button" data-level="none">未运行 · 当前没有结果，不作判断</button>
         <a href="#levels">查看详细等级表 →</a>
         <a href="../../index.html">在评测页查看 →</a>
@@ -499,6 +504,7 @@
       <tr><td>复现</td><td>同数据、同划分、同指标重复得到。</td><td class="level-ok">可以引用，注明条件</td></tr>
       <tr><td>探索</td><td>真实单次运行，尚未重复或审核。</td><td class="level-careful">仅参考，不参与主榜</td></tr>
       <tr><td>流程测试</td><td>管线跑通，但使用替代计算引擎。</td><td class="level-cannot">不能作为科学结果</td></tr>
+      <tr><td>主观估计</td><td>基于论文和生物学先验的适配度猜测。</td><td class="level-cannot">不能作为实验结果</td></tr>
       <tr><td>论文值</td><td>论文报告的数字，本站没有复现。</td><td class="level-careful">仅参考，注意协议差异</td></tr>
       <tr><td>未运行</td><td>当前没有可展示的结果。</td><td class="num">不作判断</td></tr>
     </tbody>
@@ -595,6 +601,13 @@
         example: "GBLUP 在 500×5k 上单次 80/20，Pearson r = 0.5075。",
         use: "可查看、可讨论；不参与正式比较，也不是论文复现。",
         upgrade: "固定协议，多折或多 seed 重复，并完成审核 → 复现。"
+      },
+      spec: {
+        badge: "主观估计", cls: "is-spec", title: "专家先验，不是实验结果",
+        definition: "根据论文结论、数据类型和生物学先验给出的适配度猜测，没有在本站运行。",
+        example: "SBayesRC 在 UKB 的预期适配度高于 3000 水稻。",
+        use: "只用于安排验证顺序和解释预期方向；不参与主榜、认证或论文复现结论。",
+        upgrade: "接入真实输入并完成至少一次探索运行 → 探索。"
       },
       paper: {
         badge: "论文值", cls: "is-paper", title: "论文报告，本站未复现",

@@ -1,0 +1,66 @@
+name: Prospective scoring from PR
+
+# Two-phase lifecycle:
+#   Phase 1 (this workflow)  -> pre-run expectation, tool_status=unverified, validation_status=pending_validation.
+#   Phase 2 (human review)   -> independent runner produces real metrics; only then may a record flip to certified.
+# This workflow must never write real metrics or a certified status. The generator
+# enforces tool_status=unverified / validation_status=pending_validation and refuses anything else.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  prospective:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.PROSPECTIVE_BOT_TOKEN || github.token }}
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate pre-run expectation records
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+        run: |
+          node scripts/prospective-from-pr.mjs \
+            --pr "${{ github.event.pull_request.html_url }}" \
+            --out site/data/prospective/submissions.json
+
+      - name: Guard against certification or fabricated metrics
+        run: |
+          node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const payload = JSON.parse(readFileSync("site/data/prospective/submissions.json", "utf8"));
+            for (const r of payload.records) {
+              if (r.tool_status !== "unverified") throw new Error("tool_status must stay unverified in phase 1");
+              if (r.validation_status !== "pending_validation") throw new Error("validation_status must stay pending_validation in phase 1");
+            }
+            console.log(`OK: ${payload.records.length} records, all unverified / pending_validation.`);
+          '
+
+      - name: Commit pre-run expectation update
+        run: |
+          git config user.name "gsgp-bench-bot"
+          git config user.email "gsgp-bench-bot@users.noreply.github.com"
+          if git diff --quiet -- site/data/prospective/submissions.json; then
+            echo "No prospective changes."
+            exit 0
+          fi
+          git add site/data/prospective/submissions.json
+          git commit -m "chore(prospective): pre-run expectation for #${{ github.event.pull_request.number }}"
+          git push
