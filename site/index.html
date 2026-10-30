@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>GSGP·Bench — 基因组预测方法比较</title>
-<meta name="description" content="GSGP-Bench：一站式产出 MCP、公平比较基因组预测方法、用 AI 解读当前结果。所有评测记录均可追溯。" />
+<meta name="description" content="GSGP-Bench：把论文方法整理成本地 MCP 工具，在证据等级标注下比较基因组预测方法，并用 AI 解释当前结果。所有评测记录均可追溯。" />
 <meta name="theme-color" content="#f1f2ee" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%233d5a47' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%233d5a47'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%233d5a47' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%233d5a47' opacity='.8'/%3E%3C/svg%3E" />
 <style>
@@ -1926,18 +1926,18 @@
           <circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/>
           <path d="M7.2 10.9 16.8 6.1M7.2 13.1l9.6 4.8"/>
         </svg>
-        <a class="value-title" href="resources/generate/index.html">一站式产出 MCP</a>
-        <span class="value-hint">本地生成 · 统一认证</span>
+        <a class="value-title" href="resources/generate/index.html">论文转本地 MCP</a>
+        <span class="value-hint">本地生成 · 需自行验证</span>
         <div class="value-pop">
-          <p>把论文变成你本地可运行的论文 Skill 与 MCP 工具。论文、数据和代码都不需要上传；生成后提交 GSGP-BENCH 认证。</p>
-          <a href="resources/generate/index.html">打开本地生成 →</a>
+          <p>尝试把论文整理成本地可运行的论文 Skill 与 MCP 工具。论文、数据和代码尽量留在本机；生成结果需自行验证，提交认证前保持未认证。</p>
+          <a href="resources/generate/index.html">查看本地生成流程 →</a>
         </div>
       </article>
       <article class="value-slide">
         <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path d="M4 20h16M7 20v-6M12 20V7M17 20v-9"/>
         </svg>
-        <a class="value-title" href="resources/introduce/index.html#levels">公平的 GSGP 对比</a>
+        <a class="value-title" href="resources/introduce/index.html#levels">条件对齐的 GSGP 对比</a>
         <span class="value-hint">同一数据 · 同一划分</span>
         <div class="value-pop">
           <p>在同一数据、同一划分、同一指标下比较方法。每个数字都带证据等级和运行记录，避免把演示值当成结论。</p>
@@ -1960,8 +1960,8 @@
     <div class="value-nav">
       <button class="value-arrow" type="button" id="value-prev" aria-label="上一个能力">←</button>
       <div class="value-dots" role="group" aria-label="切换平台能力">
-        <button class="value-dot is-active" type="button" aria-label="一站式产出 MCP" aria-pressed="true"></button>
-        <button class="value-dot" type="button" aria-label="公平的 GSGP 对比" aria-pressed="false"></button>
+        <button class="value-dot is-active" type="button" aria-label="论文转本地 MCP" aria-pressed="true"></button>
+        <button class="value-dot" type="button" aria-label="条件对齐的 GSGP 对比" aria-pressed="false"></button>
         <button class="value-dot" type="button" aria-label="AI 辅助解读" aria-pressed="false"></button>
       </div>
       <button class="value-arrow" type="button" id="value-next" aria-label="下一个能力">→</button>
@@ -2041,7 +2041,7 @@
   </main>
 
   <footer class="colophon">
-    <p>GSGP·Bench 基于 <a href="https://github.com/jmiao24/Paper2Agent" target="_blank" rel="noreferrer">Paper2Agent</a>（MIT 许可）的论文可复现工作流改造。论文、数据与各算法代码遵循其原始许可。</p>
+    <p>GSGP·Bench 基于 <a href="https://github.com/jmiao24/Paper2Agent" target="_blank" rel="noreferrer">Paper2Agent</a>（MIT 许可）的论文整理与本地验证流程改造。论文、数据与各算法代码遵循其原始许可。</p>
     <p class="colophon-meta">
       <span>第 01 卷</span>
       <a href="resources/introduce/index.html">介绍</a>
@@ -2120,7 +2120,7 @@
           mcp: {
             href: "resources/gblup-baseline/index.html#mcp",
             badge: "已认证",
-            tip: "已认证：GSGP-BENCH 团队验证过这个 MCP 工具（运行、输出和直接对照）。认证的是包，不是结果；我们不在线托管，用户自行使用。"
+            tip: "已认证：GSGP-BENCH 团队核对了这个 MCP 工具的启动、输入输出和一致性检查。认证的是包，不是结果；我们不在线托管，用户自行使用。"
           }
         }
       )
@@ -2204,7 +2204,7 @@
     }
   ];
 
-  /* status: reproduced | exploratory | paper_reported */
+  /* status: reproduced(demo placeholder) | exploratory | stub | speculative | paper_reported */
   const RESULTS = {
     "gblup|sim1000g":  { pearson: 0.512, pearsonSd: 0.011, r2: 0.262, r2Sd: 0.010, auc: null, runtime: 2.1, status: "reproduced" },
     "gblup|sim500":    { pearson: 0.507512, pearsonSd: null, r2: 0.257568, r2Sd: null, auc: null, runtime: 0.0007, status: "exploratory", runId: "gblup-sim500-mcp-v1" },
@@ -2213,9 +2213,9 @@
     "gblup|ukb":       { pearson: 0.331, pearsonSd: null, r2: 0.110, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
     "gblup|wtccc":     { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.641, runtime: null, status: "paper_reported" },
 
-    "ifam|sim1000g":   { pearson: 0.568, pearsonSd: 0.009, r2: 0.323, r2Sd: 0.010, auc: null, runtime: 45.2, status: "reproduced" },
+    "ifam|sim1000g":   { pearson: 0.568, pearsonSd: 0.009, r2: 0.323, r2Sd: 0.010, auc: null, runtime: 45.2, status: "stub", stubNote: "当前没有与该数据集对应的已提交流程测试结果 JSON；这些数值只用于检查界面、状态切换和记录字段，不能作为科学结果。" },
     "ifam|sim500":     { pearson: -0.031982, pearsonSd: null, r2: 0.001023, r2Sd: null, auc: null, runtime: null, status: "stub", runId: "ifam-stub-sim500-v1" },
-    "ifam|duroc":      { pearson: 0.641, pearsonSd: 0.007, r2: 0.411, r2Sd: 0.009, auc: null, runtime: 52.6, status: "reproduced" },
+    "ifam|duroc":      { pearson: 0.641, pearsonSd: 0.007, r2: 0.411, r2Sd: 0.009, auc: null, runtime: 52.6, status: "stub", stubNote: "当前没有与该数据集对应的已提交流程测试结果 JSON；这些数值只用于检查界面、状态切换和记录字段，不能作为科学结果。" },
     "ifam|rice":       { pearson: 0.741, pearsonSd: 0.006, r2: 0.549, r2Sd: 0.009, auc: null, runtime: null, status: "paper_reported" },
     "ifam|ukb":        { pearson: 0.352, pearsonSd: null, r2: 0.124, r2Sd: null, auc: null, runtime: null, status: "paper_reported" },
     "ifam|wtccc":      { pearson: null, pearsonSd: null, r2: null, r2Sd: null, auc: 0.678, runtime: null, status: "paper_reported" }
@@ -2546,9 +2546,9 @@
     stub: {
       label: "流程测试",
       short: "替代引擎，不能作结论。",
-      detail: "流程测试使用替代计算引擎，只证明生成与运行管线能跑通；数值没有科学意义。",
+      detail: "流程测试使用替代计算引擎，或尚未留下可核验的结果 JSON；它只证明生成与运行管线能跑通，数值没有科学意义。",
       cls: "is-stub",
-      note: "流程测试：真实 IFAM 编排，但计算引擎是替代品；数值没有科学意义，只用于展示生成与运行管线。"
+      note: "流程测试：真实 IFAM 编排可能已经跑通，但计算引擎是替代品或缺少可核验结果；数值没有科学意义，不能当作复现、主榜或论文级比较的依据。"
     },
     speculative: {
       label: "主观估计",
@@ -3149,6 +3149,19 @@
       </div>`;
     })();
 
+    const stubProvenance = `
+      <div class="detail-section">
+        <h3 class="detail-title">流程测试边界</h3>
+        <dl class="data-list">
+          <div class="data-row"><dt>运行模式</dt><dd><strong>流程测试</strong> · 替代计算引擎或缺少可核验结果</dd></div>
+          <div class="data-row"><dt>说明</dt><dd>${escapeHtml((result && result.stubNote) || "流程测试数值没有科学意义；只用于检查界面、状态切换和记录字段。")}</dd></div>
+          <div class="data-row"><dt>Run ID</dt><dd><code>${escapeHtml(realRecord ? realRecord.run_id : ((result && result.runId) || "未记录"))}</code></dd></div>
+          <div class="data-row"><dt>已提交结果</dt><dd>${realRecord ? "有独立结果 JSON；即使如此，流程测试仍不能作为科学结论。" : "当前没有可核验的流程测试结果 JSON。"}</dd></div>
+          <div class="data-row"><dt>不能说明</dt><dd>不能说明 ${escapeHtml(a.name)} 在该数据上的真实预测能力，也不能与探索值、复现值或论文值混排。</dd></div>
+          <div class="data-row"><dt>参考</dt><dd><a href="${escapeHtml(a.resources.paper.href)}" target="_blank" rel="noreferrer">${escapeHtml(a.resources.paper.tip)}</a></dd></div>
+        </dl>
+      </div>`;
+
     const provenance = v.status === "speculative" ? `
       <div class="detail-section">
         <h3 class="detail-title">估计依据</h3>
@@ -3194,7 +3207,7 @@
           <div class="data-row"><dt>论文</dt><dd>${a.year} · DOI 待补 · 演示占位</dd></div>
           <div class="data-row"><dt>可比性</dt><dd>论文值 · 数据访问、划分或指标可能不同，不参与主榜排名</dd></div>
         </dl>
-      </div>` : v.status === "exploratory" || v.status === "stub" ? expProvenance : `
+      </div>` : v.status === "exploratory" ? expProvenance : v.status === "stub" ? stubProvenance : `
       <div class="detail-section">
         <h3 class="detail-title">为什么没有结果</h3>
         <dl class="data-list">

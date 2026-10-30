@@ -49,10 +49,10 @@
     <li><code>gblup_export</code>：读取已完成的 run。</li>
   </ul>
   <p>MCP 不接收留出的真实值，不计算指标。指标由独立 runner 计算。MCP 是本地 stdio 原型，静态网页不能执行它。</p>
-  <p><strong>MCP 已认证：</strong>GSGP-BENCH 团队已实践验证这个 MCP 包：契约、stdio 初始化/工具列表、inspect/fit/export、直接对照和 schema 检查均通过。认证的是包，不是结果；我们不在线托管，用户自行运行；结果仍为探索。认证记录见仓库 <code>benchmark/algorithms/gblup/certification.json</code>。</p>
+  <p><strong>MCP 已认证：</strong>GSGP-BENCH 团队核对了这个 MCP 包：契约、stdio 初始化/工具列表、inspect/fit/export、独立一致性检查和 schema 检查均通过。认证的是包，不是结果；我们不在线托管，用户自行运行；结果仍为探索。认证记录见仓库 <code>benchmark/algorithms/gblup/certification.json</code>。</p>
 
   <h2>本次结果</h2>
-  <p>本次记录由 <code>gblup_inspect_inputs → gblup_fit → gblup_export</code> 的真实 stdio 调用产生；直接对照的科学指标与 MCP 结果一致。</p>
+  <p>本次记录由 <code>gblup_inspect_inputs → gblup_fit → gblup_export</code> 的真实 stdio 调用产生；独立评测记录与 MCP 结果一致。这仍是单次探索，不等于复现。</p>
   <ul>
     <li>Pearson r: <strong>0.5075</strong></li>
     <li>R²: <strong>0.2576</strong></li>
