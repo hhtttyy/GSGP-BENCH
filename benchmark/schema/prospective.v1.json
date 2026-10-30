@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsgp-bench.local/schema/prospective.v1.json",
+  "title": "GSGP-Bench prospective prediction record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "source_pr", "records"],
+  "properties": {
+    "schema_version": {"const": "gsgp.prospective.v1"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "source_pr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "title", "head_sha"],
+      "properties": {
+        "url": {"type": "string"},
+        "title": {"type": "string"},
+        "head_sha": {"type": "string"},
+        "author": {"type": ["string", "null"]}
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/record"}
+    }
+  },
+  "$defs": {
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm_id",
+        "dataset_id",
+        "expected",
+        "confidence",
+        "estimate_label",
+        "tool_status",
+        "validation_status",
+        "reasoning"
+      ],
+      "properties": {
+        "algorithm_id": {"type": "string", "minLength": 1},
+        "dataset_id": {"type": "string", "minLength": 1},
+        "expected": {"type": "integer", "minimum": 0, "maximum": 100},
+        "confidence": {"enum": ["low", "low_medium", "medium", "medium_high", "high"]},
+        "estimate_label": {"type": "string", "minLength": 1},
+        "expected_metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pearson": {"type": ["string", "null"]},
+            "r2": {"type": ["string", "null"]},
+            "auc": {"type": ["string", "null"]},
+            "runtime": {"type": ["string", "null"]}
+          }
+        },
+        "tool_status": {"const": "unverified"},
+        "validation_status": {"const": "pending_validation"},
+        "reasoning": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["summary", "evidence", "risks", "verification_plan"],
+          "properties": {
+            "summary": {"type": "string", "minLength": 10},
+            "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+            "risks": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+            "verification_plan": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}}
+          }
+        }
+      }
+    }
+  }
+}

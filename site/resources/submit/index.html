@@ -98,7 +98,7 @@
     <li>官方代码仓库、commit、许可证；</li>
     <li>Paper2Agent Skill 和 MCP 包/入口；</li>
     <li>MCP transport、运行方式、依赖；</li>
-    <li>一条可复现测试命令和参考数据；</li>
+    <li>一条可重复执行的测试命令和参考数据；</li>
     <li>期望输出与已知限制；</li>
     <li>明确声明：MCP 不接收留出的真实值，不计算评测指标。</li>
   </ul>
@@ -107,8 +107,22 @@
   <p>已认证的是 <strong>这个 MCP 包和固定版本</strong>，不是任何一次运行结果，也不是在线服务。用户仍然需要自己安装、运行并核对结果。结果等级仍单独记录为 演示 / 复现 / 探索 / 流程测试 / 论文值 / 未运行。</p>
   <p>未认证条目允许公开查看和自行使用，但网站不会为它背书；使用前请检查来源、许可证和限制。</p>
 
-  <h2>参考示例：两个已跑通的 MCP</h2>
-  <p>下面两条链路都可以在仓库中复现。第一条是自建基线；第二条是 Paper2Agent 生成的论文 Skill 加本地 MCP 原型。它们展示“从论文到 MCP”的完整过程，也明确显示当前证据等级。</p>
+  <h2>两阶段生命周期：先预期，后校验</h2>
+  <p>为了让评测页在结果跑出来之前就能看到“方法 × 数据集”的相对位置，我们把它拆成两个阶段。第一阶段的数值是 <strong>运行前预期</strong>，永远带 <code>tool_status=unverified</code> 和 <code>validation_status=pending_validation</code> 标签，不能作为科学结果引用。</p>
+  <ol>
+    <li><strong>阶段 1 · 运行前预期（未认证）。</strong>评审代理只读取提交的 PR（标题、正文、diff）和论文/文档依据，生成 <code>site/data/prospective/submissions.json</code>：每条记录含 <code>expected</code>（0–100 适配度）、<code>confidence</code>、预期指标区间，以及可核验的 <code>reasoning</code>（证据 / 风险 / 验证计划）。生成器 <code>scripts/prospective-from-pr.mjs</code> 会拒绝任何试图写入真实指标或 <code>certified</code> 的输出，CI 也会二次拦截。此时页面上“MCP 工具状态”显示为 <strong>未认证</strong>。</li>
+    <li><strong>阶段 2 · 人工校验后的真实指标（认证）。</strong>GSGP-BENCH 团队用独立 runner 在固定数据、划分和环境下真实运行，把 <code>metrics</code> 写入 <code>benchmark/runs/&lt;run-id&gt;/result.json</code> 与 <code>site/data/results/*.json</code>。只有通过校验后，对应记录才从“主观估计”切换为真实指标，并把 MCP 工具状态更新为 <strong>已认证</strong>。</li>
+  </ol>
+  <p>预期记录只用于安排验证优先级，<strong>不参与主榜、认证、复现结论或论文级比较</strong>。任何把预期数值当复现结果的做法都视为违反证据边界。</p>
+  <pre><code># 阶段 1：从 PR 生成运行前预期（需 OPENAI_API_KEY，可选 GITHUB_TOKEN / OPENAI_BASE_URL / OPENAI_MODEL）
+npm run prospective:from-pr -- --pr https://github.com/OWNER/REPO/pull/123 \
+  --out site/data/prospective/submissions.json
+
+# 本地离线自检：用内置示例，不联网
+node scripts/prospective-from-pr.mjs --mock --input pr.json --out /tmp/prospective.json</code></pre>
+
+  <h2>参考示例：两个有仓库记录的 MCP</h2>
+  <p>下面两条链路在仓库中有对应记录，可自行核对。第一条是自建基线；第二条是 Paper2Agent 生成的论文 Skill 加本地 MCP 原型。它们展示“从论文到 MCP”的当前过程，也明确显示证据等级和限制。</p>
   <div class="ref-grid">
     <article class="ref-card">
       <div class="ref-head">
@@ -119,13 +133,13 @@
         <dt>论文</dt><dd>VanRaden 2008 · J. Dairy Sci. 91:4414–4423</dd>
         <dt>论文 Skill</dt><dd><code>benchmark/algorithms/gblup/SKILL.md</code>（自建基线，不是 Paper2Agent 自动生成）</dd>
         <dt>MCP 工具</dt><dd>本地 stdio：inspect / fit / export；不接收真实值，不计算指标</dd>
-        <dt>复现结果</dt><dd>探索：Pearson r = 0.5075，R² = 0.2576，单次 80/20</dd>
+        <dt>当前记录</dt><dd>探索：Pearson r = 0.5075，R² = 0.2576，单次 80/20</dd>
       </dl>
-      <h4>复现步骤</h4>
+      <h4>核对步骤</h4>
       <ol class="ref-steps">
         <li>准备上游 IFAM 归档，导出 500×5k 本地子集；原始数据不提交。</li>
         <li>运行 direct control，得到独立评测记录。</li>
-        <li>运行本地 MCP trial，确认 MCP 结果与 direct control 指标一致。</li>
+        <li>运行本地 MCP trial，确认 MCP 结果与独立评测记录一致；这只证明单次探索链路，不是复现。</li>
       </ol>
       <pre><code>python3 benchmark/prepare_demo_subset.py \
   --ifam-root "$HOME/Downloads/IFAM-main"
@@ -151,9 +165,9 @@ python3 benchmark/run_gblup_mcp_trial.py \
         <dt>论文</dt><dd>Tang 等 2026 · Nature Communications · DOI 10.1038/s41467-026-72470-0</dd>
         <dt>论文 Skill</dt><dd>已审校（有限制）：全文、6 张图、3 个公式；状态 <code>reviewed_with_limitations</code></dd>
         <dt>MCP 工具</dt><dd>本地 stdio 四工具：inspect / fit / status / export</dd>
-        <dt>复现结果</dt><dd>流程测试：Pearson r = −0.032，仅证明管线，不能作为科学结果</dd>
+        <dt>当前记录</dt><dd>流程测试：Pearson r = −0.032，仅证明管线，不能作为科学结果</dd>
       </dl>
-      <h4>复现步骤</h4>
+      <h4>核对步骤</h4>
       <ol class="ref-steps">
         <li>运行契约测试和 tiny 验收，确认 stdio 四工具可用。</li>
         <li>用真实 IFAM.R + 替代 HIBLUP 跑 dry-run，检查 fit / status / export。</li>

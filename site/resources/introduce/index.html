@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>介绍 · GSGP·Bench</title>
-<meta name="description" content="GSGP-Bench 介绍：面向基因组预测研究者、育种团队与学习者，提供本地 MCP 生成、公平对比和 AI 解读，并说明认证与证据等级。" />
+<meta name="description" content="GSGP-Bench 介绍：面向基因组预测研究者、育种团队与学习者，提供本地 MCP 生成、条件对齐对比和 AI 解读，并说明认证与证据等级。" />
 <meta name="theme-color" content="#f1f2ee" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f1f2ee'/%3E%3Crect x='11' y='5' width='10' height='22' rx='5' fill='none' stroke='%233d5a47' stroke-width='1.6'/%3E%3Crect x='13' y='9' width='6' height='3' fill='%233d5a47'/%3E%3Crect x='13' y='15' width='6' height='2' fill='%233d5a47' opacity='.55'/%3E%3Crect x='13' y='20' width='6' height='4' fill='%233d5a47' opacity='.8'/%3E%3C/svg%3E" />
 <link rel="stylesheet" href="../ifam-paper/reader.css" />
@@ -236,6 +236,7 @@
   .level-detail.is-demo { border-left-color: var(--ink-3); }
   .level-detail.is-stub { border-left-color: #6f6a5f; }
   .level-detail.is-exp { border-left-color: var(--indigo); }
+  .level-detail.is-spec { border-left-color: #9a7b2f; }
   .level-detail.is-paper { border-left-color: var(--rust); }
   .level-detail.is-repro { border-left-color: var(--moss); }
   .level-detail.is-none { border-left-color: var(--rule); }
@@ -251,6 +252,7 @@
   .level-detail-badge.is-demo { background: #f0f1ed; border-color: var(--rule); color: var(--ink-2); }
   .level-detail-badge.is-stub { background: #f1f0eb; border-color: #8d887b; color: #5f5b51; }
   .level-detail-badge.is-exp { background: var(--blue-soft); border-color: var(--indigo); color: #394d66; }
+  .level-detail-badge.is-spec { background: #f6f1df; border-color: #9a7b2f; color: #70551a; }
   .level-detail-badge.is-paper { background: var(--rust-soft); border-color: var(--rust); color: var(--rust); }
   .level-detail-badge.is-repro { background: var(--moss-soft); border-color: var(--moss); color: var(--moss); }
   .level-detail-badge.is-none { background: #f7f8f4; border-color: var(--rule); color: var(--ink-3); }
@@ -271,6 +273,8 @@
   .level-none.is-active { border-style: solid; background: #f7f8f4; color: var(--ink); }
   .level-none.level-paper { border-color: var(--rust); color: var(--rust); }
   .level-none.level-paper.is-active { background: var(--rust-soft); color: var(--rust); }
+  .level-none.level-spec { border-color: #9a7b2f; color: #70551a; }
+  .level-none.level-spec.is-active { background: #f6f1df; color: #70551a; }
   .level-extra a { font-family: var(--sans); font-size: 12.5px; }
 
   .faq { border-top: 1px solid var(--rule); }
@@ -370,12 +374,12 @@
   <h2>我们提供什么</h2>
   <div class="intro-grid">
     <section class="intro-card is-key">
-      <h3>一站式产出 MCP</h3>
+      <h3>把论文整理成本地 MCP</h3>
       <p>用本地 Paper2Agent 套件，把论文整理成论文 Skill 和 MCP 工具。网站不执行论文代码，只提供套件、提交入口和统一认证。</p>
       <a href="../generate/index.html">查看本地生成套件 →</a>
     </section>
     <section class="intro-card is-key">
-      <h3>公平的 GSGP 对比</h3>
+      <h3>条件对齐的 GSGP 对比</h3>
       <p>同一数据、同一划分、同一指标。每个数字都带着证据等级和运行记录，演示值不会混进正式结论。</p>
       <a href="../../index.html">打开评测页 →</a>
     </section>
@@ -386,8 +390,8 @@
     </section>
   </div>
 
-  <h2 id="empower">为您赋能：从论文到可用的 MCP</h2>
-  <p class="section-lede">你不需要自己搭服务。按“生产链”把论文变成论文 Skill 和 MCP 工具，再按“使用链”把认证过的工具放到自己的电脑上运行。下面把概念、生产、发布和使用放在一条线上讲清楚。</p>
+  <h2 id="empower">从论文到本地 MCP：能做什么，不能保证什么</h2>
+  <p class="section-lede">目标是降低把论文整理成本地工具的成本；能否跑通仍取决于论文、依赖、数据和运行环境。按“生产链”把论文整理成论文 Skill 与 MCP 工具，再按“使用链”在本地运行；用之前仍需核对来源、依赖和结果等级。</p>
   <div class="flow-grid">
     <section class="flow-panel">
       <div class="flow-panel-head">
@@ -466,6 +470,7 @@
 
       <div class="level-extra">
         <button class="level-none level-paper" type="button" data-level="paper">论文值 · 论文报告，本站未复现</button>
+        <button class="level-none level-spec" type="button" data-level="spec">主观估计 · 专家先验，不是实验结果</button>
         <button class="level-none" type="button" data-level="none">未运行 · 当前没有结果，不作判断</button>
         <a href="#levels">查看详细等级表 →</a>
         <a href="../../index.html">在评测页查看 →</a>
@@ -499,6 +504,7 @@
       <tr><td>复现</td><td>同数据、同划分、同指标重复得到。</td><td class="level-ok">可以引用，注明条件</td></tr>
       <tr><td>探索</td><td>真实单次运行，尚未重复或审核。</td><td class="level-careful">仅参考，不参与主榜</td></tr>
       <tr><td>流程测试</td><td>管线跑通，但使用替代计算引擎。</td><td class="level-cannot">不能作为科学结果</td></tr>
+      <tr><td>主观估计</td><td>基于论文和生物学先验的适配度猜测。</td><td class="level-cannot">不能作为实验结果</td></tr>
       <tr><td>论文值</td><td>论文报告的数字，本站没有复现。</td><td class="level-careful">仅参考，注意协议差异</td></tr>
       <tr><td>未运行</td><td>当前没有可展示的结果。</td><td class="num">不作判断</td></tr>
     </tbody>
@@ -595,6 +601,13 @@
         example: "GBLUP 在 500×5k 上单次 80/20，Pearson r = 0.5075。",
         use: "可查看、可讨论；不参与正式比较，也不是论文复现。",
         upgrade: "固定协议，多折或多 seed 重复，并完成审核 → 复现。"
+      },
+      spec: {
+        badge: "主观估计", cls: "is-spec", title: "专家先验，不是实验结果",
+        definition: "根据论文结论、数据类型和生物学先验给出的适配度猜测，没有在本站运行。",
+        example: "SBayesRC 在 UKB 的预期适配度高于 3000 水稻。",
+        use: "只用于安排验证顺序和解释预期方向；不参与主榜、认证或论文复现结论。",
+        upgrade: "接入真实输入并完成至少一次探索运行 → 探索。"
       },
       paper: {
         badge: "论文值", cls: "is-paper", title: "论文报告，本站未复现",

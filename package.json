@@ -8,6 +8,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "dev:node": "node scripts/dev-server.mjs",
+    "prospective:from-pr": "node scripts/prospective-from-pr.mjs",
     "test": "node --test worker/test.mjs"
   },
   "devDependencies": {

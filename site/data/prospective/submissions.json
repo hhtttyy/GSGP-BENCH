@@ -1,0 +1,113 @@
+{
+  "schema_version": "gsgp.prospective.v1",
+  "generated_at": "2026-10-30T00:00:00+08:00",
+  "source_pr": {
+    "url": "https://github.com/Mikk002/GSGP-BENCH/pull/1/commits/2fdd662b0e8297d54d6547adbf8c8710b941dc45",
+    "title": "Add SBayesRC prospective estimates",
+    "head_sha": "2fdd662b0e8297d54d6547adbf8c8710b941dc45",
+    "author": "Mikk002"
+  },
+  "records": [
+    {
+      "algorithm_id": "sbayesrc",
+      "dataset_id": "sim1000g",
+      "expected": 78,
+      "confidence": "medium",
+      "estimate_label": "中等偏乐观",
+      "expected_metrics": {"pearson": "0.50-0.58", "r2": "0.25-0.34", "auc": null, "runtime": null},
+      "tool_status": "unverified",
+      "validation_status": "pending_validation",
+      "reasoning": {
+        "summary": "论文使用 1000G EUR 作为小样本 LD 参考之一，并证明低秩模型对 LD 抽样差异较稳。",
+        "evidence": [
+          "SBayesRC 论文 Fig. 2a 使用 1kg0.5k、约 494 个 EUR 个体作为 LD 参考。",
+          "论文模拟在 h²=0.5 下评估，7M SNP 相对 1M HapMap3 的平均预测准确率提高 14.4%。"
+        ],
+        "risks": [
+          "GSGP-BENCH 的 1000G 仿真 n≈503，summary 估计噪声较大。",
+          "若仿真 GWAS 与 LD 参考共用同一批 1000G EUR 个体，LD 完全匹配会让结果偏乐观，需独立 LD 参考或做失配压力测试。",
+          "如果模拟注释随机，注释分支的增益会明显缩小。"
+        ],
+        "verification_plan": [
+          "在训练折内生成 GWAS summary，验证折只看预测，不把真实值传给 MCP。",
+          "至少重复 5 个划分，报告 Pearson、R²、bias slope 和失败样例。"
+        ]
+      }
+    },
+    {
+      "algorithm_id": "sbayesrc",
+      "dataset_id": "ukb",
+      "expected": 92,
+      "confidence": "medium_high",
+      "estimate_label": "最有利",
+      "expected_metrics": {"pearson": "0.42-0.63", "r2": "0.18-0.42", "auc": null, "runtime": null},
+      "tool_status": "unverified",
+      "validation_status": "pending_validation",
+      "reasoning": {
+        "summary": "UKB 的大样本欧洲祖先设定与论文主线最匹配，是 SBayesRC 最可能表现好的公开/受控场景。",
+        "evidence": [
+          "论文在 UKB 做了 28 个近似独立性状的十折交叉验证，并扩展到 50 个性状。",
+          "论文报告在 GIANT→LifeLines 外部验证中，身高最大 R²=0.40，BMI 最大 R²=0.16。"
+        ],
+        "risks": [
+          "论文使用约 7M SNP 和 96 个 BaselineLD v2.2 注释；GSGP-BENCH 若 SNP 密度不同，绝对 R² 会变化。",
+          "受限数据申请、划分和性状预处理必须完全记录。"
+        ],
+        "verification_plan": [
+          "固定 SNP 集合、注释版本、LD 参考和 train/validation split。",
+          "独立 runner 计算指标，MCP 不读取验证集真实值。"
+        ]
+      }
+    },
+    {
+      "algorithm_id": "sbayesrc",
+      "dataset_id": "wtccc",
+      "expected": 62,
+      "confidence": "low_medium",
+      "estimate_label": "中等且不稳定",
+      "expected_metrics": {"pearson": null, "r2": null, "auc": "0.58-0.66", "runtime": null},
+      "tool_status": "unverified",
+      "validation_status": "pending_validation",
+      "reasoning": {
+        "summary": "SBayesRC 适合 summary-based 疾病 PRS，但 WTCCC1 样本较小、芯片较老，不能直接外推论文中的 UKB/FinnGen 结果。",
+        "evidence": [
+          "论文跨生物库分析显示，SBayesRC 在 FinnGen→UKB 疾病场景中相对 MegaPRS 平均提高 29.2%。",
+          "论文主分析覆盖大样本 biobank 和 consortium，而非 WTCCC1。"
+        ],
+        "risks": [
+          "病例数小会让 AUC 置信区间很宽。",
+          "不同疾病之间的遗传结构和注释覆盖差异很大。"
+        ],
+        "verification_plan": [
+          "按疾病分别运行，不允许把 7 种疾病平均后再隐藏单病种失败。",
+          "报告 AUC、PR-AUC、校准斜率和病例/对照分层结果。"
+        ]
+      }
+    },
+    {
+      "algorithm_id": "sbayesrc",
+      "dataset_id": "rice",
+      "expected": 38,
+      "confidence": "low",
+      "estimate_label": "不确定，偏低到中等",
+      "expected_metrics": {"pearson": "0.45-0.62", "r2": "0.20-0.38", "auc": null, "runtime": null},
+      "tool_status": "unverified",
+      "validation_status": "pending_validation",
+      "reasoning": {
+        "summary": "论文没有植物或水稻验证；人类 LD blocks、BaselineLD 注释和频率处理不能直接迁移。",
+        "evidence": [
+          "论文的功能注释和 LD 参考均来自人类基因组资源。",
+          "水稻为自交作物，LD 衰减、群体结构和变异频谱与人类差异很大。"
+        ],
+        "risks": [
+          "没有水稻专用 LD/注释时，现有资源不能代表方法真实能力。",
+          "若改用水稻专用资源，参数和先验也应重新校准。"
+        ],
+        "verification_plan": [
+          "先构建水稻专用 LD 参考和注释矩阵，再登记为独立方法配置。",
+          "与 GBLUP/IFAM 在相同 split 和表型上比较，禁止复用人类 BaselineLD 结论。"
+        ]
+      }
+    }
+  ]
+}
