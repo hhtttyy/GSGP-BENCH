@@ -377,6 +377,52 @@
     font-size: 11.5px;
     text-underline-offset: 3px;
   }
+  .prospective-upload {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--rule);
+  }
+  .prospective-upload h3 {
+    margin: 0 0 5px;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .prospective-upload p {
+    margin: 0 0 8px;
+    color: var(--ink-3);
+    font-size: 10.5px;
+    line-height: 1.55;
+  }
+  .prospective-upload form { display: grid; gap: 6px; }
+  .prospective-upload input {
+    width: 100%;
+    border: 1px solid var(--rule);
+    background: #fff;
+    padding: 6px 7px;
+    font-size: 10.5px;
+    color: var(--ink);
+    outline: 0;
+  }
+  .prospective-upload input:focus { border-color: var(--moss); }
+  .prospective-upload button {
+    border: 1px solid var(--moss);
+    background: var(--moss);
+    color: #fff;
+    padding: 7px 8px;
+    font-size: 10.5px;
+    cursor: pointer;
+  }
+  .prospective-upload button[disabled] { opacity: 0.55; cursor: progress; }
+  .prospective-msg {
+    margin-top: 7px;
+    color: var(--ink-3);
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+  .prospective-msg.is-ok { color: var(--moss); }
+  .prospective-msg.is-error { color: #8b5a43; }
 
   .entry-list {
     flex: 1 1 auto;
@@ -1984,8 +2030,19 @@
       </div>
       <div class="entry-list" id="algo-list"></div>
       <div class="algo-cta">
-        <p>有新的方法？先准备论文 Skill。</p>
-        <a href="resources/submit/index.html">提交新的论文 Skill →</a>
+        <p>有新的方法？先准备论文 Skill，或生成待认证预览。</p>
+        <a href="resources/submit/index.html">查看提交规则 →</a>
+        <div class="prospective-upload" id="prospective-upload">
+          <h3>暂无 MCP 文件？</h3>
+          <p>填方法名、GitHub 仓库和文献 URL。AI 只生成待认证主观适配度，不写真实指标。</p>
+          <form id="prospective-form">
+            <input name="method_name" type="text" value="BayesR" placeholder="方法名称，例如 BayesR" required />
+            <input name="repo_url" type="url" placeholder="https://github.com/owner/repo" required />
+            <input name="paper_url" type="url" value="https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004969" placeholder="文献来源 URL" required />
+            <button type="submit">生成待认证预览</button>
+          </form>
+          <div class="prospective-msg" id="prospective-message" role="status"></div>
+        </div>
       </div>
       <div class="col-foot">
         <span><b id="algo-count">3</b> 个已选</span>
@@ -2334,8 +2391,9 @@
      ------------------------------------------------------------------ */
   function readStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
-    const algos = (params.get("algos") || "").split(",").filter((id) => ALGOS.some((a) => a.id === id));
-    const datasets = (params.get("datasets") || "").split(",").filter((id) => DATASETS.some((d) => d.id === id));
+    const validId = (id) => /^[a-z0-9_-]+$/i.test(id);
+    const algos = (params.get("algos") || "").split(",").filter(validId);
+    const datasets = (params.get("datasets") || "").split(",").filter(validId);
     const metric = params.get("metric");
     if (!algos.length && !datasets.length && !metric) return null;
     return {
@@ -2786,7 +2844,11 @@
       notices += `<div class="notice is-info"><span class="notice-label">说明</span><span>当前视图混合了输入模态：个体水平与汇总统计方法需要不同的训练输入。请先阅读详情中的可比性说明，再下结论。</span></div>`;
     }
     if (hasAnySpeculativeOnly && state.metric !== "expected") {
-      notices += `<div class="notice is-info"><span class="notice-label">主观估计</span><span>SBayesRC 当前只提供主观适配度，不提供实测 Pearson、R² 或 AUC；结果表中显示为“仅主观估计”。<button class="notice-link" type="button" data-switch-metric="expected">切到主观适配度 →</button></span></div>`;
+      const speculativeOnlyNames = algos
+        .filter((a) => datasets.some((d) => hasSpeculativeOnlyCell(a.id, d.id)))
+        .map((a) => a.name)
+        .join("、");
+      notices += `<div class="notice is-info"><span class="notice-label">主观估计</span><span>${escapeHtml(speculativeOnlyNames)} 当前只提供主观适配度，不提供实测 Pearson、R² 或 AUC；结果表中显示为“仅主观估计”。<button class="notice-link" type="button" data-switch-metric="expected">切到主观适配度 →</button></span></div>`;
     }
 
     const hasValues = algos.some((a) => datasets.some((d) => getValue(a.id, d.id, state.metric).value != null));
@@ -3171,7 +3233,7 @@
           <div class="data-row"><dt>主要风险</dt><dd>${escapeHtml(fit.risk || "—")}</dd></div>
           ${fit.reasoning ? `<div class="data-row"><dt>证据</dt><dd>${fit.reasoning.evidence.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
           <div class="data-row"><dt>验证计划</dt><dd>${fit.reasoning.verification_plan.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
-          <div class="data-row"><dt>来源 PR</dt><dd>${fit.sourcePr ? `<a href="${escapeHtml(fit.sourcePr.url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourcePr.title || fit.sourcePr.url)}</a>` : "—"}</dd></div>` : ""}
+          ${fit.sourceSubmission ? `<div class="data-row"><dt>来源提交</dt><dd><a href="${escapeHtml(fit.sourceSubmission.paper_url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourceSubmission.method_name || "论文原文")}</a> · hook 通过 · ${escapeHtml(fit.sourceSubmission.hook || "allowlist")}</dd></div>` : fit.sourcePr ? `<div class="data-row"><dt>来源 PR</dt><dd><a href="${escapeHtml(fit.sourcePr.url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourcePr.title || fit.sourcePr.url)}</a></dd></div>` : ""}` : ""}
           <div class="data-row"><dt>参考</dt><dd><a href="${escapeHtml(a.resources.paper.href)}" target="_blank" rel="noreferrer">${escapeHtml(a.resources.paper.tip)}</a></dd></div>
         </dl>
       </div>
@@ -3312,6 +3374,8 @@
      ------------------------------------------------------------------ */
   $("#algo-search").addEventListener("input", (e) => renderAlgos(e.target.value));
   $("#data-search").addEventListener("input", (e) => renderDatasets(e.target.value));
+  const prospectiveForm = $("#prospective-form");
+  if (prospectiveForm) prospectiveForm.addEventListener("submit", submitProspectiveForm);
   $("#algo-clear").addEventListener("click", () => {
     state.algos = [];
     afterSelectionChange();
@@ -3368,7 +3432,8 @@
         dataFit: record.reasoning?.evidence?.join("；") || previous.dataFit,
         risk: record.reasoning?.risks?.join("；") || previous.risk,
         reasoning: record.reasoning || null,
-        sourcePr: payload.source_pr || null,
+        sourcePr: record.source_submission ? null : (payload.source_pr || null),
+        sourceSubmission: record.source_submission || payload.source_submission || null,
         toolStatus: record.tool_status || "unverified",
         validationStatus: record.validation_status || "pending_validation"
       };
@@ -3383,6 +3448,115 @@
       applyProspectivePayload(await response.json());
     } catch (error) {
       console.warn("Prospective records unavailable; keeping inline fallback.", error);
+    }
+  }
+
+  function catalogEntryToAlgo(item) {
+    const r = item.resources || {};
+    const paper = r.paper || item.paper || {};
+    return {
+      id: item.id,
+      name: item.name || item.id,
+      family: item.family || "待分类",
+      input: item.input || "个体数据",
+      year: item.year || "—",
+      status: item.status || "converting",
+      statusLabel: item.statusLabel || "待认证",
+      color: item.color || "#6f6a5f",
+      note: item.note || "允许提交，待认证；仅生成主观适配度。",
+      resources: {
+        paper: {
+          href: paper.href || paper.url || item.paper_url || "#",
+          tip: paper.tip || paper.citation || paper.title || "论文链接待补充"
+        },
+        skill: { tip: (r.skill && r.skill.tip) || "论文 Skill 尚未生成。" },
+        mcp: {
+          badge: (r.mcp && r.mcp.badge) || "待认证",
+          tip: (r.mcp && r.mcp.tip) || "MCP 未认证：仅完成提交与预审。"
+        }
+      }
+    };
+  }
+
+  async function loadDynamicCatalog() {
+    try {
+      const response = await fetch("data/catalog/algorithms.json", { cache: "no-store" });
+      if (!response.ok) return;
+      const payload = await response.json();
+      if (payload.schema_version !== "gsgp.algorithm-catalog.v1" || !Array.isArray(payload.algorithms)) return;
+      payload.algorithms.forEach((item) => {
+        if (!item || !item.id) return;
+        const entry = catalogEntryToAlgo(item);
+        const existing = ALGOS.find((algo) => algo.id === entry.id);
+        if (existing) Object.assign(existing, entry);
+        else ALGOS.push(entry);
+      });
+      renderAlgos($("#algo-search").value);
+    } catch (error) {
+      console.warn("Dynamic algorithm catalog unavailable; keeping inline fallback.", error);
+    }
+  }
+
+  function applyProspectivePreview(data) {
+    if (!data || !data.algorithm || !Array.isArray(data.records)) {
+      throw new Error("预审返回格式不正确。");
+    }
+    const entry = catalogEntryToAlgo(data.algorithm);
+    const existing = ALGOS.find((algo) => algo.id === entry.id);
+    if (existing) Object.assign(existing, entry);
+    else ALGOS.push(entry);
+    applyProspectivePayload({
+      schema_version: "gsgp.prospective.v1",
+      generated_at: data.generated_at,
+      source_pr: null,
+      records: data.records
+    });
+    if (!state.algos.includes(entry.id)) state.algos.push(entry.id);
+    if (!state.datasets.length) {
+      const openDatasets = [...new Set(data.records.map((record) => record.dataset_id))]
+        .filter((id) => {
+          const dataset = dataById(id);
+          return dataset && dataset.access === "open";
+        });
+      state.datasets = (openDatasets.length ? openDatasets : data.records.map((record) => record.dataset_id)).slice(0, 3);
+    }
+    state.metric = "expected";
+    writeStateToUrl();
+    renderAlgos($("#algo-search").value);
+    renderResults();
+    const target = $("#figure-block");
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  async function submitProspectiveForm(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const button = form.querySelector("button[type=submit]");
+    const message = $("#prospective-message");
+    const payload = {
+      method_name: form.method_name.value.trim(),
+      repo_url: form.repo_url.value.trim(),
+      paper_url: form.paper_url.value.trim()
+    };
+    message.className = "prospective-msg";
+    message.textContent = "正在生成待认证预览…";
+    button.disabled = true;
+    try {
+      const response = await fetch("/api/prospective", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error?.message || "预审失败。");
+      applyProspectivePreview(data);
+      message.className = "prospective-msg is-ok";
+      message.textContent = `已加入待认证预览：${data.algorithm.name}（MCP 未认证，${data.mock ? "本地 Mock" : "AI 预审"}）。`;
+    } catch (error) {
+      message.className = "prospective-msg is-error";
+      message.textContent = error.message;
+    } finally {
+      button.disabled = false;
     }
   }
 
@@ -3476,11 +3650,15 @@
   /* ------------------------------------------------------------------
      Init
      ------------------------------------------------------------------ */
-  renderAlgos();
-  renderDatasets();
-  renderResults();
-  initValueCarousel();
-  loadRealResults();
+  async function boot() {
+    await loadDynamicCatalog();
+    renderAlgos();
+    renderDatasets();
+    renderResults();
+    initValueCarousel();
+    await loadRealResults();
+  }
+  boot();
 })();
 </script>
 </body>

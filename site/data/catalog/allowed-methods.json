@@ -1,0 +1,83 @@
+{
+  "schema_version": "gsgp.allowed-methods.v1",
+  "updated_at": "2026-10-30T00:00:00+08:00",
+  "methods": [
+    {
+      "id": "bayesr",
+      "aliases": ["BayesR", "Bayes R", "bayesr"],
+      "name": "BayesR",
+      "family": "贝叶斯混合模型",
+      "input": "个体数据",
+      "year": 2014,
+      "color": "#5b6c8a",
+      "auto_submit": true,
+      "note": "允许提交；只生成待认证的主观适配度，不代表已集成或已验证。",
+      "paper": {
+        "url": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004969",
+        "doi": "10.1371/journal.pgen.1004969",
+        "title": "Simultaneous discovery, estimation and prediction analysis of complex traits using a Bayesian mixture model",
+        "citation": "Moser et al. 2015 · PLOS Genetics"
+      },
+      "allowed_datasets": ["sim1000g", "duroc", "rice", "ukb", "wtccc"],
+      "expected_by_dataset": {
+        "sim1000g": { "expected": 72, "confidence": "low_medium", "estimate_label": "允许方法 · 待认证", "pearson": "0.48-0.57", "r2": "0.23-0.32" },
+        "duroc": { "expected": 78, "confidence": "low_medium", "estimate_label": "允许方法 · 待认证", "pearson": "0.55-0.65", "r2": "0.30-0.42" },
+        "rice": { "expected": 74, "confidence": "low", "estimate_label": "允许方法 · 待认证", "pearson": "0.58-0.72", "r2": "0.34-0.52" },
+        "ukb": { "expected": 66, "confidence": "low", "estimate_label": "允许方法 · 待认证", "pearson": "0.25-0.40", "r2": "0.06-0.16" },
+        "wtccc": { "expected": 60, "confidence": "low", "estimate_label": "允许方法 · 待认证", "auc": "0.58-0.67" }
+      },
+      "reasoning": {
+        "summary": "BayesR 用混合先验同时处理多基因背景和少量大效应；适合作为贝叶斯方法族的待认证入口，但当前只是允许提交的预审模板，不是本站运行结果。",
+        "evidence": [
+          "BayesR 论文（Moser et al. 2015, PLOS Genetics）提出贝叶斯混合模型，用多个正态组分近似 SNP 效应分布。",
+          "该方法在个体水平基因型上运行，输入与本站 GBLUP / IFAM 同属个体数据，但先验设置和计算复杂度不同。",
+          "论文报告了模拟和真实性状上的预测与效应发现结果；这些数字不能直接迁移到本站的数据划分和指标协议。"
+        ],
+        "risks": [
+          "混合比例、PVE 先验、SNP 密度、LD 和性状遗传结构都会影响表现；小样本下混合模型可能不稳定。",
+          "本 demo 没有真实运行 BayesR，也没有完成依赖、数据版本、划分和许可证核验。",
+          "不能把论文中的 BayesR 结果当成本站复现值，也不能用它证明 BayesR 优于其他方法。"
+        ],
+        "verification_plan": [
+          "固定数据、SNP 集合、划分和指标，由独立 runner 运行 BayesR；MCP 不接触验证集真实值。",
+          "至少重复 5 个划分，报告 Pearson、R²、bias slope 和失败样例。",
+          "人工复核输入输出、依赖版本和许可证后，才允许把工具状态从待认证更新为已认证；结果等级仍单独评定。"
+        ]
+      }
+    },
+    {
+      "id": "bayesb",
+      "aliases": ["BayesB", "Bayes B", "bayesb"],
+      "name": "BayesB",
+      "family": "贝叶斯变量选择",
+      "input": "个体数据",
+      "year": 2001,
+      "color": "#6f7f5b",
+      "auto_submit": false,
+      "note": "已知方法，尚未配置自动预审模板；提交后只进入人工排队。",
+      "paper": {
+        "url": "https://academic.oup.com/genetics/article/157/4/1819/6049921",
+        "doi": "10.1093/genetics/157.4.1819",
+        "title": "Prediction of total genetic value using genome-wide dense marker maps",
+        "citation": "Meuwissen et al. 2001 · Genetics"
+      }
+    },
+    {
+      "id": "bayesc",
+      "aliases": ["BayesC", "Bayes C", "bayesc"],
+      "name": "BayesC",
+      "family": "贝叶斯变量选择",
+      "input": "个体数据",
+      "year": 2011,
+      "color": "#7a6a8a",
+      "auto_submit": false,
+      "note": "已知方法，尚未配置自动预审模板；提交后只进入人工排队。",
+      "paper": {
+        "url": "https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-12-186",
+        "doi": "10.1186/1471-2105-12-186",
+        "title": "Extension of the Bayesian alphabet for genomic selection",
+        "citation": "Habier et al. 2011 · BMC Bioinformatics"
+      }
+    }
+  ]
+}
