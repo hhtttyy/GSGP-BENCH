@@ -9,7 +9,8 @@
     "deploy": "wrangler deploy",
     "dev:node": "node scripts/dev-server.mjs",
     "prospective:from-pr": "node scripts/prospective-from-pr.mjs",
-    "test": "node --test worker/test.mjs"
+    "prospective:from-submission": "node scripts/prospective-from-submission.mjs",
+    "test": "node --test worker/test.mjs scripts/test-prospective-from-submission.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

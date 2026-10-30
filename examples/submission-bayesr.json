@@ -1,0 +1,6 @@
+{
+  "method": "BayesR",
+  "paper_url": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004969",
+  "datasets": ["sim1000g", "duroc", "rice", "ukb", "wtccc"],
+  "submitted_by": "demo"
+}

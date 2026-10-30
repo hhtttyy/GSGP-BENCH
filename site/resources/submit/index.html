@@ -121,6 +121,14 @@ npm run prospective:from-pr -- --pr https://github.com/OWNER/REPO/pull/123 \
 # 本地离线自检：用内置示例，不联网
 node scripts/prospective-from-pr.mjs --mock --input pr.json --out /tmp/prospective.json</code></pre>
 
+  <h2>允许清单 demo：先闸门，再生成待认证记录</h2>
+  <p>第一版不直接开放任意方法写入主榜。后台维护 <code>site/data/catalog/allowed-methods.json</code>，记录已知但尚未集成的方法。提交时 hook 只接受清单内且已配置 <code>auto_submit=true</code> 的方法；它只生成待认证的 prospective 记录和算法卡，不写真实指标，也不写 <code>certified</code>。</p>
+  <pre><code>node scripts/prospective-from-submission.mjs \
+  --submission examples/submission-bayesr.json</code></pre>
+  <p>示例提交：BayesR × 1000G 仿真 / Duroc / 3000 水稻 / UKB / WTCCC1。生成后主榜出现“待认证”方法卡；主观适配度 tab 可查看预期，工具状态保持未认证。</p>
+  <p><a href="../../index.html?algos=bayesr&datasets=sim1000g,duroc,rice,ukb,wtccc&metric=expected">打开 BayesR 待认证 demo →</a></p>
+  <p>BayesB / BayesC 已在允许清单中，但 <code>auto_submit=false</code>，提交后只进入人工排队，不会自动生成主榜记录。</p>
+
   <h2>参考示例：两个有仓库记录的 MCP</h2>
   <p>下面两条链路在仓库中有对应记录，可自行核对。第一条是自建基线；第二条是 Paper2Agent 生成的论文 Skill 加本地 MCP 原型。它们展示“从论文到 MCP”的当前过程，也明确显示证据等级和限制。</p>
   <div class="ref-grid">

@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DEFAULT_OUT = path.join(ROOT, "site/data/prospective/submissions.json");
 const CONFIDENCE = new Set(["low", "low_medium", "medium", "medium_high", "high"]);
-const ALGORITHMS = ["gblup", "ifam", "sbayesrc"];
+const ALGORITHMS = ["gblup", "ifam", "sbayesrc", "bayesr", "bayesb", "bayesc"];
 const DATASETS = ["sim1000g", "sim500", "duroc", "rice", "ukb", "wtccc"];
 
 function parsePrUrl(value) {
@@ -93,6 +93,7 @@ export function validateProspectivePayload(payload, sourcePr) {
       },
       tool_status: "unverified",
       validation_status: "pending_validation",
+      source_submission: record.source_submission || null,
       reasoning: {
         summary: reasoning.summary.trim(),
         evidence: reasoning.evidence.map((x) => x.trim()),

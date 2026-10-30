@@ -2334,8 +2334,9 @@
      ------------------------------------------------------------------ */
   function readStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
-    const algos = (params.get("algos") || "").split(",").filter((id) => ALGOS.some((a) => a.id === id));
-    const datasets = (params.get("datasets") || "").split(",").filter((id) => DATASETS.some((d) => d.id === id));
+    const validId = (id) => /^[a-z0-9_-]+$/i.test(id);
+    const algos = (params.get("algos") || "").split(",").filter(validId);
+    const datasets = (params.get("datasets") || "").split(",").filter(validId);
     const metric = params.get("metric");
     if (!algos.length && !datasets.length && !metric) return null;
     return {
@@ -2786,7 +2787,11 @@
       notices += `<div class="notice is-info"><span class="notice-label">说明</span><span>当前视图混合了输入模态：个体水平与汇总统计方法需要不同的训练输入。请先阅读详情中的可比性说明，再下结论。</span></div>`;
     }
     if (hasAnySpeculativeOnly && state.metric !== "expected") {
-      notices += `<div class="notice is-info"><span class="notice-label">主观估计</span><span>SBayesRC 当前只提供主观适配度，不提供实测 Pearson、R² 或 AUC；结果表中显示为“仅主观估计”。<button class="notice-link" type="button" data-switch-metric="expected">切到主观适配度 →</button></span></div>`;
+      const speculativeOnlyNames = algos
+        .filter((a) => datasets.some((d) => hasSpeculativeOnlyCell(a.id, d.id)))
+        .map((a) => a.name)
+        .join("、");
+      notices += `<div class="notice is-info"><span class="notice-label">主观估计</span><span>${escapeHtml(speculativeOnlyNames)} 当前只提供主观适配度，不提供实测 Pearson、R² 或 AUC；结果表中显示为“仅主观估计”。<button class="notice-link" type="button" data-switch-metric="expected">切到主观适配度 →</button></span></div>`;
     }
 
     const hasValues = algos.some((a) => datasets.some((d) => getValue(a.id, d.id, state.metric).value != null));
@@ -3171,7 +3176,7 @@
           <div class="data-row"><dt>主要风险</dt><dd>${escapeHtml(fit.risk || "—")}</dd></div>
           ${fit.reasoning ? `<div class="data-row"><dt>证据</dt><dd>${fit.reasoning.evidence.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
           <div class="data-row"><dt>验证计划</dt><dd>${fit.reasoning.verification_plan.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
-          <div class="data-row"><dt>来源 PR</dt><dd>${fit.sourcePr ? `<a href="${escapeHtml(fit.sourcePr.url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourcePr.title || fit.sourcePr.url)}</a>` : "—"}</dd></div>` : ""}
+          ${fit.sourceSubmission ? `<div class="data-row"><dt>来源提交</dt><dd><a href="${escapeHtml(fit.sourceSubmission.paper_url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourceSubmission.method_name || "论文原文")}</a> · hook 通过 · ${escapeHtml(fit.sourceSubmission.hook || "allowlist")}</dd></div>` : fit.sourcePr ? `<div class="data-row"><dt>来源 PR</dt><dd><a href="${escapeHtml(fit.sourcePr.url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourcePr.title || fit.sourcePr.url)}</a></dd></div>` : ""}` : ""}
           <div class="data-row"><dt>参考</dt><dd><a href="${escapeHtml(a.resources.paper.href)}" target="_blank" rel="noreferrer">${escapeHtml(a.resources.paper.tip)}</a></dd></div>
         </dl>
       </div>
@@ -3368,7 +3373,8 @@
         dataFit: record.reasoning?.evidence?.join("；") || previous.dataFit,
         risk: record.reasoning?.risks?.join("；") || previous.risk,
         reasoning: record.reasoning || null,
-        sourcePr: payload.source_pr || null,
+        sourcePr: record.source_submission ? null : (payload.source_pr || null),
+        sourceSubmission: record.source_submission || payload.source_submission || null,
         toolStatus: record.tool_status || "unverified",
         validationStatus: record.validation_status || "pending_validation"
       };
@@ -3383,6 +3389,52 @@
       applyProspectivePayload(await response.json());
     } catch (error) {
       console.warn("Prospective records unavailable; keeping inline fallback.", error);
+    }
+  }
+
+  function catalogEntryToAlgo(item) {
+    const r = item.resources || {};
+    const paper = r.paper || item.paper || {};
+    return {
+      id: item.id,
+      name: item.name || item.id,
+      family: item.family || "待分类",
+      input: item.input || "个体数据",
+      year: item.year || "—",
+      status: item.status || "converting",
+      statusLabel: item.statusLabel || "待认证",
+      color: item.color || "#6f6a5f",
+      note: item.note || "允许提交，待认证；仅生成主观适配度。",
+      resources: {
+        paper: {
+          href: paper.href || paper.url || item.paper_url || "#",
+          tip: paper.tip || paper.citation || paper.title || "论文链接待补充"
+        },
+        skill: { tip: (r.skill && r.skill.tip) || "论文 Skill 尚未生成。" },
+        mcp: {
+          badge: (r.mcp && r.mcp.badge) || "待认证",
+          tip: (r.mcp && r.mcp.tip) || "MCP 未认证：仅完成提交与预审。"
+        }
+      }
+    };
+  }
+
+  async function loadDynamicCatalog() {
+    try {
+      const response = await fetch("data/catalog/algorithms.json", { cache: "no-store" });
+      if (!response.ok) return;
+      const payload = await response.json();
+      if (payload.schema_version !== "gsgp.algorithm-catalog.v1" || !Array.isArray(payload.algorithms)) return;
+      payload.algorithms.forEach((item) => {
+        if (!item || !item.id) return;
+        const entry = catalogEntryToAlgo(item);
+        const existing = ALGOS.find((algo) => algo.id === entry.id);
+        if (existing) Object.assign(existing, entry);
+        else ALGOS.push(entry);
+      });
+      renderAlgos($("#algo-search").value);
+    } catch (error) {
+      console.warn("Dynamic algorithm catalog unavailable; keeping inline fallback.", error);
     }
   }
 
@@ -3476,11 +3528,15 @@
   /* ------------------------------------------------------------------
      Init
      ------------------------------------------------------------------ */
-  renderAlgos();
-  renderDatasets();
-  renderResults();
-  initValueCarousel();
-  loadRealResults();
+  async function boot() {
+    await loadDynamicCatalog();
+    renderAlgos();
+    renderDatasets();
+    renderResults();
+    initValueCarousel();
+    await loadRealResults();
+  }
+  boot();
 })();
 </script>
 </body>

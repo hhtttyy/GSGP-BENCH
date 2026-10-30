@@ -1,0 +1,32 @@
+{
+  "schema_version": "gsgp.algorithm-catalog.v1",
+  "generated_at": "2026-10-30T06:40:38.846Z",
+  "algorithms": [
+    {
+      "id": "bayesr",
+      "name": "BayesR",
+      "family": "贝叶斯混合模型",
+      "input": "个体数据",
+      "year": 2014,
+      "status": "converting",
+      "statusLabel": "待认证",
+      "color": "#5b6c8a",
+      "note": "允许提交；只生成待认证的主观适配度，不代表已集成或已验证。",
+      "catalog_source": "allowed-methods.hook",
+      "catalog_updated_at": "2026-10-30T06:40:38.846Z",
+      "resources": {
+        "paper": {
+          "href": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004969",
+          "tip": "Moser et al. 2015 · PLOS Genetics · 论文原文链接"
+        },
+        "skill": {
+          "tip": "论文 Skill 尚未生成；当前只有允许清单和预审记录。"
+        },
+        "mcp": {
+          "badge": "待认证",
+          "tip": "MCP 未认证：仅完成提交与预审，尚未运行真实引擎或人工验收。"
+        }
+      }
+    }
+  ]
+}
