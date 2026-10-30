@@ -25,7 +25,7 @@
   <p><strong>这不是实验结果。</strong>本页是 GSGP-Bench 在尚未完成 SBayesRC 实测复现前，根据论文、数据访问级别、种群遗传学和性状架构作出的主观适配度猜测。它不进入主榜、认证或论文级比较。</p>
 
   <h2>论文依据</h2>
-  <p>SBayesRC 把 GWAS summary statistics、LD 参考和功能注释联合建模，在论文中分析 50 个性状、约 7M 常见 SNP 和 96 个注释。论文报告欧洲祖先相对无注释 SBayesR 平均约 14% 提升，跨祖先最高约 34% 提升。优势来自高密度 SNP、功能注释和低秩 LD 建模，但也强依赖数据规模、LD 匹配和注释质量。</p>
+  <p>SBayesRC 把 GWAS summary statistics、LD 参考和功能注释联合建模，在论文中分析 50 个性状、约 7M 常见 SNP 和 96 个 BaselineLD v2.2 注释。在 28 个近乎独立的 UKB 欧洲性状十折交叉验证中，7M SNP 加注释相对 1M HapMap3 无注释的 SBayesR 平均提高约 14%（其中 7M SNP 单独 +2.8%、注释单独 +3.2%、两者联合 +14.2%）；跨祖先相对 SBayesR 平均提高 SAS 16.0%、EAS 22.6%、AFR 33.7%。优势来自高密度 SNP、功能注释和低秩 LD 建模，但也强依赖数据规模、LD 匹配和注释质量：论文 7M SNP × 96 注释的设定需要约 73.3 GB 内存、8.5 小时（4 核）。</p>
   <p>参考：Zheng et al. <em>Nature Genetics</em> 56:1211-1222 (2024). DOI <a href="https://doi.org/10.1038/s41588-024-01704-y">10.1038/s41588-024-01704-y</a>。</p>
 
   <h2>四种数据的猜测</h2>
@@ -38,7 +38,7 @@
         <td>1000G 仿真</td>
         <td><strong>78 / 100</strong></td>
         <td>Pearson 约 0.50-0.58；R² 约 0.25-0.34</td>
-        <td>人类 EUR LD 背景接近论文假设，若仿真含注释富集，方法方向应有利；但 n≈503，summary 噪声和 LD 抽样误差会压低确定性。</td>
+        <td>人类 EUR LD 背景接近论文假设，若仿真含注释富集，方法方向应有利；但 n≈503，summary 噪声和 LD 抽样误差会压低确定性。若仿真的 GWAS 与 LD 参考用同一批个体，LD 完全匹配会偏乐观，需独立 LD 参考或失配压力测试。</td>
       </tr>
       <tr>
         <td>UK Biobank</td>

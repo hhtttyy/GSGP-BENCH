@@ -25,6 +25,7 @@
         ],
         "risks": [
           "GSGP-BENCH 的 1000G 仿真 n≈503，summary 估计噪声较大。",
+          "若仿真 GWAS 与 LD 参考共用同一批 1000G EUR 个体，LD 完全匹配会让结果偏乐观，需独立 LD 参考或做失配压力测试。",
           "如果模拟注释随机，注释分支的增益会明显缩小。"
         ],
         "verification_plan": [
@@ -39,7 +40,7 @@
       "expected": 92,
       "confidence": "medium_high",
       "estimate_label": "最有利",
-      "expected_metrics": {"pearson": "0.45-0.65", "r2": "0.18-0.42", "auc": null, "runtime": null},
+      "expected_metrics": {"pearson": "0.42-0.63", "r2": "0.18-0.42", "auc": null, "runtime": null},
       "tool_status": "unverified",
       "validation_status": "pending_validation",
       "reasoning": {

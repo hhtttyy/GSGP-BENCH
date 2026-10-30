@@ -2181,19 +2181,19 @@
     {
       id: "duroc", name: "Duroc 猪", sci: "Sus scrofa", species: "动物",
       n: "n ≈ 2.8k", markers: "11.3M SNP", access: "open", accessLabel: "开放",
-      trait: "背膘厚 / 眼肌深 / 乳头数", type: "quant", version: "v1",
+      trait: "背膘厚 / 眼肌深 / 瘦肉率 / 乳头数 / 采食时间（7 性状）", type: "quant", version: "v1",
       note: "IFAM 论文使用；公开育种数据"
     },
     {
       id: "rice", name: "3000 水稻", sci: "Oryza sativa", species: "植物",
-      n: "n = 3,024", markers: "333k SNP", access: "request", accessLabel: "需申请",
-      trait: "粒长 / 粒宽 / 抽穗期", type: "quant", version: "v1",
-      note: "IFAM 论文使用；需向 IRRI 申请"
+      n: "n = 3,024", markers: "333k SNP", access: "open", accessLabel: "开放",
+      trait: "粒长 / 粒宽 / 粒长宽比 / 抽穗期 / 千粒重（5 性状）", type: "quant", version: "v1",
+      note: "3000 Rice Genome Project；基因型经 IRRI Rice SNP-Seek 公开"
     },
     {
       id: "ukb", name: "UK Biobank", sci: "Homo sapiens", species: "人类",
       n: "n ≈ 348.5k", markers: "1.09M SNP", access: "restricted", accessLabel: "受限",
-      trait: "身高 / BMI", type: "quant", version: "—",
+      trait: "身高 / BMI / 骨密度 / 肺功能（6 性状）", type: "quant", version: "—",
       note: "需申请；仅展示论文值"
     },
     {
@@ -2223,25 +2223,25 @@
 
   /* 主观适配度独立于真实结果，避免把先验猜测混入证据等级。 */
   const FIT_ESTIMATES = {
-    "gblup|sim1000g": { expected: 74, estimate: "稳健", confidence: "中高", expectedPearson: "0.48–0.56", expectedR2: "0.23–0.31", expectedAuc: "—", methodFit: "加性线性模型契合 h²=0.5 的常见模拟，REML 稳定。", dataFit: "n≈503 偏小，但 GBLUP 对 p≫n 仍常用；1.2M SNP 计算较重。", risk: "若遗传结构偏非线性或注释富集，单随机效应会丢失信息。" },
+    "gblup|sim1000g": { expected: 74, estimate: "稳健", confidence: "中高", expectedPearson: "0.48–0.56", expectedR2: "0.23–0.31", expectedAuc: "—", methodFit: "加性线性模型契合 h²=0.5 的常见模拟，REML 稳定。", dataFit: "n≈503 偏小；GBLUP 天然适应 p≫n，1.2M SNP 的 GRM 构建以一次流式扫描为主，算力开销可控。", risk: "若遗传结构偏非线性或注释富集，单随机效应会丢失信息。" },
     "gblup|sim500": { expected: 83, estimate: "很适配", confidence: "高", expectedPearson: "0.45–0.58", expectedR2: "0.20–0.34", expectedAuc: "—", methodFit: "小 SNP 面板和加性性状很适合 rrBLUP。", dataFit: "500×5k 是经典入门规模，计算和解释都直接。", risk: "示例数据太小，外推到真实育种群体有限。" },
-    "gblup|duroc": { expected: 80, estimate: "适配良好", confidence: "中高", expectedPearson: "0.56–0.64", expectedR2: "0.31–0.41", expectedAuc: "—", methodFit: "经典育种性状通常适合加性 GRM 基线。", dataFit: "n≈2.8k 可估 GRM，但 11.3M SNP 需要内存和矩阵优化。", risk: "多性状遗传结构不同，强 QTL 或非线性效应会被低估。" },
-    "gblup|rice": { expected: 78, estimate: "通常稳健", confidence: "中高", expectedPearson: "0.64–0.74", expectedR2: "0.41–0.55", expectedAuc: "—", methodFit: "Gblup 在水稻基因组预测中常见且稳健。", dataFit: "n=3,024 和 333k SNP 适中，群体结构需要校正好。", risk: "群体分层和材料关系复杂时，不加结构协变量会偏乐观。" },
-    "gblup|ukb": { expected: 72, estimate: "可做但偏重", confidence: "中", expectedPearson: "0.28–0.38", expectedR2: "0.08–0.14", expectedAuc: "—", methodFit: "大样本个体数据可以估 GRM，但方法本身不利用功能注释。", dataFit: "n≈348.5k 和 1.09M SNP 计算成本高，需分块或降维。", risk: "与注释增强方法相比上限较低；训练/验证划分影响很大。" },
-    "gblup|wtccc": { expected: 64, estimate: "中等", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.60–0.67", methodFit: "二分类亦可做线性/阈值预测，AUC 常接近传统 PRS。", dataFit: "病例数偏少、老芯片 SNP 较疏，病种间差异明显。", risk: "小样本会让 AUC 波动很大，罕见病尤其不稳定。" },
+    "gblup|duroc": { expected: 80, estimate: "适配良好", confidence: "中高", expectedPearson: "0.56–0.64", expectedR2: "0.31–0.41", expectedAuc: "—", methodFit: "经典育种性状通常适合加性 GRM 基线。", dataFit: "n≈2.8k 时 n×n GRM 约 8×10⁶ 元素，内存可控；瓶颈是从 11.3M SNP 构建 GRM 的算力与 I/O，需分块流式读取。", risk: "多性状遗传结构不同，强 QTL 或非线性效应会被低估。" },
+    "gblup|rice": { expected: 78, estimate: "通常稳健", confidence: "中高", expectedPearson: "0.64–0.74", expectedR2: "0.41–0.55", expectedAuc: "—", methodFit: "GBLUP 是水稻自交系群体基因组预测的常用基线，对加性性状较稳健。", dataFit: "n=3,024 和 333k SNP 适中，群体结构需要校正好。", risk: "群体分层和材料关系复杂时，不加结构协变量会偏乐观。" },
+    "gblup|ukb": { expected: 72, estimate: "可做但偏重", confidence: "中", expectedPearson: "0.28–0.38", expectedR2: "0.08–0.14", expectedAuc: "—", methodFit: "大样本个体数据可以估 GRM，但方法本身不利用功能注释。", dataFit: "n≈348.5k 时 n×n GRM 约 1.2×10¹¹ 元素，远超内存，需低秩近似、分块或改用汇总统计方法。", risk: "与注释增强方法相比上限较低；训练/验证划分影响很大。" },
+    "gblup|wtccc": { expected: 64, estimate: "中等", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.60–0.67", methodFit: "病例-对照可在观测 0/1 尺度上直接做线性预测；AUC 随病例比例、遗传力与划分变化，须按疾病分别解读。", dataFit: "病例数偏少、老芯片 SNP 较疏，病种间差异明显。", risk: "小样本会让 AUC 波动很大，罕见病尤其不稳定。" },
 
-    "ifam|sim1000g": { expected: 76, estimate: "有潜力", confidence: "中", expectedPearson: "0.52–0.60", expectedR2: "0.27–0.36", expectedAuc: "—", methodFit: "注释增强模型在注释真实参与遗传结构时占优。", dataFit: "人类 1000G 背景接近论文训练场景，但 n≈503 限制注释学习。", risk: "若注释随机或与生成模型不一致，注释分支可能无增益。" },
+    "ifam|sim1000g": { expected: 76, estimate: "有潜力", confidence: "中", expectedPearson: "0.52–0.60", expectedR2: "0.27–0.36", expectedAuc: "—", methodFit: "注释增强模型在注释真实参与遗传结构时占优。", dataFit: "IFAM 论文的人类场景是 WTCCC1（病例-对照）与 UKB（1.09M HapMap3 SNP、约 34.9 万欧洲个体），并非 1000G 仿真；n≈503 也远不足以学习注释方差组分。", risk: "若注释随机或与生成模型不一致，注释分支可能无增益。" },
     "ifam|sim500": { expected: 70, estimate: "流程倾向良好", confidence: "低中", expectedPearson: "0.35–0.55", expectedR2: "0.12–0.30", expectedAuc: "—", methodFit: "真实引擎下可整合模拟注释，但当前记录仍是流程测试。", dataFit: "5k SNP 和 500 个体不足以充分训练注释模型。", risk: "现有 STUB 记录不能代表真实 IFAM 表现。" },
     "ifam|duroc": { expected: 84, estimate: "论文最有利", confidence: "中高", expectedPearson: "0.60–0.68", expectedR2: "0.36–0.46", expectedAuc: "—", methodFit: "IFAM 的注释加多随机效应正适合育种性状。", dataFit: "Duroc 是该论文使用场景，数据规模也匹配。", risk: "不同性状和注释可用性会让实际结果分化。" },
-    "ifam|rice": { expected: 84, estimate: "论文有利", confidence: "中高", expectedPearson: "0.68–0.78", expectedR2: "0.46–0.61", expectedAuc: "—", methodFit: "IFAM 论文直接覆盖水稻，注释路线适配植物育种。", dataFit: "3000 水稻样本量适中，但需可靠注释和群体结构处理。", risk: "IRRI 数据申请和注释版本会直接影响复现难度。" },
+    "ifam|rice": { expected: 84, estimate: "论文有利", confidence: "中高", expectedPearson: "0.68–0.78", expectedR2: "0.46–0.61", expectedAuc: "—", methodFit: "IFAM 论文直接覆盖水稻，注释路线适配植物育种。", dataFit: "3000 水稻样本量适中，但需可靠注释和群体结构处理。", risk: "水稻注释来源（论文用 RGAP）与表型子集版本会直接影响复现难度。" },
     "ifam|ukb": { expected: 76, estimate: "有潜力但计算重", confidence: "中", expectedPearson: "0.32–0.40", expectedR2: "0.10–0.16", expectedAuc: "—", methodFit: "注释模型适合复杂多基因性状，但 UKB 规模计算昂贵。", dataFit: "大样本提高上限，也放大了内存、I/O 和注释对齐要求。", risk: "不使用 UKB 限制数据时只能做方法性估计，不能算正式复现。" },
     "ifam|wtccc": { expected: 68, estimate: "中等偏乐观", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.62–0.70", methodFit: "多注释随机效应可缓解小样本过拟合，若注释有信息会受益。", dataFit: "WTCCC1 小样本和老芯片会限制注释优势的稳定性。", risk: "疾病异质性大，部分病种可能低于 GBLUP。" },
 
-    "sbayesrc|sim1000g": { expected: 78, estimate: "中等偏乐观", confidence: "中", expectedPearson: "0.50–0.58", expectedR2: "0.25–0.34", expectedAuc: "—", methodFit: "低秩模型适合百万级 SNP，并对 GWAS 与 LD 参考之间的抽样差异较稳。", dataFit: "1000G EUR 与论文使用的 1kg0.5k LD 参考相近；若仿真含注释富集，优势应更明显。", risk: "n≈503 的 summary 估计噪声大；若注释随机或与 BaselineLD 不匹配，注释分支可能没有增益。" },
+    "sbayesrc|sim1000g": { expected: 78, estimate: "中等偏乐观", confidence: "中", expectedPearson: "0.50–0.58", expectedR2: "0.25–0.34", expectedAuc: "—", methodFit: "低秩模型适合百万级 SNP，并对 GWAS 与 LD 参考之间的抽样差异较稳。", dataFit: "1000G EUR 与论文 1kg0.5k LD 参考（494 个 EUR）同源；但若仿真 GWAS 与 LD 参考共用同一批个体，LD 完全匹配会偏乐观，需独立 LD 参考或失配压力测试。", risk: "n≈503 的 summary 估计噪声大；若注释随机或与 BaselineLD 不匹配，注释分支可能没有增益。" },
     "sbayesrc|sim500": { expected: 20, estimate: "不适配", confidence: "中高", expectedPearson: "—", expectedR2: "—", expectedAuc: "—", methodFit: "SBayesRC 需要 GWAS summary、LD 参考和注释；5k SNP 面板过窄。", dataFit: "500×5k 示例没有 summary/LD/注释三件套，不足以代表该方法。", risk: "即使强行接入，也不能和论文设置类比。" },
     "sbayesrc|duroc": { expected: 32, estimate: "需猪专用资源", confidence: "低", expectedPearson: "0.25–0.45（需猪 LD/注释）", expectedR2: "0.06–0.20", expectedAuc: "—", methodFit: "贝叶斯 summary 框架可迁移，但需要物种专用 LD 和注释。", dataFit: "论文的人类 BaselineLD、LD blocks 和频率处理不能直接用于猪。", risk: "没有猪专用资源时，表现可能明显低于个体水平 GBLUP/IFAM。" },
     "sbayesrc|rice": { expected: 38, estimate: "不确定/偏低到中等", confidence: "低", expectedPearson: "0.45–0.62（仅有水稻 LD/注释时）", expectedR2: "0.20–0.38", expectedAuc: "—", methodFit: "贝叶斯 summary 框架可迁移，但论文的 LD 分块、BaselineLD 注释和参数先验都来自人类。", dataFit: "水稻自交、群体结构、LD 衰减和功能注释体系与人类差异很大；现有人类资源不能直接套用。", risk: "若没有水稻专用 LD 和注释，预测可能明显低于个体水平 IFAM；即便迁移，也应视为另一套方法假设。" },
-    "sbayesrc|ukb": { expected: 92, estimate: "最有利", confidence: "中高", expectedPearson: "0.45–0.65（身高/BMI 合并口径）", expectedR2: "0.18–0.42", expectedAuc: "—", methodFit: "论文正是在 UKB 规模、约 7M SNP 和 96 个注释的设定下建立优势。", dataFit: "大样本、欧洲祖先、身高/BMI 等高度多基因性状与 SBayesRC 的建模假设最匹配。", risk: "绝对 R² 强依赖性状、SNP 密度、LD 参考和训练样本大小；不能把论文数值当成本站复现。" },
+    "sbayesrc|ukb": { expected: 92, estimate: "最有利", confidence: "中高", expectedPearson: "0.42–0.63（身高偏高、BMI 偏低）", expectedR2: "0.18–0.42", expectedAuc: "—", methodFit: "论文正是在 UKB 规模、约 7M SNP 和 96 个注释的设定下建立优势。", dataFit: "大样本、欧洲祖先、身高/BMI 等高度多基因性状与 SBayesRC 的建模假设最匹配。", risk: "绝对 R² 强依赖性状、SNP 密度、LD 参考和训练样本大小；不能把论文数值当成本站复现。" },
     "sbayesrc|wtccc": { expected: 62, estimate: "中等且不稳定", confidence: "低中", expectedPearson: "—", expectedR2: "—", expectedAuc: "0.58–0.66", methodFit: "二元疾病可由 summary 方法建模，贝叶斯收缩和注释有助于控制过拟合。", dataFit: "WTCCC1 样本较小、老芯片 SNP 较疏，疾病间遗传结构差异大，功能注释覆盖不一定完整。", risk: "案例数不足会让 AUC 区间很宽；低 prevalence 疾病尤其可能只得到接近传统 PRS 的表现。" }
   };
   const PROSPECTIVE_META = Object.create(null);
@@ -3159,14 +3159,14 @@
           ${fit.reasoning ? `<div class="data-row"><dt>证据</dt><dd>${fit.reasoning.evidence.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
           <div class="data-row"><dt>验证计划</dt><dd>${fit.reasoning.verification_plan.map((item) => escapeHtml(item)).join("<br>")}</dd></div>
           <div class="data-row"><dt>来源 PR</dt><dd>${fit.sourcePr ? `<a href="${escapeHtml(fit.sourcePr.url)}" target="_blank" rel="noreferrer">${escapeHtml(fit.sourcePr.title || fit.sourcePr.url)}</a>` : "—"}</dd></div>` : ""}
-          <div class="data-row"><dt>参考</dt><dd><a href="https://doi.org/10.1038/s41588-024-01704-y" target="_blank" rel="noreferrer">Zheng et al. 2024 · Nature Genetics</a></dd></div>
+          <div class="data-row"><dt>参考</dt><dd><a href="${escapeHtml(a.resources.paper.href)}" target="_blank" rel="noreferrer">${escapeHtml(a.resources.paper.tip)}</a></dd></div>
         </dl>
       </div>
       <div class="detail-section">
         <h3 class="detail-title">证据边界</h3>
         <dl class="data-list">
           <div class="data-row"><dt>状态</dt><dd><strong>主观估计</strong> · 不是本站运行结果</dd></div>
-          <div class="data-row"><dt>来源</dt><dd>论文结论、数据类型与种群遗传学先验；不代表 SBayesRC 已在本站复现。</dd></div>
+          <div class="data-row"><dt>来源</dt><dd>论文结论、数据类型与种群遗传学先验；不代表 ${escapeHtml(a.name)} 已在本站复现。</dd></div>
           <div class="data-row"><dt>不参与</dt><dd>主榜、认证、复现结论和论文级比较</dd></div>
         </dl>
       </div>` : v.status === "reproduced" ? `
