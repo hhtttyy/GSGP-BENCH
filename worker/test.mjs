@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import worker from "./index.js";
 
 const assetFetcher = {
@@ -17,6 +18,8 @@ const realEnv = {
   OPENAI_BASE_URL: "https://ai.example/v1",
   OPENAI_MODEL: "test-model"
 };
+const allowedMethods = JSON.parse(readFileSync(new URL("../site/data/catalog/allowed-methods.json", import.meta.url), "utf8"));
+const prospectiveEnv = { ...mockEnv, ALLOWED_METHODS: JSON.stringify(allowedMethods) };
 
 const validPayload = {
   metric: "Pearson r（越高越好）",
@@ -37,6 +40,20 @@ function analyzeRequest(body = validPayload, headers = {}) {
   });
 }
 
+const validProspective = {
+  method_name: "BayesR",
+  repo_url: "https://github.com/syntheke/bayesR",
+  paper_url: "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004969"
+};
+
+function prospectiveRequest(body = validProspective, headers = {}) {
+  return new Request("https://bench.example/api/prospective", {
+    method: "POST",
+    headers: { "content-type": "application/json", ...headers },
+    body: typeof body === "string" ? body : JSON.stringify(body)
+  });
+}
+
 test("mock mode returns a labelled local analysis", async () => {
   const response = await worker.fetch(analyzeRequest(), mockEnv);
   assert.equal(response.status, 200);
@@ -47,6 +64,96 @@ test("mock mode returns a labelled local analysis", async () => {
   assert.match(data.text, /本地 Mock 解读/);
   assert.match(data.text, /2 个结果单元/);
   assert.match(data.text, /探索 1，流程测试 1/);
+});
+
+test("prospective mock returns only pending records and a catalog card", async () => {
+  const response = await worker.fetch(prospectiveRequest(), prospectiveEnv);
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.equal(data.mock, true);
+  assert.equal(data.model, "mock");
+  assert.equal(data.algorithm.id, "bayesr");
+  assert.equal(data.algorithm.status, "converting");
+  assert.equal(data.algorithm.statusLabel, "待认证");
+  assert.equal(data.records.length, 5);
+  for (const record of data.records) {
+    assert.equal(record.tool_status, "unverified");
+    assert.equal(record.validation_status, "pending_validation");
+    assert.equal(record.source_submission.hook, "allowed-methods.v1");
+  }
+});
+
+test("prospective rejects a paper URL outside the allowlist", async () => {
+  const response = await worker.fetch(prospectiveRequest({
+    ...validProspective,
+    paper_url: "https://example.com/not-bayesr"
+  }), prospectiveEnv);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, "PAPER_MISMATCH");
+});
+
+test("prospective rejects known methods without auto-submit", async () => {
+  const response = await worker.fetch(prospectiveRequest({
+    method_name: "BayesB",
+    repo_url: "https://github.com/example/bayesb",
+    paper_url: "https://academic.oup.com/genetics/article/157/4/1819/6049921"
+  }), prospectiveEnv);
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).error.code, "METHOD_REQUIRES_REVIEW");
+});
+
+test("prospective requires a GitHub repository URL", async () => {
+  const response = await worker.fetch(prospectiveRequest({
+    ...validProspective,
+    repo_url: "https://example.com/bayesr"
+  }), prospectiveEnv);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, "INVALID_PAYLOAD");
+});
+
+test("prospective rejects non-POST and cross-origin calls", async () => {
+  const nonPost = await worker.fetch(new Request("https://bench.example/api/prospective"), prospectiveEnv);
+  assert.equal(nonPost.status, 405);
+  assert.equal((await nonPost.json()).error.code, "METHOD_NOT_ALLOWED");
+
+  const crossOrigin = await worker.fetch(
+    prospectiveRequest(validProspective, { origin: "https://evil.example" }),
+    prospectiveEnv
+  );
+  assert.equal(crossOrigin.status, 403);
+  assert.equal((await crossOrigin.json()).error.code, "FORBIDDEN_ORIGIN");
+});
+
+test("prospective real mode uses the model but keeps pending status", async () => {
+  const originalFetch = globalThis.fetch;
+  let sent = null;
+  globalThis.fetch = async (_url, options) => {
+    sent = JSON.parse(options.body);
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify({
+        summary: "AI 预审摘要",
+        evidence: ["论文提出混合先验"],
+        risks: ["尚未真实运行"],
+        verification_plan: ["固定 split 后由独立 runner 运行"]
+      }) } }]
+    }), { status: 200, headers: { "content-type": "application/json" } });
+  };
+  try {
+    const response = await worker.fetch(prospectiveRequest(), {
+      ...realEnv,
+      ALLOWED_METHODS: JSON.stringify(allowedMethods)
+    });
+    assert.equal(response.status, 200);
+    const data = await response.json();
+    assert.equal(data.mock, false);
+    assert.equal(data.model, "test-model");
+    assert.equal(data.records[0].reasoning.summary, "AI 预审摘要");
+    assert.equal(data.records[0].tool_status, "unverified");
+    assert.match(sent.messages[0].content, /不能声称已运行/);
+    assert.deepEqual(sent.response_format, { type: "json_object" });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test("non-POST requests are rejected", async () => {
