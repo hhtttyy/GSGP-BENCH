@@ -27,7 +27,7 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 12px); }
 .lp-nav .container { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); width: min(100% - 2 * var(--space-5), 84rem); }
 .lp-brand { display: flex; align-items: baseline; gap: var(--space-3); text-decoration: none; color: var(--text); }
 .lp-wordmark { font-family: var(--font-display); font-size: var(--fs-lg); letter-spacing: 0.06em; font-weight: 600; }
-.lp-brand-sub { font-size: var(--fs-xs); color: var(--text-muted); letter-spacing: 0.04em; }
+.lp-brand-sub { font-size: var(--fs-base); color: var(--text-muted); letter-spacing: 0.02em; }
 .lp-nav-links { display: flex; align-items: center; gap: var(--space-5); }
 .lp-nav-links a:not(.btn) { color: var(--text-muted); text-decoration: none; font-size: var(--fs-sm); transition: color var(--dur-fast) var(--ease-std); }
 .lp-nav-links a:not(.btn):hover { color: var(--text); }

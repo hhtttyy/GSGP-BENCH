@@ -245,9 +245,9 @@ a:hover { color: var(--ink); text-decoration-color: currentColor; }
 .nav-link {
   position: relative;
   color: var(--ink-2);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   text-decoration: none;
   padding: 4px 0;
   transition: color 0.15s;
