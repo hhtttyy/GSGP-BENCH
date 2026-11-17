@@ -1,0 +1,6 @@
+[Unit]
+Description=GSGP-BENCH API liveness watchdog (oneshot)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /opt/gsgp-api/watchdog.sh gsgp-api 8787

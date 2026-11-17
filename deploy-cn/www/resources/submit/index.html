@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>提交 MCP · GSGP-BENCH</title>
+<meta name="description" content="向 GSGP-BENCH 提交 Paper2Agent 生成的 Skill/MCP 包，接受统一验证和认证。" />
+<meta name="theme-color" content="#f1f2ee" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233d5a47'/%3E%3Cpath d='M10 6c0 7 12 7 12 13M22 6c0 7-12 7-12 13M10 19c0 4 3 6 6 7M22 19c0 4-3 6-6 7' stroke='%23fbfbf8' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../ifam-paper/reader.css" />
+<style>
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 18px 0 8px;
+    min-width: 0;
+  }
+  .ref-card {
+    min-width: 0;
+    padding: 18px 18px 16px;
+    border: 1px solid var(--rule);
+    background: var(--plate);
+  }
+  .ref-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .ref-head h3 { margin: 0; font-size: 20px; }
+  .ref-status {
+    padding: 2px 7px;
+    border: 1px solid;
+    font-family: var(--mono);
+    font-size: 10.5px;
+  }
+  .ref-status.is-ok { color: var(--moss); border-color: var(--moss); }
+  .ref-status.is-pending { color: var(--rust); border-color: var(--rust); }
+  .ref-card dl {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 5px 10px;
+    margin: 14px 0;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .ref-card dt { color: var(--ink-3); }
+  .ref-card dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+  .ref-card h4 { margin: 16px 0 6px; font-size: 15px; }
+  .ref-steps {
+    margin: 0 0 10px;
+    padding-left: 20px;
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .ref-card pre { margin: 10px 0 12px; max-width: 100%; font-size: 11px; }
+  .ref-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 12px;
+  }
+  @media (max-width: 820px) {
+    .ref-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="reader-page">
+<header class="masthead">
+  <a class="brand" href="../../" aria-label="GSGP-BENCH 首页">
+    <span class="brand-text">
+      <span class="wordmark">GSGP-BENCH</span>
+      <span class="brand-sub">基因组预测 · 证据库</span>
+    </span>
+  </a>
+  <nav class="mast-nav" aria-label="主导航">
+    <a class="nav-link" href="../../">首页</a>
+    <a class="nav-link" href="../../bench/index.html">评测</a>
+    <a class="nav-link" href="../introduce/index.html">介绍</a>
+    <a class="nav-link" href="../generate/index.html">生成</a>
+    <a class="nav-link is-active" href="../submit/index.html" aria-current="page">提交</a>
+    <a class="nav-link nav-github" href="https://github.com/hhtttyy/GSGP-BENCH" target="_blank" rel="noreferrer" aria-label="在 GitHub 查看项目"><span>GitHub</span><span class="arrow">↗</span></a>
+  </nav>
+</header>
+<main class="reader">
+  <h1>提交 MCP</h1>
+  <p>我们用 <strong>已认证 / 未认证</strong> 两个状态，不托管在线 MCP。已认证表示 GSGP-BENCH 团队实践验证过这个版本的 MCP 包；它不代表论文结果认证，也不代表网站在线执行。</p>
+
+  <p><a href="../../resources/generate/index.html">还没有生成包？先下载本地 Paper2Agent 套件 →</a></p>
+
+  <h2>流程</h2>
+  <ol>
+    <li><a href="../../resources/generate/index.html">用本地 Paper2Agent 套件生成包</a>，准备 Skill、MCP 服务、工具契约、运行说明和公开/合成测试数据。</li>
+    <li>在仓库的 <strong>Issues → New issue → MCP submission</strong> 提交表单（模板：<code>.github/ISSUE_TEMPLATE/mcp-submission.yml</code>）。</li>
+    <li>GSGP-BENCH 团队统一运行参考数据、检查输入输出、真实值隔离、安全边界和来源记录。</li>
+    <li>通过 → 标记 <strong>已认证</strong>；未通过或尚未审核 → 保持 <strong>未认证</strong>，仍可被查看和使用，但风险自担。</li>
+  </ol>
+
+  <h2>提交需要包含</h2>
+  <ul>
+    <li>论文标题、DOI/链接；</li>
+    <li>官方代码仓库、commit、许可证；</li>
+    <li>Paper2Agent Skill 和 MCP 包/入口；</li>
+    <li>MCP transport、运行方式、依赖；</li>
+    <li>一条可重复执行的测试命令和参考数据；</li>
+    <li>期望输出与已知限制；</li>
+    <li>明确声明：MCP 不接收留出的真实值，不计算评测指标。</li>
+  </ul>
+
+  <h2>认证边界</h2>
+  <p>已认证的是 <strong>这个 MCP 包和固定版本</strong>，不是任何一次运行结果，也不是在线服务。用户仍然需要自己安装、运行并核对结果。结果等级仍单独记录为 演示 / 复现 / 探索 / 流程测试 / 论文值 / 未运行。</p>
+  <p>未认证条目允许公开查看和自行使用，但网站不会为它背书；使用前请检查来源、许可证和限制。</p>
+
+  <h2>两阶段生命周期：先预期，后校验</h2>
+  <p>为了让评测页在结果跑出来之前就能看到“方法 × 数据集”的相对位置，我们把它拆成两个阶段。第一阶段的数值是 <strong>运行前预期</strong>，永远带 <code>tool_status=unverified</code> 和 <code>validation_status=pending_validation</code> 标签，不能作为科学结果引用。</p>
+  <ol>
+    <li><strong>阶段 1 · 运行前预期（未认证）。</strong>评审代理只读取提交的 PR（标题、正文、diff）和论文/文档依据，生成 <code>site/data/prospective/submissions.json</code>：每条记录含 <code>expected</code>（0–100 适配度）、<code>confidence</code>、预期指标区间，以及可核验的 <code>reasoning</code>（证据 / 风险 / 验证计划）。生成器 <code>scripts/prospective-from-pr.mjs</code> 会拒绝任何试图写入真实指标或 <code>certified</code> 的输出，CI 也会二次拦截。此时页面上“MCP 工具状态”显示为 <strong>未认证</strong>。</li>
+    <li><strong>阶段 2 · 人工校验后的真实指标（认证）。</strong>GSGP-BENCH 团队用独立 runner 在固定数据、划分和环境下真实运行，把 <code>metrics</code> 写入 <code>benchmark/runs/&lt;run-id&gt;/result.json</code> 与 <code>site/data/results/*.json</code>。只有通过校验后，对应记录才从“主观估计”切换为真实指标，并把 MCP 工具状态更新为 <strong>已认证</strong>。</li>
+  </ol>
+  <p>预期记录只用于安排验证优先级，<strong>不参与主榜、认证、复现结论或论文级比较</strong>。任何把预期数值当复现结果的做法都视为违反证据边界。</p>
+  <pre><code># 阶段 1：从 PR 生成运行前预期（需 OPENAI_API_KEY，可选 GITHUB_TOKEN / OPENAI_BASE_URL / OPENAI_MODEL）
+npm run prospective:from-pr -- --pr https://github.com/OWNER/REPO/pull/123 \
+  --out site/data/prospective/submissions.json
+
+# 本地离线自检：用内置示例，不联网
+node scripts/prospective-from-pr.mjs --mock --input pr.json --out /tmp/prospective.json</code></pre>
+
+  <h2>允许清单 demo：先闸门，再生成待认证记录</h2>
+  <p>第一版不直接开放任意方法写入主榜。后台维护 <code>site/data/catalog/allowed-methods.json</code>，记录已知但尚未集成的方法。提交时 hook 只接受清单内且已配置 <code>auto_submit=true</code> 的方法；它只生成待认证的 prospective 记录和算法卡，不写真实指标，也不写 <code>certified</code>。</p>
+  <pre><code>node scripts/prospective-from-submission.mjs \
+  --submission examples/submission-bayesr.json</code></pre>
+  <p>示例提交：BayesR × 1000G 仿真 / Duroc / 3000 水稻 / UKB / WTCCC1。生成后主榜出现“待认证”方法卡；主观适配度 tab 可查看预期，工具状态保持未认证。</p>
+  <p><a href="../../bench/index.html?algos=bayesr&datasets=sim1000g,duroc,rice,ukb,wtccc&metric=expected">打开 BayesR 待认证 demo →</a></p>
+  <p>也可以直接在主评测页左侧的“暂无 MCP 文件？”表单中填写方法名、GitHub 仓库和文献 URL；Worker 只返回待认证预览，动态加入方法卡，不会写真实指标或认证状态。</p>
+  <p>BayesB / BayesC 已在允许清单中，但 <code>auto_submit=false</code>，提交后只进入人工排队，不会自动生成主榜记录。</p>
+
+  <h2>参考示例：两个有仓库记录的 MCP</h2>
+  <p>下面两条链路在仓库中有对应记录，可自行核对。第一条是自建基线；第二条是 Paper2Agent 生成的论文 Skill 加本地 MCP 原型。它们展示“从论文到 MCP”的当前过程，也明确显示证据等级和限制。</p>
+  <div class="ref-grid">
+    <article class="ref-card">
+      <div class="ref-head">
+        <h3>GBLUP 基线 MCP</h3>
+        <span class="ref-status is-ok">已认证</span>
+      </div>
+      <dl>
+        <dt>论文</dt><dd>VanRaden 2008 · J. Dairy Sci. 91:4414–4423</dd>
+        <dt>论文 Skill</dt><dd><code>benchmark/algorithms/gblup/SKILL.md</code>（自建基线，不是 Paper2Agent 自动生成）</dd>
+        <dt>MCP 工具</dt><dd>本地 stdio：inspect / fit / export；不接收真实值，不计算指标</dd>
+        <dt>当前记录</dt><dd>探索：Pearson r = 0.5075，R² = 0.2576，单次 80/20</dd>
+      </dl>
+      <h4>核对步骤</h4>
+      <ol class="ref-steps">
+        <li>准备上游 IFAM 归档，导出 500×5k 本地子集；原始数据不提交。</li>
+        <li>运行 direct control，得到独立评测记录。</li>
+        <li>运行本地 MCP trial，确认 MCP 结果与独立评测记录一致；这只证明单次探索链路，不是复现。</li>
+      </ol>
+      <pre><code>python3 benchmark/prepare_demo_subset.py \
+  --ifam-root "$HOME/Downloads/IFAM-main"
+
+python3 benchmark/run_gblup_sim.py \
+  --source-subset local_data/ifam-demo-500x5k \
+  --run-id gblup-sim500-v1
+
+python3 benchmark/run_gblup_mcp_trial.py \
+  --run-id gblup-sim500-mcp-v1</code></pre>
+      <p class="ref-links">
+        <a href="../../resources/gblup-baseline/index.html">查看基线说明 →</a>
+        <a href="../../data/results/gblup-sim500.json">查看结果记录 →</a>
+      </p>
+    </article>
+
+    <article class="ref-card">
+      <div class="ref-head">
+        <h3>IFAM 论文 Skill + MCP</h3>
+        <span class="ref-status is-pending">未认证</span>
+      </div>
+      <dl>
+        <dt>论文</dt><dd>Tang 等 2026 · Nature Communications · DOI 10.1038/s41467-026-72470-0</dd>
+        <dt>论文 Skill</dt><dd>已审校（有限制）：全文、6 张图、3 个公式；状态 <code>reviewed_with_limitations</code></dd>
+        <dt>MCP 工具</dt><dd>本地 stdio 四工具：inspect / fit / status / export</dd>
+        <dt>当前记录</dt><dd>流程测试：Pearson r = −0.032，仅证明管线，不能作为科学结果</dd>
+      </dl>
+      <h4>核对步骤</h4>
+      <ol class="ref-steps">
+        <li>运行契约测试和 tiny 验收，确认 stdio 四工具可用。</li>
+        <li>用真实 IFAM.R + 替代 HIBLUP 跑 dry-run，检查 fit / status / export。</li>
+        <li>真实 HIBLUP 验收需要 R、optparse 和 HIBLUP v1.1.0；当前 v1.1.0 不可得，因此保持未认证。</li>
+      </ol>
+      <pre><code>python3 -m unittest discover \
+  -s agents/ifam/mcp/tests -v
+
+python3 agents/ifam/mcp/acceptance.py --skip-demo
+
+export IFAM_ROOT="$HOME/Downloads/IFAM-main"
+python3 agents/ifam/mcp/dry_run.py \
+  --driver ifam-r \
+  --work-dir /tmp/ifam-mcp-dry-run</code></pre>
+      <p class="ref-links">
+        <a href="../../resources/ifam-paper/index.html">查看论文 Skill →</a>
+        <a href="../../data/results/ifam-stub-sim500.json">查看流程测试记录 →</a>
+      </p>
+    </article>
+  </div>
+</main>
+</body>
+</html>

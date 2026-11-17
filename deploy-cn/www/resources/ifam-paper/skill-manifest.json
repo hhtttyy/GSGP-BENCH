@@ -1,0 +1,112 @@
+{
+  "schema_version": "ifam.paper-skill.preview.v1",
+  "name": "ifam-paper",
+  "review_status": "reviewed_with_limitations",
+  "generated_on": "2026-10-18",
+  "source_path": "agents/ifam/skill/ifam-paper",
+  "paper": {
+    "doi": "10.1038/s41467-026-72470-0",
+    "citation": "Tang et al., Nature Communications (2026) 17:5686",
+    "license": "CC BY 4.0"
+  },
+  "not_for": [
+    "benchmark evidence or model ranking",
+    "data or code distribution",
+    "a callable MCP service"
+  ],
+  "source_bundle": {
+    "file_count": 13,
+    "files": [
+      {
+        "path": "SKILL.md",
+        "bytes": 1766,
+        "sha256": "0e988749b11e103e142e313c07ecb60c5edcfd6f940613a7998655feec23c084"
+      },
+      {
+        "path": "assets/figure/equation-1.jpg",
+        "bytes": 4188,
+        "sha256": "02ca5846b1a0e9d5ea27eca18b9696fa4f149c8257fb36505259b4b70fc33bbf"
+      },
+      {
+        "path": "assets/figure/equation-2.jpg",
+        "bytes": 4972,
+        "sha256": "9cbbe2a9c9e070dc0b24e9d1505574b0e613985298e4f8afb25ae5624280ca56"
+      },
+      {
+        "path": "assets/figure/equation-3.jpg",
+        "bytes": 5351,
+        "sha256": "7ad10afec1806ec3245728ca3b7c4361430971a992424a0b97cac9abacb2f51a"
+      },
+      {
+        "path": "assets/figure/figure-1.jpg",
+        "bytes": 117091,
+        "sha256": "089d14b91818ccbcd23beb23edd2e8b7eb42dc928d99d7824e78769ea5f74dbb"
+      },
+      {
+        "path": "assets/figure/figure-2.jpg",
+        "bytes": 51124,
+        "sha256": "35d83d420a9e6ea6ac2193355f40e2e19895abd873e3528c61d9c53254340c4f"
+      },
+      {
+        "path": "assets/figure/figure-3.jpg",
+        "bytes": 82230,
+        "sha256": "d0a3fa38ed62c5aafa81d57b9c3ca06b575bf4f8cc06e33db81d39273c74b04f"
+      },
+      {
+        "path": "assets/figure/figure-4.jpg",
+        "bytes": 55894,
+        "sha256": "e45446450fb252524dc957cd3ed3716b4795def35421cb4c4d9111f3a6ee2c03"
+      },
+      {
+        "path": "assets/figure/figure-5.jpg",
+        "bytes": 40362,
+        "sha256": "dcb05e59f3ab312a88f26e7be856a1b802a4bf0d09c72e68544689edc5d57f0f"
+      },
+      {
+        "path": "assets/figure/figure-6.jpg",
+        "bytes": 58993,
+        "sha256": "889f584a5c84f2df86e5a9b8451e1c410bb4c8b5b52f67c7b293a1b6f236a588"
+      },
+      {
+        "path": "references/index.md",
+        "bytes": 3068,
+        "sha256": "fde65f4e7e587436f000c81866ef0fbe8bc821fe374d9df3bd00804c978500e2"
+      },
+      {
+        "path": "references/paper.md",
+        "bytes": 69054,
+        "sha256": "7923d6f34c166326e5ac8f2abe51da0bf69717c8ff47c06844f2f300fe1f297e"
+      },
+      {
+        "path": "references/supplement.md",
+        "bytes": 71,
+        "sha256": "9711740d256b15cd452f412166adb870647e8f1b0de3601f071d58247cf4d835"
+      }
+    ]
+  },
+  "rendered_pages": [
+    {
+      "path": "SKILL.html",
+      "sha256": "d8ad7cbce347949ef5b5b20eba0c6cc7267b8b0635b3e701253535286efd76f0"
+    },
+    {
+      "path": "references/index.html",
+      "sha256": "edc3b6c126e6ffe2648d7fbdb6851d9ce197cf2853d59317827f53942ae7545e"
+    },
+    {
+      "path": "references/paper.html",
+      "sha256": "d70bb9b60176c553eadf73a92593ea88fea0ece550df62a3f1a879ca6e4c91d1"
+    },
+    {
+      "path": "references/supplement.html",
+      "sha256": "c1a5e775ae84a6b15643e832791dc89ca1b282469f4488055745aaa01d7a9dfb"
+    }
+  ],
+  "zip": {
+    "path": "ifam-paper-skill.zip",
+    "bytes": 395680,
+    "sha256": "e6b92664b1762cb1935709d5c746c3b8539e93c2ecdef3ef72afda54b28d1d90",
+    "top_level_directory": "ifam-paper",
+    "file_count": 13
+  }
+}

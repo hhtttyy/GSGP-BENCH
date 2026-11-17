@@ -1,0 +1,309 @@
+{
+  "schema_version": "gsgp.result.v1",
+  "run_id": "ifam-stub-sim500-v1",
+  "algorithm": {
+    "id": "ifam",
+    "name": "IFAM",
+    "implementation": "IFAM.R 1.0.0 + fake HIBLUP (STUB runtime)",
+    "paper_doi": "10.1038/s41467-026-72470-0",
+    "paper_title": "Tang et al. 2026, Improving genomic prediction accuracy of complex traits by integrating massive types of functional annotation information, Nature Communications 17:5686",
+    "code_commit": "62f8e4cd8ee53d70b3324ec5cd40d3f2ffbf7649"
+  },
+  "dataset": {
+    "id": "sim500",
+    "name": "GSGP-Sim 500\u00d75k",
+    "species": "Sus scrofa (demo genotype)",
+    "source": "Genotype and annotations derived from the public upstream IFAM demo (500 individuals \u00d7 5,000 SNPs); trait simulated with h\u00b2=0.5, 200 causal SNPs, seed 20261019. Raw data stays local.",
+    "n_individuals": 500,
+    "n_snps": 5000,
+    "trait": {
+      "name": "simulated_trait",
+      "type": "quantitative",
+      "simulated": true,
+      "heritability": 0.5
+    },
+    "license_note": "STUB record. Fake HIBLUP engine; raw data and predictions remain local; no scientific claim.",
+    "input_sha256": {
+      "geno/demo.bed": "f8fc2bbec495a7e00d2032d1f1369cdaa3309c71d4b84c8c50639a27da8ac59e",
+      "geno/demo.bim": "671e3675bb33a2449b8d105768f7d5ef1a8d3224668a33474a409e127711e2f4",
+      "geno/demo.fam": "a5deb5a684b1cbe5f880ad0e011723db6311b0e688379a80a52ea2b3cb8ecad0",
+      "pheno/phenotype.fit.txt": "a40576e66b59cd6cd3df14e9f28fea8945b5dc9e5bcd41ec45abcdeeddb3ffd2",
+      "splits/repeat-1.json": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57",
+      "annotations/A1.txt": "86d5f3292199fdc3abe10d6368d158a06ed2f5679c758228018c53706f11a9a1",
+      "annotations/A2.txt": "9f7f3c0f31d452ca62615a0c5eeef8249d16fb0d4509543b91c6d7da9a44197a",
+      "annotations/A3.txt": "8654c3ac263feea36d8b2ebbb0e4a36058d729d13118af90696a161aa433d98f",
+      "annotations/A4.txt": "550f7554304c537667a28fa48a6fb17901ea258bd63996aedc1538f4e78c1c23",
+      "annotations/A5.txt": "1b816bffe19e59bb4366717fb67bdf3e18630a71796c3f652293b9130c2cd6a0",
+      "annotations/A6.txt": "1566fc250b5188ba972d929af86ca054d368560ca314a4a75a301642e5a1ab00",
+      "annotations/A7.txt": "c06a88b85d4bbf4ff6f27d9c17f039925600250570ed242ef198d6ae911c55d1",
+      "annotations/A8.txt": "4f18a8b812d541bec6cf9e20c945da11a808095f2c1ffad800d5398014ef48df"
+    }
+  },
+  "split": {
+    "split_id": "sim500-repeat-1",
+    "seed": 20261019,
+    "n_training": 400,
+    "n_validation": 100,
+    "split_sha256": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+  },
+  "metrics": {
+    "pearson_r": -0.03198201301094622,
+    "r2": 0.0010228491562323332,
+    "prediction_bias_slope": -0.2310477297039435,
+    "auc": null,
+    "runtime_seconds": null
+  },
+  "fit": {
+    "runtime_mode": "stub",
+    "variance_components": [
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A1",
+        "Var": 1.0,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A2",
+        "Var": 0.1,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A3",
+        "Var": 0.01,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A4",
+        "Var": 0.001,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A5",
+        "Var": 0.0001,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A6",
+        "Var": 1e-05,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A7",
+        "Var": 1e-06,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "IFAM.A8",
+        "Var": 1e-07,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "variance_estimation",
+        "Item": "e",
+        "Var": 1.0,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "final_model",
+        "Item": "IFAM.A1.GA",
+        "Var": 0.5,
+        "Var_SE": 0.1,
+        "h2": 0.3,
+        "h2_SE": 0.03,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "final_model",
+        "Item": "IFAM.A2.GA",
+        "Var": 0.5,
+        "Var_SE": 0.1,
+        "h2": 0.3,
+        "h2_SE": 0.03,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "final_model",
+        "Item": "IFAM.A3.GA",
+        "Var": 0.5,
+        "Var_SE": 0.1,
+        "h2": 0.3,
+        "h2_SE": 0.03,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "final_model",
+        "Item": "IFAM.A4.GA",
+        "Var": 0.5,
+        "Var_SE": 0.1,
+        "h2": 0.3,
+        "h2_SE": 0.03,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "final_model",
+        "Item": "IFAM.A5.GA",
+        "Var": 0.5,
+        "Var_SE": 0.1,
+        "h2": 0.3,
+        "h2_SE": 0.03,
+        "h2_Pr(Chisq)": 0.001
+      },
+      {
+        "stage": "final_model",
+        "Item": "e",
+        "Var": 1.0,
+        "Var_SE": 0.1,
+        "h2": 0.5,
+        "h2_SE": 0.05,
+        "h2_Pr(Chisq)": 0.001
+      }
+    ],
+    "random_effects": null,
+    "annotation_summary": {
+      "header": [
+        "Annotations",
+        "Number_annotaions",
+        "Number_overlap_anno_map",
+        "Anno_cover_percent"
+      ],
+      "rows": [
+        {
+          "Annotations": "A1",
+          "Number_annotaions": "1545",
+          "Number_overlap_anno_map": "1545",
+          "Anno_cover_percent": "30.9%"
+        },
+        {
+          "Annotations": "A2",
+          "Number_annotaions": "736",
+          "Number_overlap_anno_map": "736",
+          "Anno_cover_percent": "14.72%"
+        },
+        {
+          "Annotations": "A3",
+          "Number_annotaions": "504",
+          "Number_overlap_anno_map": "504",
+          "Anno_cover_percent": "10.08%"
+        },
+        {
+          "Annotations": "A4",
+          "Number_annotaions": "2976",
+          "Number_overlap_anno_map": "2976",
+          "Anno_cover_percent": "59.52%"
+        },
+        {
+          "Annotations": "A5",
+          "Number_annotaions": "105",
+          "Number_overlap_anno_map": "105",
+          "Anno_cover_percent": "2.1%"
+        },
+        {
+          "Annotations": "A6",
+          "Number_annotaions": "424",
+          "Number_overlap_anno_map": "424",
+          "Anno_cover_percent": "8.48%"
+        },
+        {
+          "Annotations": "A7",
+          "Number_annotaions": "1427",
+          "Number_overlap_anno_map": "1427",
+          "Anno_cover_percent": "28.54%"
+        },
+        {
+          "Annotations": "A8",
+          "Number_annotaions": "28",
+          "Number_overlap_anno_map": "28",
+          "Anno_cover_percent": "0.56%"
+        }
+      ]
+    }
+  },
+  "evidence": {
+    "level": "stub",
+    "status": "complete",
+    "certified": false,
+    "single_split": true,
+    "reviewed_by": null,
+    "notes": [
+      "STUB ONLY: real IFAM.R orchestration, fake HIBLUP numerical engine.",
+      "Numbers are not IFAM results and must not be cited as scientific evidence.",
+      "This fills the Paper2Agent/MCP lane for capability display while HIBLUP v1.1.0 is unavailable.",
+      "Independent runner computed metrics from held-out truth."
+    ]
+  },
+  "provenance": {
+    "command": "python3 benchmark/run_ifam_stub_sim.py --run-id ifam-stub-sim500-v1",
+    "environment": {
+      "python": "3.9.6",
+      "R": "Rscript (R) version 4.6.1 (2026-06-24)",
+      "hiblup": "fake-engine",
+      "platform": "macOS-15.6-arm64-arm-64bit"
+    },
+    "code_sha256": "1ff7efa4e0ecaf2c4998202a3e5658e5cc2987878f3304479e39d18d210e0f11",
+    "predictions_sha256": "b83f382d2dd679682083f206a2784de7893d3097b9853046e7a82d61e9f391ab",
+    "runner_sha256": "54ad2b370480752405df392a40309480c167db44701619285c30e7a0af9b0fdd",
+    "created_at": "2026-10-18T17:13:07Z",
+    "notes": [
+      "runtime_mode=stub",
+      "IFAM job ifam-20261019-5f824228"
+    ]
+  },
+  "mcp": {
+    "server": "ifam",
+    "version": "0.1.0",
+    "transport": "stdio",
+    "tools": [
+      "ifam_inspect_inputs",
+      "ifam_fit",
+      "ifam_job_status",
+      "ifam_export"
+    ],
+    "job_id": "ifam-20261019-5f824228"
+  },
+  "artifacts": {
+    "result_json": "benchmark/runs/ifam-stub-sim500-v1/result.json",
+    "metrics_json": "benchmark/runs/ifam-stub-sim500-v1/metrics.json",
+    "site_json": "site/data/results/ifam-stub-sim500.json",
+    "predictions_private": "local_data/ifam-stub-sim500/predictions_stub.tsv"
+  },
+  "site": {
+    "algorithm_id": "ifam",
+    "dataset_id": "sim500",
+    "status": "stub",
+    "label": "STUB \u00b7 fake HIBLUP"
+  }
+}

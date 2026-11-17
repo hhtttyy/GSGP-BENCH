@@ -1,0 +1,18 @@
+[Unit]
+Description=GSGP-BENCH domestic AI proxy (Python stdlib, loopback only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/gsgp-bench.env
+ExecStart=/usr/bin/python3 /opt/gsgp-api/server.py
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

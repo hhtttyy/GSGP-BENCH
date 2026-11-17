@@ -1,0 +1,19 @@
+[Unit]
+Description=__NAME__ site AI proxy (Python stdlib, loopback only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/__NAME__-bench.env
+Environment=GSGP_API_PORT=__API_PORT__
+ExecStart=/usr/bin/python3 /opt/__NAME__-api/server.py
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,111 @@
+{
+  "schema_version": "gsgp.result.v1",
+  "run_id": "gblup-sim500-mcp-v1",
+  "algorithm": {
+    "id": "gblup",
+    "name": "GBLUP / rrBLUP",
+    "implementation": "GSGP-Bench GBLUP v0.1 via MCP (manual baseline)",
+    "paper_doi": "10.3168/jds.2007-0980",
+    "paper_title": "VanRaden 2008, Efficient methods to compute genomic predictions, J. Dairy Sci. 91:4414\u20134423",
+    "code_commit": null
+  },
+  "dataset": {
+    "id": "sim500",
+    "name": "GSGP-Sim 500\u00d75k",
+    "species": "Sus scrofa (demo genotype)",
+    "source": "Genotype: 500 individuals \u00d7 5,000 SNPs derived from the public upstream IFAM demo. Trait: simulated quantitative phenotype, h\u00b2=0.5, 200 causal SNPs, seed 20261019. Raw data stays local.",
+    "n_individuals": 500,
+    "n_snps": 5000,
+    "trait": {
+      "name": "simulated_trait",
+      "type": "quantitative",
+      "simulated": true,
+      "heritability": 0.5
+    },
+    "license_note": "Raw genotype, phenotype and predictions remain local; only aggregate metrics and hashes are public.",
+    "input_sha256": {
+      "geno/demo.bed": "f8fc2bbec495a7e00d2032d1f1369cdaa3309c71d4b84c8c50639a27da8ac59e",
+      "geno/demo.bim": "671e3675bb33a2449b8d105768f7d5ef1a8d3224668a33474a409e127711e2f4",
+      "geno/demo.fam": "a5deb5a684b1cbe5f880ad0e011723db6311b0e688379a80a52ea2b3cb8ecad0",
+      "pheno/phenotype.fit.txt": "a40576e66b59cd6cd3df14e9f28fea8945b5dc9e5bcd41ec45abcdeeddb3ffd2",
+      "splits/repeat-1.json": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+    }
+  },
+  "split": {
+    "split_id": "sim500-repeat-1",
+    "seed": 20261019,
+    "n_training": 400,
+    "n_validation": 100,
+    "split_sha256": "b90740ffc195d48f07a682a2abddafe657f7ff945ac9882e3fea969e8c9f0c57"
+  },
+  "metrics": {
+    "pearson_r": 0.5075119047400981,
+    "r2": 0.2575683334529224,
+    "prediction_bias_slope": 1.2116827556051972,
+    "auc": null,
+    "runtime_seconds": 0.041124
+  },
+  "fit": {
+    "lambda": 0.9783617488137963,
+    "sigma_g2": 0.522812480405741,
+    "sigma_e2": 0.5114997326314394,
+    "n_snps": 5000,
+    "n_snps_used": 5000,
+    "n_training": 400,
+    "n_validation": 100,
+    "reml_objective": -20.053536402653673,
+    "runtime_seconds": 0.041124,
+    "missing_genotypes_imputed": 4181
+  },
+  "evidence": {
+    "level": "exploratory",
+    "status": "complete",
+    "certified": false,
+    "single_split": true,
+    "reviewed_by": null,
+    "notes": [
+      "Single 80/20 split; not a multi-fold L1 record.",
+      "Produced through the manual GBLUP MCP over stdio; not a Paper2Agent-generated MCP.",
+      "Trait is simulated; not the IFAM paper's Duroc phenotype.",
+      "The MCP did not read truth and did not compute metrics; the independent runner did."
+    ]
+  },
+  "provenance": {
+    "command": "python3 benchmark/run_gblup_mcp_trial.py --run-id gblup-sim500-mcp-v1",
+    "environment": {
+      "python": "3.9.6",
+      "numpy": "2.0.2",
+      "platform": "macOS-15.6-arm64-arm-64bit"
+    },
+    "code_sha256": "e5d9213035ec365e7e19f6e73a420986b464b1cf0c069ef7540b64f08cba17b9",
+    "predictions_sha256": "45247a1e6e05278fd424cd099417ac47aa6a594f211a85d770430971b1458774",
+    "runner_sha256": "54ad2b370480752405df392a40309480c167db44701619285c30e7a0af9b0fdd",
+    "created_at": "2026-10-18T17:13:06Z",
+    "notes": [
+      "MCP run artifact and public result are intentionally separate."
+    ]
+  },
+  "mcp": {
+    "server": "gblup",
+    "version": "0.1.0",
+    "transport": "stdio",
+    "tools": [
+      "gblup_inspect_inputs",
+      "gblup_fit",
+      "gblup_export"
+    ],
+    "fit_run_id": "gblup-20261019-be024feb"
+  },
+  "artifacts": {
+    "result_json": "benchmark/runs/gblup-sim500-mcp-v1/result.json",
+    "metrics_json": "benchmark/runs/gblup-sim500-mcp-v1/metrics.json",
+    "site_json": "site/data/results/gblup-sim500.json",
+    "predictions_private": "local_data/gblup-sim500/predictions_mcp.tsv"
+  },
+  "site": {
+    "algorithm_id": "gblup",
+    "dataset_id": "sim500",
+    "status": "exploratory",
+    "label": "\u5355\u6b21\u5212\u5206 \u00b7 \u63a2\u7d22\u6027"
+  }
+}

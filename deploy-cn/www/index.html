@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基因组预测方案智能评估平台--GSGP-Bench</title>
+<meta name="description" content="GSGP-BENCH 把论文里的基因组预测方法放到同条件、可追溯、带证据等级的公开账本里比较。数据不出本机，站点不托管算法执行。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233d5a47'/%3E%3Cpath d='M10 6c0 7 12 7 12 13M22 6c0 7-12 7-12 13M10 19c0 4 3 6 6 7M22 19c0 4-3 6-6 7' stroke='%23fbfbf8' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/primitives.css">
+<link rel="stylesheet" href="css/landing.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.js",
+    "three/addons/": "./vendor/addons/"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- ============ 固定导航 ============ -->
+<header class="lp-nav" id="lp-nav">
+  <div class="container">
+    <a class="lp-brand" href="#top" aria-label="GSGP-BENCH 首页">
+      <span class="lp-wordmark">GSGP-BENCH</span>
+      <span class="lp-brand-sub">基因组预测方案智能评估平台</span>
+    </a>
+    <nav class="lp-nav-links" aria-label="页面导航">
+      <a class="btn btn-primary lp-nav-cta" href="bench/">进入评测台</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ 开屏：真实 B-DNA 三维舞台（被动慢旋动画） ============ -->
+  <div class="lp-hero-wrap">
+  <section class="lp-hero" aria-label="平台简介与 DNA 三维模型">
+    <div class="lp-stage" id="lp-stage">
+      <picture>
+        <source media="(max-width: 900px)" srcset="assets/dna-mobile.webp" type="image/webp">
+        <source srcset="assets/dna-desktop.webp" type="image/webp">
+        <source media="(max-width: 900px)" srcset="assets/dna-mobile.png">
+        <img src="assets/dna-desktop.png" alt="B-DNA 双螺旋三维模型静止渲染帧" fetchpriority="high">
+      </picture>
+    </div>
+    <div class="lp-hero-scrim" aria-hidden="true"></div>
+
+    <div class="lp-hero-inner">
+      <div class="lp-hero-copy">
+        <h1 data-reveal>基因组预测方案智能评估平台<br><span class="h1-brand">GSGP-BENCH</span></h1>
+        <p class="lp-lead" data-reveal style="--i:1">把论文里的预测结果，放到你的数据上同条件验真，证据分级、可追溯、数据不出本机，实测汇入公开账本。GSGP-BENCH赋能将论文转化为Skill、MCP，为能力持续沉淀落地。</p>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- ============ 我们为您服务 ============ -->
+  <section class="lp-serve section" id="serve">
+    <div class="container">
+      <div class="lp-head">
+        <h2 data-reveal>我们为您服务</h2>
+        <p data-reveal style="--i:1">面向三类用户，解决同一件事的三个侧面：让基因组预测的数字可信、可比、可讲清。</p>
+      </div>
+      <div class="lp-serve-grid">
+        <article class="lp-serve-card" style="--uc:var(--accent)" data-reveal>
+          <div class="lp-serve-top">
+            <span class="lp-serve-num">01</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3v18M12 7c-3 0-5-2-8-2 0 4 3 6 8 6M12 7c3 0 5-2 8-2 0 4-3 6-8 6M12 15c-3 0-5-2-8-2 0 4 3 6 8 6M12 15c3 0 5-2 8-2 0 4-3 6-8 6"/></svg>
+          </div>
+          <h3>育种与遗传研究者</h3>
+          <div class="lp-serve-block">
+            <span class="tag">您的问题</span>
+            <p>论文数字各说各话：数据集、划分、指标口径都不同，不知道新方法在自己的数据上到底值不值得用。</p>
+          </div>
+          <div class="lp-serve-block solve">
+            <span class="tag">我们解决</span>
+            <p>同条件实测参照：GBLUP、IFAM、SBayesRC、BayesR 在公开数据集上按统一协议运行，每个数字带证据等级，缺失如实留空。</p>
+          </div>
+          <p class="lp-serve-scenario">场景：为奶牛育种方案挑选基因组预测方法</p>
+        </article>
+        <article class="lp-serve-card" style="--uc:var(--indigo);--i:1" data-reveal>
+          <div class="lp-serve-top">
+            <span class="lp-serve-num">02</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/></svg>
+          </div>
+          <h3>方法开发者</h3>
+          <div class="lp-serve-block">
+            <span class="tag">您的问题</span>
+            <p>新方法缺少公平、可重复的展示位置；自报数字难以被信任，也没有统一的比较入口。</p>
+          </div>
+          <div class="lp-serve-block solve">
+            <span class="tag">我们解决</span>
+            <p>论文 → 论文 Skill → 本地 MCP → 独立 runner 的认证链路：提交论文与仓库，经允许清单预审与同条件验证，以证据进入公开账本。</p>
+          </div>
+          <p class="lp-serve-scenario">场景：提交 SBayesRC 类新方法进入公开账本</p>
+        </article>
+        <article class="lp-serve-card" style="--uc:var(--clay);--i:2" data-reveal>
+          <div class="lp-serve-top">
+            <span class="lp-serve-num">03</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6l9-3 9 3-9 3-9-3z"/><path d="M7 8v5c0 1.5 2.2 3 5 3s5-1.5 5-3V8"/><path d="M21 6v6"/></svg>
+          </div>
+          <h3>审稿人与课堂</h3>
+          <div class="lp-serve-block">
+            <span class="tag">您的问题</span>
+            <p>「论文值 ≠ 实测值」很难向学生或同行讲清；演示值、探索值与复现值经常被混为一谈。</p>
+          </div>
+          <div class="lp-serve-block solve">
+            <span class="tag">我们解决</span>
+            <p>证据阶梯与如实标注的账本：探索、复现、跨协议、论文值、流程测试各归其位；AI 解读示范克制的科研表述，仅供参考。</p>
+          </div>
+          <p class="lp-serve-scenario">场景：研究生课程上的方法比较案例</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 功能 Bento ============ -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="lp-head">
+        <h2 data-reveal>为「认真比较」而设计的每个细节。</h2>
+      </div>
+      <div class="lp-bento">
+        <article class="lp-tile span3 tint-moss" data-reveal>
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 19V9m5 10V5m5 14v-8m5 8V7"/><path d="M2 21h20"/></svg>
+          <h3>同条件对比</h3>
+          <p>同一数据集、同一划分、同一指标口径下并排比较 GBLUP、IFAM、SBayesRC、BayesR。缺失与不可比的单元如实留空，而不是补一个好看的数。</p>
+        </article>
+        <article class="lp-tile span3" data-reveal style="--i:1">
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.6"/></svg>
+          <h3>数据不出本机</h3>
+          <p>算法与 MCP 工具全部在本地运行。站点只展示公开聚合结果；AI 解读也只接收当前页面上的聚合数字，不接收基因型、表型或样本 ID。</p>
+        </article>
+        <article class="lp-tile span2 tint-info" data-reveal>
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/><path d="M18 15l.9 2.3L21 18l-2.1.7L18 21l-.9-2.3L15 18l2.1-.7z"/></svg>
+          <h3>AI 解读 · 仅供参考</h3>
+          <p>由站点配置的模型对当前视图写一段克制的对比解读，明确区分演示、探索与复现，不下没有统计依据的断言。</p>
+        </article>
+        <article class="lp-tile span2" data-reveal style="--i:1">
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 12h6M10 16h6"/></svg>
+          <h3>可追溯记录</h3>
+          <p>每条结果带来源提交、运行环境与内容哈希，任何数字都能回溯到它是如何产生的。</p>
+        </article>
+        <article class="lp-tile span2 tint-clay" data-reveal style="--i:2">
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.5 5.5l13 13"/></svg>
+          <h3>主观估计不混主榜</h3>
+          <p>「待认证」的主观适配度与论文值单独陈列、明确标注，永远不会和实测结果排在同一张榜单里。</p>
+        </article>
+        <article class="lp-tile span4" data-reveal>
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/></svg>
+          <h3>开放提交与预审</h3>
+          <p>没有现成的 MCP 文件？提交论文与 GitHub 仓库，平台按允许清单生成「待认证预览」：预期来自人工模板，AI 只写摘要、证据、风险与验证计划，绝不声称已运行。欢迎通过 GitHub Issues 提交你的方法。</p>
+          <span class="mono-note">submit → allowlist → prospective preview (unverified)</span>
+        </article>
+        <article class="lp-tile span2" data-reveal style="--i:1">
+          <svg class="lp-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 19c-4 1.5-4-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+          <h3>开源 · MIT</h3>
+          <p>基于 Paper2Agent 构建，代码与证据账本公开可查，欢迎复现、质疑与贡献。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ 页脚 ============ -->
+<footer class="lp-footer">
+  <div class="container">
+    <span><span class="lp-footer-brand">GSGP-BENCH</span> · 基因组预测方案智能评估平台 · 基于 <a href="https://github.com/jmiao24/Paper2Agent">Paper2Agent</a>（MIT）</span>
+    <nav class="lp-footer-links" aria-label="页脚导航">
+      <a href="bench/">评测台</a>
+      <a href="resources/introduce/">平台介绍</a>
+      <a href="resources/submit/">提交指南</a>
+      <a href="https://github.com/hhtttyy/GSGP-BENCH">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module">
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const nav = document.getElementById("lp-nav");
+const onScroll = () => nav.classList.toggle("is-scrolled", window.scrollY > 8);
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+const els = [...document.querySelectorAll("[data-reveal]")];
+if (reduceMotion || !("IntersectionObserver" in window)) els.forEach((el) => el.classList.add("is-in"));
+else {
+  const ro = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.add("is-in"); ro.unobserve(entry.target); }
+    });
+  }, { threshold: 0, rootMargin: "0px 0px -10% 0px" });
+  els.forEach((el) => ro.observe(el));
+}
+
+/* 桌面渐进增强：静态帧秒开；桌面且非 reduced-motion 且 WebGL 可用时升级 three.js 慢旋；移动/弱偏好/失败保持静态帧 */
+const desktopMQ = window.matchMedia("(min-width: 901px)");
+if (desktopMQ.matches && !reduceMotion) {
+  try {
+    const probe = document.createElement("canvas");
+    const gl = probe.getContext("webgl2") || probe.getContext("webgl");
+    if (gl) {
+      const THREE = await import("three");
+      const { RoomEnvironment } = await import("three/addons/environments/RoomEnvironment.js");
+      const { RoundedBoxGeometry } = await import("three/addons/geometries/RoundedBoxGeometry.js");
+      initStage(THREE, RoomEnvironment, RoundedBoxGeometry);
+    }
+  } catch (err) {
+    console.warn("keep static frame:", err && err.message);
+  }
+}
+
+function initStage(THREE, RoomEnvironment, RoundedBoxGeometry) {
+  const stage = document.getElementById("lp-stage");
+  const canvas = document.createElement("canvas");
+  canvas.id = "dna-canvas";
+  canvas.setAttribute("aria-label", "B-DNA 双螺旋三维模型，缓慢自转");
+  canvas.setAttribute("role", "img");
+  stage.appendChild(canvas);
+  const hero = document.querySelector(".lp-hero");
+
+  /* fixed studio configuration (user-specified): indigo×plum backbones, no fog, back-top key at 270° */
+  const params = { speed: 1.5, bp: 24, radius: 0.9, motes: 350, glow: 0.25, fog: 0, light: 270, palette: "indigo", seed: 42 };
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.02;
+
+  const scene = new THREE.Scene();
+  const BG = new THREE.Color("#f1f2ee");
+  scene.background = BG;
+  scene.fog = new THREE.FogExp2(BG, params.fog);
+
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 120);
+
+  let dirty = true;
+  let frameCount = 0;
+
+  /* ---------- lights: back-top warm key (270°), cool front fill, clay side rim ---------- */
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xe9eee7, 0.5);
+  const key = new THREE.DirectionalLight(0xfff2df, 2.2);
+  const fill = new THREE.DirectionalLight(0x4a607c, 1.1);
+  const rim = new THREE.DirectionalLight(0x8b5a43, 1.5);
+  scene.add(hemi, key, fill, rim);
+  function placeLights() {
+    const a = params.light * Math.PI / 180;
+    key.position.set(Math.cos(a) * 7, 9, Math.sin(a) * 7);          /* high back-top: rim glow, short shadow */
+    fill.position.set(Math.cos(a + Math.PI) * 6, 5, Math.sin(a + Math.PI) * 6);   /* front-top cool: readable form */
+    rim.position.set(Math.cos(a + Math.PI / 2) * 7, 1.5, Math.sin(a + Math.PI / 2) * 7);
+  }
+  placeLights();
+
+  /* ---------- studio pedestal + baked contact shadow (no projected smear) ---------- */
+  function radialTexture(inner, outer) {
+    const c = document.createElement("canvas");
+    c.width = c.height = 256;
+    const g = c.getContext("2d");
+    const grad = g.createRadialGradient(128, 128, 8, 128, 128, 128);
+    grad.addColorStop(0, inner);
+    grad.addColorStop(1, outer);
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 256, 256);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+  const pedestal = new THREE.Mesh(
+    new THREE.CircleGeometry(6.5, 64),
+    new THREE.MeshBasicMaterial({ map: radialTexture("rgba(233,238,231,0.95)", "rgba(233,238,231,0)"), transparent: true, depthWrite: false })
+  );
+  pedestal.rotation.x = -Math.PI / 2;
+  const contact = new THREE.Mesh(
+    new THREE.CircleGeometry(2.6, 48),
+    new THREE.MeshBasicMaterial({ map: radialTexture("rgba(27,38,33,0.30)", "rgba(27,38,33,0)"), transparent: true, depthWrite: false })
+  );
+  contact.rotation.x = -Math.PI / 2;
+  contact.scale.set(1.5, 0.85, 1);
+
+  /* ---------- B-DNA model ----------
+     10.5 bp per turn, rise 0.34 nm, backbone radius 0.9 nm.
+     Glycosidic bonds 140° apart (not 180°) => major / minor grooves.
+     Each base pair = two flat aromatic planks meeting near the axis with 2 (A=T) or 3 (G≡C) H-bonds. */
+  const RISE = 0.34;
+  const TWIST = Math.PI * 2 / 10.5;
+  const OFFSET = 140 * Math.PI / 180;
+  const BASE_COLORS = { A: 0x7b794d, T: 0x985a3f, G: 0x5d7a63, C: 0x715c6e };
+  const COMPLEMENT = { A: "T", T: "A", G: "C", C: "G" };
+  const PALETTES = {
+    moss: { a: 0x3d5a47, b: 0x8b5a43 },
+    indigo: { a: 0x4a607c, b: 0x715c6e },
+    clay: { a: 0x985a3f, b: 0x7b794d }
+  };
+
+  function mulberry32(seed) {
+    let t = seed >>> 0;
+    return function () {
+      t += 0x6D2B79F5;
+      let r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const dnaGroup = new THREE.Group();
+  scene.add(dnaGroup);
+  const dnaModel = new THREE.Group();   /* rebuildable parts; pedestal/contact stay in dnaGroup */
+  dnaGroup.add(dnaModel);
+  dnaGroup.add(pedestal, contact);
+  let dnaMats = [];
+  let hbMat = null, baseMat = null;
+  let counts = { bp: 0, beads: 0, bases: 0, hbonds: 0 };
+  let rebuilds = 0;
+
+  function disposeDNA() {
+    while (dnaModel.children.length) {
+      const child = dnaModel.children.pop();
+      child.geometry && child.geometry.dispose();
+    }
+    dnaMats.forEach((m) => m.dispose());
+    dnaMats = [];
+  }
+
+  function buildDNA() {
+    disposeDNA();
+    rebuilds++;
+    const bp = params.bp, R = params.radius;
+    const pal = PALETTES[params.palette];
+    const rand = mulberry32(params.seed);
+    const seq = Array.from({ length: bp }, () => "ATGC"[Math.floor(rand() * 4)]);
+    const y0 = -(bp - 1) * RISE / 2;
+
+    const matA = new THREE.MeshPhysicalMaterial({ color: pal.a, roughness: 0.28, metalness: 0.05, clearcoat: 0.8, clearcoatRoughness: 0.25, envMapIntensity: 0.65 });
+    const matB = new THREE.MeshPhysicalMaterial({ color: pal.b, roughness: 0.28, metalness: 0.05, clearcoat: 0.8, clearcoatRoughness: 0.25, envMapIntensity: 0.65 });
+    const beadMatA = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(pal.a).lerp(new THREE.Color(0xffffff), 0.45), roughness: 0.22, metalness: 0.25, clearcoat: 0.6, envMapIntensity: 0.7 });
+    const beadMatB = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(pal.b).lerp(new THREE.Color(0xffffff), 0.45), roughness: 0.22, metalness: 0.25, clearcoat: 0.6, envMapIntensity: 0.7 });
+    baseMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.34, clearcoat: 0.5, envMapIntensity: 0.6 });
+    hbMat = new THREE.MeshStandardMaterial({ color: 0xfbfbf8, emissive: 0xf6ead0, emissiveIntensity: 0.5 + params.glow * 2.5, roughness: 0.4 });
+    dnaMats = [matA, matB, beadMatA, beadMatB, baseMat, hbMat];
+
+    const attach = (i, s) => {
+      const ang = i * TWIST + s * OFFSET;
+      return new THREE.Vector3(Math.cos(ang) * R, y0 + i * RISE, Math.sin(ang) * R);
+    };
+
+    /* backbones: smooth tubes spanning first→last nucleotide (open ends hidden inside terminal beads) */
+    for (let s = 0; s < 2; s++) {
+      const pts = [];
+      for (let i = 0; i < bp; i++) pts.push(attach(i, s));
+      const curve = new THREE.CatmullRomCurve3(pts);
+      const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, bp * 12, 0.16, 10, false), s === 0 ? matA : matB);
+      dnaModel.add(tube);
+    }
+
+    /* phosphate beads */
+    const beadGeo = new THREE.SphereGeometry(0.21, 20, 14);
+    const beads = [new THREE.InstancedMesh(beadGeo, beadMatA, bp), new THREE.InstancedMesh(beadGeo, beadMatB, bp)];
+    const m4 = new THREE.Matrix4();
+    for (let s = 0; s < 2; s++) {
+      for (let i = 0; i < bp; i++) {
+        const p = attach(i, s);
+        m4.makeTranslation(p.x, p.y, p.z);
+        beads[s].setMatrixAt(i, m4);
+      }
+      beads[s].instanceMatrix.needsUpdate = true;
+      dnaModel.add(beads[s]);
+    }
+
+    /* base halves: flat aromatic-ring planks meeting near the axis, + hydrogen bonds */
+    const halfGeo = new RoundedBoxGeometry(0.30, 0.07, 1, 2, 0.02);
+    const bases = new THREE.InstancedMesh(halfGeo, baseMat, bp * 2);
+    const hbGeo = new THREE.SphereGeometry(0.05, 10, 8);
+    const hbonds = new THREE.InstancedMesh(hbGeo, hbMat, bp * 3);
+    const fwd = new THREE.Vector3(0, 0, 1);
+    const quat = new THREE.Quaternion();
+    const scl = new THREE.Vector3();
+    const pos = new THREE.Vector3();
+    const dir = new THREE.Vector3();
+    const col = new THREE.Color();
+    let hbCount = 0;
+    for (let i = 0; i < bp; i++) {
+      const letter = seq[i];
+      const partner = COMPLEMENT[letter];
+      const inner = [];
+      for (let s = 0; s < 2; s++) {
+        const a = attach(i, s);
+        const tiltY = s === 0 ? 0.05 : -0.05;      /* propeller twist */
+        const outer = new THREE.Vector3(a.x * 0.93, a.y, a.z * 0.93);
+        const inn = new THREE.Vector3(a.x * 0.11, a.y + tiltY, a.z * 0.11);
+        inner.push(inn);
+        dir.copy(inn).sub(outer);
+        const len = dir.length();
+        dir.normalize();
+        quat.setFromUnitVectors(fwd, dir);
+        pos.copy(outer).add(inn).multiplyScalar(0.5);
+        scl.set(1, 1, len);
+        m4.compose(pos, quat, scl);
+        const idx = i * 2 + s;
+        bases.setMatrixAt(idx, m4);
+        bases.setColorAt(idx, col.setHex(s === 0 ? BASE_COLORS[letter] : BASE_COLORS[partner]));
+      }
+      const n = (letter === "A" || letter === "T") ? 2 : 3;
+      for (let k = 1; k <= n; k++) {
+        pos.copy(inner[0]).lerp(inner[1], k / (n + 1));
+        m4.makeTranslation(pos.x, pos.y, pos.z);
+        hbonds.setMatrixAt(hbCount++, m4);
+      }
+    }
+    bases.instanceMatrix.needsUpdate = true;
+    if (bases.instanceColor) bases.instanceColor.needsUpdate = true;
+    hbonds.count = hbCount;
+    hbonds.instanceMatrix.needsUpdate = true;
+    dnaModel.add(bases, hbonds);
+
+    counts = { bp, beads: bp * 2, bases: bp * 2, hbonds: hbCount };
+    pedestal.position.y = y0 - 0.34;
+    contact.position.y = y0 - 0.30;
+    applyGlow();
+    dirty = true;
+  }
+
+  function applyGlow() {
+    if (hbMat) hbMat.emissiveIntensity = 0.5 + params.glow * 2.5;
+    if (baseMat) { baseMat.emissive = new THREE.Color(0xffffff); baseMat.emissiveIntensity = params.glow * 0.1; }
+    if (motesMat) motesMat.opacity = 0.18 + params.glow * 0.45;
+    dirty = true;
+  }
+
+  /* ---------- drifting particles ---------- */
+  let motes = null, motesMat = null, motesVel = null;
+  const moteTex = radialTexture("rgba(93,122,99,0.9)", "rgba(93,122,99,0)");
+  function buildMotes() {
+    if (motes) { scene.remove(motes); motes.geometry.dispose(); motesMat.dispose(); motes = null; }
+    const n = params.motes;
+    if (!n) return;
+    const positions = new Float32Array(n * 3);
+    motesVel = new Float32Array(n);
+    const h = params.bp * RISE + 6;
+    for (let i = 0; i < n; i++) {
+      const r = 2 + Math.random() * 5;
+      const a = Math.random() * Math.PI * 2;
+      positions[i * 3] = Math.cos(a) * r;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * h;
+      positions[i * 3 + 2] = Math.sin(a) * r;
+      motesVel[i] = 0.002 + Math.random() * 0.004;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    motesMat = new THREE.PointsMaterial({ size: 0.1, map: moteTex, transparent: true, opacity: 0.18 + params.glow * 0.45, depthWrite: false, color: 0x5d7a63, sizeAttenuation: true });
+    motes = new THREE.Points(geo, motesMat);
+    scene.add(motes);
+    dirty = true;
+  }
+
+  /* ---------- layout / resize: helix anchored right on desktop, centred band on mobile ---------- */
+  let lastWide = null;
+  function layout() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    const wide = w > 900;
+    dnaGroup.position.set(wide ? 2.6 : 0, wide ? 0 : -1.6, 0);
+    if (lastWide !== wide) {
+      camera.position.copy(dnaGroup.position).add(new THREE.Vector3(wide ? 11.2 : 12.5, wide ? 3.4 : 4.2, wide ? 15.6 : 17.4));
+      lastWide = wide;
+    }
+    camera.lookAt(dnaGroup.position);
+    camera.aspect = w / Math.max(1, h);
+    if (wide) {
+      /* fill the right column: scale with viewport height (capped), keep clear of nav and floor */
+      const dist = camera.position.distanceTo(dnaGroup.position);
+      const visH = 2 * Math.tan(camera.fov * Math.PI / 360) * dist;
+      const helixUnits = (params.bp - 1) * RISE + 0.6;
+      dnaGroup.scale.setScalar(Math.min(1.2, Math.max(1, (h - 128) / (helixUnits * h / visH))));
+      camera.setViewOffset(w, h, -w * 0.28, 0, w, h);   /* anchor the helix in the right column, clear of centre */
+    } else {
+      dnaGroup.scale.setScalar(1);
+      camera.clearViewOffset();
+    }
+    camera.updateProjectionMatrix();
+    dirty = true;
+  }
+  if ("ResizeObserver" in window) new ResizeObserver(layout).observe(stage);
+  else window.addEventListener("resize", layout);
+
+  /* ---------- render loop (single rAF, paused offscreen) ---------- */
+  let rafId = null;
+  let visible = true;
+  const clock = new THREE.Clock();
+  function frame() {
+    rafId = null;
+    if (!visible || document.hidden) return;
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const t = clock.elapsedTime;
+    if (!reduceMotion && params.speed > 0) dnaGroup.rotation.y += dt * params.speed * 0.07;   /* slow in-place spin ≈ 6°/s */
+    if (!reduceMotion) {
+      if (motes) {
+        const arr = motes.geometry.attributes.position.array;
+        const h = params.bp * RISE + 6;
+        for (let i = 0; i < motesVel.length; i++) {
+          arr[i * 3 + 1] += motesVel[i];
+          if (arr[i * 3 + 1] > h / 2) arr[i * 3 + 1] = -h / 2;
+        }
+        motes.geometry.attributes.position.needsUpdate = true;
+      }
+      if (hbMat) hbMat.emissiveIntensity = 0.5 + params.glow * 2.5 + Math.sin(t * 2) * 0.15 * params.glow;
+      frameCount++;
+      renderer.render(scene, camera);
+    } else if (dirty) {
+      frameCount++;
+      renderer.render(scene, camera);
+      dirty = false;
+    }
+    rafId = window.requestAnimationFrame(frame);
+  }
+  function startLoop() {
+    if (rafId === null && visible && !document.hidden) rafId = window.requestAnimationFrame(frame);
+  }
+  function stopLoop() {
+    if (rafId !== null) { window.cancelAnimationFrame(rafId); rafId = null; }
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible) { dirty = true; startLoop(); } else stopLoop();
+    }, { threshold: 0 }).observe(hero);
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopLoop(); else { dirty = true; startLoop(); }
+  });
+
+  /* ---------- boot ---------- */
+  layout();
+  buildDNA();
+  buildMotes();
+  renderer.render(scene, camera);
+  const pic = stage.querySelector("picture");
+  if (pic) pic.style.display = "none";
+  const mq = window.matchMedia("(min-width: 901px)");
+  mq.addEventListener("change", (e) => {
+    if (e.matches) { canvas.style.display = ""; if (pic) pic.style.display = "none"; dirty = true; startLoop(); }
+    else { stopLoop(); canvas.style.display = "none"; if (pic) pic.style.display = ""; }
+  });
+  startLoop();
+  window.__dnaReady = true;
+  clearTimeout(window.__dnaTimer);
+  window.__dna = {
+    ready: true,
+    revision: THREE.REVISION,
+    params,
+    get counts() { return counts; },
+    get rebuilds() { return rebuilds; },
+    get frames() { return frameCount; },
+    scene,
+    group: dnaGroup,
+    camera,
+    renderer,
+    distance: () => camera.position.distanceTo(dnaGroup.position)
+  };
+}
+</script>
+</body>
+</html>
