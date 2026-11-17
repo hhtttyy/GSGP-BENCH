@@ -211,8 +211,78 @@ a:hover { color: var(--ink); text-decoration-color: currentColor; }
   .reader th, .reader td { padding: 7px 6px; }
 }
 
+/* ---------------- Unified masthead (same source as the bench workbench) ---------------- */
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: 78px;
+  padding: 0 26px;
+  background: var(--plate);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+}
+.masthead .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; }
+.brand-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.wordmark {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.brand-sub {
+  color: var(--ink-3);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mast-nav { margin-left: auto; display: flex; align-items: center; gap: 22px; white-space: nowrap; }
+.nav-link {
+  position: relative;
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.nav-link:hover { color: var(--ink); }
+.nav-link.is-active { color: var(--ink); }
+.nav-link.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1.5px;
+  background: var(--moss);
+}
+.nav-github { text-decoration: none; }
+.nav-github .arrow { margin-left: 4px; color: var(--ink-3); }
+@media (max-width: 1180px) {
+  .mast-nav { gap: 20px; }
+  .brand-sub { letter-spacing: 0.1em; }
+}
+@media (max-width: 1080px) {
+  .masthead { padding: 0 20px; gap: 20px; }
+}
+@media (max-width: 920px) {
+  .masthead { height: auto; min-height: 64px; padding: 12px 18px; flex-wrap: wrap; }
+  .mast-nav { gap: 18px; }
+}
+@media (max-width: 680px) {
+  .masthead { padding: 11px 14px; gap: 12px; }
+  .wordmark { font-size: 21px; }
+  .brand-sub { display: none; }
+  .mast-nav { gap: 13px; margin-left: auto; }
+}
+
 @media print {
-  .reader-top { display: none; }
+  .reader-top, .masthead { display: none; }
   body { background: #fff; font-size: 11pt; }
   .reader { width: auto; padding: 0; }
   .reader a { color: inherit; text-decoration: none; }
