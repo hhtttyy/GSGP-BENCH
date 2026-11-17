@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>提交 MCP · GSGP·Bench</title>
-<meta name="description" content="向 GSGP-Bench 提交 Paper2Agent 生成的 Skill/MCP 包，接受统一验证和认证。" />
+<title>提交 MCP · GSGP-BENCH</title>
+<meta name="description" content="向 GSGP-BENCH 提交 Paper2Agent 生成的 Skill/MCP 包，接受统一验证和认证。" />
 <meta name="theme-color" content="#f1f2ee" />
 <link rel="stylesheet" href="../ifam-paper/reader.css" />
 <style>
@@ -67,9 +67,9 @@
 </head>
 <body class="reader-page">
 <header class="reader-top">
-  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <a class="reader-brand" href="../../">GSGP-BENCH</a>
   <nav class="reader-crumbs" aria-label="站点导航">
-    <a href="../../index.html">评测</a>
+    <a href="../../bench/index.html">评测</a>
     <span aria-hidden="true">/</span>
     <a href="../introduce/index.html">介绍</a>
     <span aria-hidden="true">/</span>
@@ -126,7 +126,7 @@ node scripts/prospective-from-pr.mjs --mock --input pr.json --out /tmp/prospecti
   <pre><code>node scripts/prospective-from-submission.mjs \
   --submission examples/submission-bayesr.json</code></pre>
   <p>示例提交：BayesR × 1000G 仿真 / Duroc / 3000 水稻 / UKB / WTCCC1。生成后主榜出现“待认证”方法卡；主观适配度 tab 可查看预期，工具状态保持未认证。</p>
-  <p><a href="../../index.html?algos=bayesr&datasets=sim1000g,duroc,rice,ukb,wtccc&metric=expected">打开 BayesR 待认证 demo →</a></p>
+  <p><a href="../../bench/index.html?algos=bayesr&datasets=sim1000g,duroc,rice,ukb,wtccc&metric=expected">打开 BayesR 待认证 demo →</a></p>
   <p>也可以直接在主评测页左侧的“暂无 MCP 文件？”表单中填写方法名、GitHub 仓库和文献 URL；Worker 只返回待认证预览，动态加入方法卡，不会写真实指标或认证状态。</p>
   <p>BayesB / BayesC 已在允许清单中，但 <code>auto_submit=false</code>，提交后只进入人工排队，不会自动生成主榜记录。</p>
 

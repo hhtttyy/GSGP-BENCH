@@ -29,3 +29,6 @@ local_data/
 
 # Local paper PDFs: licenses vary and the static site does not need them
 docs/*.pdf
+
+# frontend-rails gate screenshots (verification artifacts, not site assets)
+site/.gate/

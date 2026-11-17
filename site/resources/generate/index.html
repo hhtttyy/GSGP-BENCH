@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>本地生成 Skill/MCP · Paper2Agent · GSGP·Bench</title>
+<title>本地生成 Skill/MCP · Paper2Agent · GSGP-BENCH</title>
 <meta name="description" content="用 Paper2Agent 本地生成论文 Skill/MCP：下载套件、复制提示词、运行、提交认证。" />
 <meta name="theme-color" content="#f1f2ee" />
 <link rel="stylesheet" href="../ifam-paper/reader.css" />
@@ -165,7 +165,7 @@
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #c7cfc4;
+    background: var(--rule);
     cursor: pointer;
   }
   .kit-dot.is-active { background: var(--moss); }
@@ -261,9 +261,9 @@
 </head>
 <body class="reader-page">
 <header class="reader-top">
-  <a class="reader-brand" href="../../index.html">GSGP<span>/</span>BENCH</a>
+  <a class="reader-brand" href="../../">GSGP-BENCH</a>
   <nav class="reader-crumbs" aria-label="站点导航">
-    <a href="../../index.html">评测</a>
+    <a href="../../bench/index.html">评测</a>
     <span aria-hidden="true">/</span>
     <a href="../introduce/index.html">介绍</a>
     <span aria-hidden="true">/</span>
@@ -336,7 +336,7 @@
               <span>只提交包与聚合结果</span>
             </div>
             <div class="kit-panel is-site">
-              <span class="kit-panel-kicker">GSGP·Bench</span>
+              <span class="kit-panel-kicker">GSGP-BENCH</span>
               <strong>展示与认证</strong>
               <div class="kit-chips">
                 <span class="kit-chip">公开记录</span>
@@ -435,7 +435,7 @@ Requirements:
 4. Do not execute untrusted code outside the isolated project environment.
 5. Record runtime versions, commands, test data, and known limitations.
 6. The MCP must not receive held-out truth and must not compute benchmark metrics.
-7. Produce a package that can be submitted to GSGP-Bench for MCP certification.</pre>
+7. Produce a package that can be submitted to GSGP-BENCH for MCP certification.</pre>
         </div>
       </li>
       <li>
@@ -540,7 +540,7 @@ Requirements:
 </main>
 
 <footer class="reader-foot">
-  <p><b>GSGP·Bench</b> · 本地 Paper2Agent 套件</p>
+  <p><b>GSGP-BENCH</b> · 本地 Paper2Agent 套件</p>
   <p>本站不执行论文或代码、不上传数据、不托管 MCP。生成包需单独提交认证。</p>
 </footer>
 

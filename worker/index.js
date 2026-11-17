@@ -497,6 +497,10 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return jsonResponse({ error: { code: "NOT_FOUND", message: "Unknown API route." } }, 404);
     }
+    // The workbench moved from /index.html to /bench/; keep old deep links working.
+    if (url.pathname === "/index.html") {
+      return Response.redirect(new URL(`/bench/${url.search}`, url), 301);
+    }
     if (!env.ASSETS) {
       return new Response("Static assets binding is missing.", { status: 500 });
     }
